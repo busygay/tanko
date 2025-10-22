@@ -1,0 +1,186 @@
+[gd_scene load_steps=14 format=3 uid="uid://ow3t2xlpwqf"]
+
+[ext_resource type="Script" uid="uid://cl1bl8ano1tlq" path="res://tigger/skill_assembly.gd" id="1_uty8y"]
+[ext_resource type="Texture2D" uid="uid://cjkupxyxqm0ub" path="res://asset/Character-and-Zombie.png" id="1_yi2rb"]
+[ext_resource type="Texture2D" uid="uid://cu6jebgh7oob2" path="res://asset/arrowSilver_left.png" id="2_uty8y"]
+[ext_resource type="Texture2D" uid="uid://bdkih0ix8hy6i" path="res://asset/arrowSilver_right.png" id="3_3qrbh"]
+[ext_resource type="FontFile" uid="uid://bnnm0j2xa4rlb" path="res://asset/Siyuan-NoKorean-Alternative.woff2" id="5_3qrbh"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4tgdy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uty8y"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7o8v0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6lhmr"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_irkmr"]
+atlas = ExtResource("1_yi2rb")
+region = Rect2(15, 4, 17, 22)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_srnof"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_08j8u"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_4tgdy"]
+font = ExtResource("5_3qrbh")
+font_size = 32
+outline_size = 1
+
+[node name="skillAssembly" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_uty8y")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_top = 100
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 20
+
+[node name="onCombo" type="Panel" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer3"]
+clip_contents = true
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_4tgdy")
+
+[node name="brokenCombo" type="Panel" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer3"]
+clip_contents = true
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_uty8y")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="VBoxLeft" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="twoCombo" type="Panel" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxLeft"]
+clip_contents = true
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_7o8v0")
+
+[node name="fiveCombo" type="Panel" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxLeft"]
+clip_contents = true
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_6lhmr")
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_right = 25
+
+[node name="TextureRect" type="TextureRect" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/MarginContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(400, 400)
+layout_mode = 2
+texture = SubResource("AtlasTexture_irkmr")
+
+[node name="VBoxRight" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="APGained" type="Panel" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxRight"]
+clip_contents = true
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_srnof")
+
+[node name="APSpent" type="Panel" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxRight"]
+clip_contents = true
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_08j8u")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_constants/separation = 18
+
+[node name="buttonLeft" type="TextureButton" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer2"]
+clip_contents = true
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_uty8y")
+stretch_mode = 4
+
+[node name="child" type="Control" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer2"]
+clip_contents = true
+custom_minimum_size = Vector2(595.2, 831.2)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+
+[node name="Marker2D" type="Marker2D" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer2/child"]
+gizmo_extents = 42.7
+
+[node name="buttonRight" type="TextureButton" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer2"]
+clip_contents = true
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+size_flags_vertical = 4
+texture_normal = ExtResource("3_3qrbh")
+stretch_mode = 4
+
+[node name="TipsPanel" type="Panel" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 325.0
+offset_top = 324.0
+offset_right = 1075.0
+offset_bottom = 1434.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TipsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TipsLabel" type="Label" parent="TipsPanel/VBoxContainer"]
+layout_mode = 2
+text = "五连答时触发一次技能，通常会加强技能的能力。"
+label_settings = SubResource("LabelSettings_4tgdy")
+
+[node name="TipsScrollContainer" type="ScrollContainer" parent="TipsPanel/VBoxContainer"]
+clip_contents = false
+layout_mode = 2
+size_flags_vertical = 3
+
+[connection signal="pressed" from="Panel/MarginContainer/VBoxContainer/HBoxContainer2/buttonLeft" to="." method="_on_button_left_pressed"]
+[connection signal="pressed" from="Panel/MarginContainer/VBoxContainer/HBoxContainer2/buttonRight" to="." method="_on_button_right_pressed"]

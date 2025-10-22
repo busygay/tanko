@@ -1,0 +1,9 @@
+[gd_scene load_steps=4 format=3 uid="uid://dfxufpe7skmpu"]
+
+[ext_resource type="PackedScene" uid="uid://bveueqdnn2l7p" path="res://skill/scene/skill.tscn" id="1_nyxem"]
+[ext_resource type="Script" uid="uid://btyigu4tf8qwx" path="res://skill/scene/double_shoot_up.gd" id="2_1bg4s"]
+[ext_resource type="Resource" uid="uid://b4wwnk5hpi6nh" path="res://skill/resource/doubleShootUp.tres" id="3_ynx13"]
+
+[node name="doubleShootUp" instance=ExtResource("1_nyxem")]
+script = ExtResource("2_1bg4s")
+Data = ExtResource("3_ynx13")

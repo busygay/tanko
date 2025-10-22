@@ -1,0 +1,250 @@
+[gd_scene load_steps=18 format=3 uid="uid://ccdvqjok7b0ih"]
+
+[ext_resource type="Script" uid="uid://cxviwp8brub8y" path="res://main/UI/word_confirm.gd" id="1_ge7lg"]
+[ext_resource type="Texture2D" uid="uid://cj3p80dkcjlxe" path="res://asset/button_square_header_small_square_screws.png" id="2_wr6wn"]
+[ext_resource type="Texture2D" uid="uid://7lkg3xwj2574" path="res://asset/button.png" id="3_lhsii"]
+[ext_resource type="ButtonGroup" uid="uid://cxkj5o5ab0br0" path="res://main/UI/wordConfirmButton_group.tres" id="4_wr6wn"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_wr6wn"]
+font_size = 60
+font_color = Color(1, 0, 0, 1)
+outline_size = 1
+outline_color = Color(1, 0, 0, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ge7lg"]
+atlas = ExtResource("3_lhsii")
+region = Rect2(1, 1, 124, 41)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wr6wn"]
+atlas = ExtResource("3_lhsii")
+region = Rect2(127, 1, 124, 41)
+
+[sub_resource type="LabelSettings" id="LabelSettings_lhsii"]
+font_size = 20
+font_color = Color(0, 0, 0, 1)
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d21lf"]
+atlas = ExtResource("3_lhsii")
+region = Rect2(1, 1, 124, 41)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wmoqm"]
+atlas = ExtResource("3_lhsii")
+region = Rect2(127, 1, 124, 41)
+
+[sub_resource type="LabelSettings" id="LabelSettings_0q4bl"]
+font_size = 20
+font_color = Color(0, 0, 0, 1)
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_wmoqm"]
+font_size = 50
+
+[sub_resource type="LabelSettings" id="LabelSettings_ndh8k"]
+font_size = 50
+
+[sub_resource type="LabelSettings" id="LabelSettings_3copa"]
+font_size = 50
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lhsii"]
+atlas = ExtResource("3_lhsii")
+region = Rect2(1, 1, 124, 41)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nq8ng"]
+atlas = ExtResource("3_lhsii")
+region = Rect2(127, 1, 124, 41)
+
+[sub_resource type="LabelSettings" id="LabelSettings_owfl2"]
+font_size = 28
+font_color = Color(0, 0, 0, 1)
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+shadow_color = Color(1, 0, 0, 1)
+
+[node name="wordConfirm" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ge7lg")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 200
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 200
+
+[node name="NinePatchRect" type="NinePatchRect" parent="MarginContainer"]
+layout_mode = 2
+texture = ExtResource("2_wr6wn")
+patch_margin_left = 12
+patch_margin_top = 18
+patch_margin_right = 12
+patch_margin_bottom = 12
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/NinePatchRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AccuracyLabel" type="Label" parent="MarginContainer/NinePatchRect/VBoxContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "准确率：90"
+label_settings = SubResource("LabelSettings_wr6wn")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/NinePatchRect/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 132
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 128
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="correctButton" type="TextureButton" parent="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+button_group = ExtResource("4_wr6wn")
+texture_normal = SubResource("AtlasTexture_ge7lg")
+texture_pressed = SubResource("AtlasTexture_wr6wn")
+
+[node name="Label" type="Label" parent="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/correctButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "正确单词"
+label_settings = SubResource("LabelSettings_lhsii")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="errorButton" type="TextureButton" parent="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+button_group = ExtResource("4_wr6wn")
+texture_normal = SubResource("AtlasTexture_d21lf")
+texture_pressed = SubResource("AtlasTexture_wmoqm")
+
+[node name="Label" type="Label" parent="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/errorButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "错误单词"
+label_settings = SubResource("LabelSettings_0q4bl")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AirControl" type="Control" parent="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="VBoxContainer" parent="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="headerVbox" type="VBoxContainer" parent="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="header" type="HBoxContainer" parent="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer/headerVbox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="假名" type="Label" parent="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer/headerVbox/header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "假名"
+label_settings = SubResource("LabelSettings_wmoqm")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="日语汉字" type="Label" parent="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer/headerVbox/header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "日语汉字"
+label_settings = SubResource("LabelSettings_ndh8k")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="中文" type="Label" parent="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer/headerVbox/header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "中文"
+label_settings = SubResource("LabelSettings_3copa")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="content" type="VBoxContainer" parent="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NEXT" type="TextureButton" parent="MarginContainer/NinePatchRect/VBoxContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(248, 82)
+layout_mode = 2
+size_flags_horizontal = 8
+texture_normal = SubResource("AtlasTexture_lhsii")
+texture_pressed = SubResource("AtlasTexture_nq8ng")
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="MarginContainer/NinePatchRect/VBoxContainer/NEXT"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "NEXT"
+label_settings = SubResource("LabelSettings_owfl2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="toggled" from="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/correctButton" to="." method="_on_correct_button_toggled"]
+[connection signal="toggled" from="MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/errorButton" to="." method="_on_error_button_toggled"]
+[connection signal="pressed" from="MarginContainer/NinePatchRect/VBoxContainer/NEXT" to="." method="_on_next_pressed"]

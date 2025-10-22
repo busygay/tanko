@@ -1,0 +1,107 @@
+[gd_scene load_steps=10 format=3 uid="uid://d1t5wfugr4e7j"]
+
+[ext_resource type="PackedScene" uid="uid://cpwfxq46j3tfy" path="res://globalSkillData/asset/Turret/turret.tscn" id="1_63rh5"]
+[ext_resource type="Script" uid="uid://b4wlx21grybh0" path="res://globalSkillData/turret.gd" id="1_agkei"]
+
+[sub_resource type="Gradient" id="Gradient_65205"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_agkei"]
+gradient = SubResource("Gradient_65205")
+width = 32
+height = 32
+fill = 1
+fill_from = Vector2(0.50427353, 0.48290598)
+
+[sub_resource type="Gradient" id="Gradient_or7e1"]
+colors = PackedColorArray(0.28, 0.28, 0.28, 1, 0.45, 0.45, 0.45, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_s3n3v"]
+gradient = SubResource("Gradient_or7e1")
+
+[sub_resource type="Curve" id="Curve_acr10"]
+_data = [Vector2(0.0044247806, 0.20224726), 0.0, 0.0, 0, 0, Vector2(0.35398233, 0.764045), 1.1285893, 1.1285893, 0, 0, Vector2(0.61504424, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_aeque"]
+curve = SubResource("Curve_acr10")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_fhnw3"]
+lifetime_randomness = 0.3
+particle_flag_disable_z = true
+angle_min = 5.000011
+angle_max = 25.000011
+inherit_velocity_ratio = 1.0
+spread = 5.0
+initial_velocity_min = 10.0
+initial_velocity_max = 50.0
+gravity = Vector3(0, -1, 0)
+linear_accel_min = 4.9999976
+linear_accel_max = 24.999998
+scale_curve = SubResource("CurveTexture_aeque")
+color_ramp = SubResource("GradientTexture1D_s3n3v")
+
+[node name="Turret" type="Node2D"]
+scale = Vector2(0.3, 0.3)
+script = ExtResource("1_agkei")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -256.0
+offset_top = -358.0
+offset_right = 256.0
+offset_bottom = 154.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="Node3D" type="Node3D" parent="SubViewportContainer/SubViewport"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+
+[node name="Turret" parent="SubViewportContainer/SubViewport/Node3D" instance=ExtResource("1_63rh5")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+script = null
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/Node3D"]
+transform = Transform3D(1, 3.184072e-08, 1.376387e-08, -3.184072e-08, 0.68511945, 0.7284308, 1.37638665e-08, -0.7284308, 0.68511945, -8.69562e-08, 2.5594926, 1.989326)
+projection = 1
+size = 2.2
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewportContainer/SubViewport/Node3D"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 7.9747586, 0.29401922)
+light_energy = 4.0
+shadow_enabled = true
+
+[node name="Marker2D" type="Marker2D" parent="."]
+position = Vector2(260, -93.33333)
+gizmo_extents = 33.8
+
+[node name="eye" type="Area2D" parent="."]
+position = Vector2(270, -96.666664)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionPolygon2D" parent="eye"]
+polygon = PackedVector2Array(0, 0, 5000, 500, 5000, -500)
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+position = Vector2(445, 327)
+emitting = false
+amount = 15
+texture = SubResource("GradientTexture2D_agkei")
+lifetime = 3.0
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_fhnw3")
+
+[connection signal="body_entered" from="eye" to="." method="_on_eye_body_entered"]
+[connection signal="body_exited" from="eye" to="." method="_on_eye_body_exited"]
+
+[editable path="SubViewportContainer/SubViewport/Node3D/Turret"]

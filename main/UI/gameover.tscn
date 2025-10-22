@@ -1,0 +1,333 @@
+[gd_scene load_steps=19 format=3 uid="uid://csk33yb7rnhf1"]
+
+[ext_resource type="Script" uid="uid://cxy71okqfq0fl" path="res://main/UI/gameover.gd" id="1_eeur3"]
+[ext_resource type="Texture2D" uid="uid://cj3p80dkcjlxe" path="res://asset/button_square_header_small_square_screws.png" id="2_kctv7"]
+[ext_resource type="Texture2D" uid="uid://7lkg3xwj2574" path="res://asset/button.png" id="3_2nw6q"]
+[ext_resource type="ButtonGroup" uid="uid://5pvcxm0ycvwn" path="res://main/UI/gameOverButton_group.tres" id="3_kctv7"]
+[ext_resource type="Texture2D" uid="uid://n5q4y5vtudwc" path="res://asset/button_yellow.png" id="5_2nw6q"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w3x71"]
+atlas = ExtResource("3_2nw6q")
+region = Rect2(1, 1, 124, 41)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_af4fq"]
+atlas = ExtResource("3_2nw6q")
+region = Rect2(127, 1, 124, 41)
+
+[sub_resource type="LabelSettings" id="LabelSettings_g1o2j"]
+font_size = 32
+font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pn7gr"]
+atlas = ExtResource("3_2nw6q")
+region = Rect2(1, 1, 124, 41)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b7a41"]
+atlas = ExtResource("3_2nw6q")
+region = Rect2(127, 1, 124, 41)
+
+[sub_resource type="LabelSettings" id="LabelSettings_7nmon"]
+font_size = 32
+font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_kctv7"]
+font_size = 32
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g1o2j"]
+atlas = ExtResource("5_2nw6q")
+region = Rect2(0, 0, 96, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7nmon"]
+atlas = ExtResource("5_2nw6q")
+region = Rect2(96, 0, 96, 24)
+
+[sub_resource type="LabelSettings" id="LabelSettings_yximd"]
+font_size = 32
+font_color = Color(0, 0, 0, 1)
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lh3sh"]
+atlas = ExtResource("5_2nw6q")
+region = Rect2(0, 0, 96, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xmx0r"]
+atlas = ExtResource("5_2nw6q")
+region = Rect2(96, 0, 96, 24)
+
+[sub_resource type="LabelSettings" id="LabelSettings_y70k4"]
+font_size = 24
+font_color = Color(0, 0, 0, 1)
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[node name="gameover" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_eeur3")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_top = 200
+theme_override_constants/margin_right = 100
+theme_override_constants/margin_bottom = 200
+
+[node name="NinePatchRect" type="NinePatchRect" parent="Panel/MarginContainer"]
+layout_mode = 2
+texture = ExtResource("2_kctv7")
+patch_margin_left = 14
+patch_margin_top = 18
+patch_margin_right = 12
+patch_margin_bottom = 4
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel/MarginContainer/NinePatchRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 18
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/NinePatchRect/MarginContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/MarginContainer"]
+layout_mode = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 40
+text = "此次游戏共使用XX个单词，正确数为XX，错误数为XX。准确率为XX。"
+
+[node name="Panel" type="Panel" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 23
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="correct" type="TextureButton" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+button_group = ExtResource("3_kctv7")
+texture_normal = SubResource("AtlasTexture_w3x71")
+texture_pressed = SubResource("AtlasTexture_af4fq")
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/MarginContainer/VBoxContainer/correct"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "正确的"
+label_settings = SubResource("LabelSettings_g1o2j")
+horizontal_alignment = 1
+
+[node name="error" type="TextureButton" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+button_group = ExtResource("3_kctv7")
+texture_normal = SubResource("AtlasTexture_pn7gr")
+texture_pressed = SubResource("AtlasTexture_b7a41")
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/MarginContainer/VBoxContainer/error"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "错误的"
+label_settings = SubResource("LabelSettings_7nmon")
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "aaa"
+label_settings = SubResource("LabelSettings_kctv7")
+
+[node name="Label2" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "aaa"
+label_settings = SubResource("LabelSettings_kctv7")
+
+[node name="Label3" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "aaa"
+label_settings = SubResource("LabelSettings_kctv7")
+
+[node name="Label4" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "aaa"
+label_settings = SubResource("LabelSettings_kctv7")
+
+[node name="Label5" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "aaa"
+label_settings = SubResource("LabelSettings_kctv7")
+
+[node name="Label6" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "aaa"
+label_settings = SubResource("LabelSettings_kctv7")
+
+[node name="Label7" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "aaa"
+label_settings = SubResource("LabelSettings_kctv7")
+
+[node name="Label8" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "aaa"
+label_settings = SubResource("LabelSettings_kctv7")
+
+[node name="Label9" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "aaa"
+label_settings = SubResource("LabelSettings_kctv7")
+
+[node name="Label10" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "aaa"
+label_settings = SubResource("LabelSettings_kctv7")
+
+[node name="Label11" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "aaa"
+label_settings = SubResource("LabelSettings_kctv7")
+
+[node name="Label12" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "aaa"
+label_settings = SubResource("LabelSettings_kctv7")
+
+[node name="Label13" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "aaa"
+label_settings = SubResource("LabelSettings_kctv7")
+
+[node name="Label14" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "aaa"
+label_settings = SubResource("LabelSettings_kctv7")
+
+[node name="Label15" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "aaa"
+label_settings = SubResource("LabelSettings_kctv7")
+
+[node name="Label16" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "aaa"
+label_settings = SubResource("LabelSettings_kctv7")
+
+[node name="MarginContainer2" type="MarginContainer" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 45
+theme_override_constants/margin_bottom = 45
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/MarginContainer2"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 68
+
+[node name="restartButton" type="TextureButton" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(192, 48)
+layout_mode = 2
+texture_normal = SubResource("AtlasTexture_g1o2j")
+texture_pressed = SubResource("AtlasTexture_7nmon")
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer/restartButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "回到主页"
+label_settings = SubResource("LabelSettings_yximd")
+horizontal_alignment = 1
+
+[node name="doNotAddErrorBook" type="TextureButton" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(192, 48)
+layout_mode = 2
+texture_normal = SubResource("AtlasTexture_lh3sh")
+texture_pressed = SubResource("AtlasTexture_xmx0r")
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer/doNotAddErrorBook"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "放弃加入错题本"
+label_settings = SubResource("LabelSettings_y70k4")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+autostart = true
+
+[connection signal="pressed" from="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/MarginContainer/VBoxContainer/correct" to="." method="_on_correct_pressed"]
+[connection signal="pressed" from="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/MarginContainer/VBoxContainer/error" to="." method="_on_error_pressed"]
+[connection signal="scroll_ended" from="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer" to="." method="_on_scroll_container_scroll_ended"]
+[connection signal="scroll_started" from="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer" to="." method="_on_scroll_container_scroll_started"]
+[connection signal="pressed" from="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer/restartButton" to="." method="_on_restart_button_pressed"]
+[connection signal="pressed" from="Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer/doNotAddErrorBook" to="." method="_on_do_not_add_error_book_pressed"]

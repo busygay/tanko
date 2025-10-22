@@ -1,0 +1,13 @@
+extends Node
+func _ready() -> void:
+	Eventmanger.fiveComboEmit.connect(skillemit)
+	
+func skillemit():
+	var tigger:Dictionary ={
+		"fiveCombo":true
+	}
+	var count = get_child_count() 
+	if count >0:
+		var temp = randi_range(0,count-1)
+		get_child(temp)._skillEmit(tigger)
+	pass

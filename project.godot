@@ -1,0 +1,63 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="tankou"
+run/main_scene="uid://b2srsnxwwp6yd"
+config/features=PackedStringArray("4.5", "Mobile")
+
+[autoload]
+
+Eventmanger="*res://global/eventmanger.gd"
+Jlptn5="*res://global/jlptn_5.gd"
+ChangeScenceLoad="*res://global/change_scence_load.tscn"
+AudioManager="*res://global/audio_manager.gd"
+Level="*res://global/level.gd"
+SkillManager="*res://global/skill_manager.gd"
+
+[display]
+
+window/size/viewport_width=1080
+window/size/viewport_height=1920
+window/stretch/mode="viewport"
+window/stretch/aspect="keep_width"
+window/handheld/orientation=6
+
+[editor_plugins]
+
+enabled=PackedStringArray()
+
+[global_group]
+
+player=""
+main=""
+answering=""
+card_pile=""
+cardPath2D=""
+twoComboTigger=""
+fiveComboTIgger=""
+onComboTigger=""
+brokenComboTigger=""
+APGainedTigger=""
+APSpentTIgger=""
+tigger=""
+enemy=""
+
+[gui]
+
+theme/custom_font="uid://bnnm0j2xa4rlb"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true

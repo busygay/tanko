@@ -1,0 +1,124 @@
+[gd_scene load_steps=16 format=3 uid="uid://bwdxekq11p3n7"]
+
+[ext_resource type="Shader" uid="uid://dnt3brjng750f" path="res://shop/skillrow.gdshader" id="1_7h1jn"]
+[ext_resource type="Script" uid="uid://bcashdnh156m3" path="res://shop/skillrow.gd" id="1_ore36"]
+[ext_resource type="Texture2D" uid="uid://7370t5uys68" path="res://skill/asset/card.png" id="2_ymqax"]
+[ext_resource type="Texture2D" uid="uid://sjwi20xre50p" path="res://skill/asset/doubleShoot.png" id="3_dl3ps"]
+[ext_resource type="Texture2D" uid="uid://cgbi7d4axwrdx" path="res://skill/asset/card_bg.png" id="4_7h1jn"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_1v3f8"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_niejh"]
+width = 64
+height = 64
+noise = SubResource("FastNoiseLite_1v3f8")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ds7sj"]
+shader = ExtResource("1_7h1jn")
+shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_niejh")
+shader_parameter/dissolve_value = 1.0
+shader_parameter/burn_size = 0.3
+shader_parameter/burn_color = Color(0.890196, 0.2, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_iupyk"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_w8uv6"]
+width = 64
+height = 64
+noise = SubResource("FastNoiseLite_iupyk")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ed8ku"]
+shader = ExtResource("1_7h1jn")
+shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_w8uv6")
+shader_parameter/dissolve_value = 1.0
+shader_parameter/burn_size = 0.2
+shader_parameter/burn_color = Color(0.905882, 0.333333, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_1v3f8"]
+font_size = 96
+outline_size = 2
+shadow_size = 4
+shadow_color = Color(1, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_00pmo"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_xsftc"]
+noise = SubResource("FastNoiseLite_00pmo")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tc0hk"]
+shader = ExtResource("1_7h1jn")
+shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_xsftc")
+shader_parameter/dissolve_value = 1.0
+shader_parameter/burn_size = 0.2
+shader_parameter/burn_color = Color(0.890196, 0.2, 0, 1)
+
+[node name="Skillrow" type="TextureButton"]
+process_mode = 3
+material = SubResource("ShaderMaterial_ds7sj")
+clip_contents = true
+custom_minimum_size = Vector2(200, 200)
+offset_right = 744.0
+offset_bottom = 1039.0
+scale = Vector2(0.4, 0.4)
+mouse_filter = 1
+texture_normal = ExtResource("2_ymqax")
+ignore_texture_size = true
+stretch_mode = 4
+script = ExtResource("1_ore36")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_top = 200
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/MarginContainer"]
+material = SubResource("ShaderMaterial_ed8ku")
+clip_contents = true
+custom_minimum_size = Vector2(320, 240)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+texture = ExtResource("3_dl3ps")
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "枪斗术"
+label_settings = SubResource("LabelSettings_1v3f8")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/margin_left = 45
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 20
+
+[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer/MarginContainer2"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 64
+theme_override_font_sizes/bold_font_size = 64
+bbcode_enabled = true
+text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+
+[node name="TextureRect" type="TextureRect" parent="."]
+z_index = -1
+material = SubResource("ShaderMaterial_tc0hk")
+layout_mode = 0
+offset_right = 744.0
+offset_bottom = 1039.0
+mouse_filter = 2
+texture = ExtResource("4_7h1jn")

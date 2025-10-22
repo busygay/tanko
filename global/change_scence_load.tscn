@@ -1,0 +1,31 @@
+[gd_scene load_steps=4 format=3 uid="uid://rorfxk7c8mhx"]
+
+[ext_resource type="Script" uid="uid://bwc57ip2l145u" path="res://global/change_scence_load.gd" id="1_2cldt"]
+[ext_resource type="Shader" uid="uid://baam42mr8skar" path="res://global/changeScence.gdshader" id="2_88kb8"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ucybv"]
+shader = ExtResource("2_88kb8")
+shader_parameter/spacing = 25.0
+shader_parameter/animation_progress = 0.0
+shader_parameter/dot_size = 1.0
+shader_parameter/dot_color = Color(0, 0, 0, 1)
+
+[node name="changeScenceLoad" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_2cldt")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = 999
+material = SubResource("ShaderMaterial_ucybv")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

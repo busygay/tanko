@@ -1,0 +1,31 @@
+[gd_scene load_steps=8 format=3 uid="uid://bu52c0arvjbnp"]
+
+[ext_resource type="Script" uid="uid://faiaygyd4fkq" path="res://tigger/tigger.gd" id="1_tacab"]
+[ext_resource type="Script" uid="uid://1vtskt7g6fqd" path="res://tigger/two_combo_tigger.gd" id="2_irrsa"]
+[ext_resource type="Script" uid="uid://cf7uxixmgwyxf" path="res://tigger/five_combo_tigger.gd" id="3_exbic"]
+[ext_resource type="Script" uid="uid://cmvdbso7pl8go" path="res://tigger/on_combo_tigger.gd" id="4_nuesh"]
+[ext_resource type="Script" uid="uid://b42iobi65uwn5" path="res://tigger/broken_combo_tigger.gd" id="5_y2j4j"]
+[ext_resource type="Script" uid="uid://d0nrqlh5fbyy2" path="res://tigger/ap_gained_tigger.gd" id="6_h8u71"]
+[ext_resource type="Script" uid="uid://d3tl8fc6o3j4n" path="res://tigger/ap_spent_tigger.gd" id="7_v1egv"]
+
+[node name="tigger" type="Node" groups=["tigger"]]
+process_mode = 1
+script = ExtResource("1_tacab")
+
+[node name="onComboTigger" type="Node" parent="." groups=["onComboTigger"]]
+script = ExtResource("4_nuesh")
+
+[node name="twoComboTigger" type="Node" parent="." groups=["twoComboTigger"]]
+script = ExtResource("2_irrsa")
+
+[node name="fiveComboTigger" type="Node" parent="." groups=["fiveComboTIgger"]]
+script = ExtResource("3_exbic")
+
+[node name="brokenComboTigger" type="Node" parent="." groups=["brokenComboTigger"]]
+script = ExtResource("5_y2j4j")
+
+[node name="APGainedTigger" type="Node" parent="." groups=["APGainedTigger"]]
+script = ExtResource("6_h8u71")
+
+[node name="APSpentTigger" type="Node" parent="." groups=["APSpentTIgger"]]
+script = ExtResource("7_v1egv")
