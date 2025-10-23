@@ -1,10 +1,10 @@
 extends Node
 
 var _skillDataPath:Dictionary={
-#	"doubleShoot":'res://skill/resource/doubleShoot.tres',
+	"doubleShoot":'res://skill/resource/doubleShoot.tres',
 	"cdSub":'res://skill/resource/cdSub.tres',
 	"baseDamageUp":'res://skill/resource/baseDamageUp.tres',
-#	"ricochetShoot":"res://skill/resource/ricochetShoot.tres",
+	"ricochetShoot":"res://skill/resource/ricochetShoot.tres",
 	"BT-7270":'res://skill/resource/BT-7270.tres',
 }
 var _skillDataManager:Dictionary={
