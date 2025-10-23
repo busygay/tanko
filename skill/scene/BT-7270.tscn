@@ -1,0 +1,9 @@
+[gd_scene load_steps=4 format=3 uid="uid://bohxvh8qhpw21"]
+
+[ext_resource type="PackedScene" uid="uid://bveueqdnn2l7p" path="res://skill/scene/skill.tscn" id="1_u1j6t"]
+[ext_resource type="Script" uid="uid://cm6kf6qeuftgt" path="res://skill/scene/BT-7270.gd" id="2_kggrm"]
+[ext_resource type="Resource" uid="uid://bfrmdwa85220" path="res://skill/resource/BT-7270.tres" id="3_0utln"]
+
+[node name="turret" instance=ExtResource("1_u1j6t")]
+script = ExtResource("2_kggrm")
+Data = ExtResource("3_0utln")

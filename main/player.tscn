@@ -676,7 +676,7 @@ _data = {
 }
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hqtel"]
-radius = 12.494444
+radius = 12.5
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_sweqy"]
 radius = 206.386

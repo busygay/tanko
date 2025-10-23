@@ -24,6 +24,7 @@ var cosFre:float = 0.5
 var playerLevel:int =1
 var islevelDone:bool
 
+
 var allInTreeEnemyCount:int = 0
 var currentExp:
 	set(new):
@@ -38,15 +39,15 @@ var currentExp:
 			playerLevel +=1
 			currentExp -=NextLevelExp
 			
+			
+const TURRET_BT_7270 = preload('uid://d1t5wfugr4e7j')
 func _ready() -> void:
 	
-	###测试
-	
-	var temp = TURRET.instantiate()
-	temp._setData(10,1,$Marker2D.global_position,PI/2)
-	get_tree().get_first_node_in_group("main").add_child(temp)
-	
-	
+	#test
+	var temp = TURRET_BT_7270.instantiate()
+	add_child(temp)
+	temp._setData(10,1,$Marker2D.global_position,PI/2,300)
+
 	
 	currentExp = 0
 	Eventmanger.GameStart.emit()

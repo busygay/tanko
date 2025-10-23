@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://bveueqdnn2l7p"]
 
 [ext_resource type="Script" uid="uid://cakb18smeqo78" path="res://skill/scene/skill.gd" id="1_oehuc"]
+[ext_resource type="Texture2D" uid="uid://bxf56nt3ilt4k" path="res://skill/asset/BT-7270.png" id="3_bstxo"]
 [ext_resource type="Texture2D" uid="uid://cgbi7d4axwrdx" path="res://skill/asset/card_bg.png" id="3_iph8u"]
-[ext_resource type="Texture2D" uid="uid://sjwi20xre50p" path="res://skill/asset/doubleShoot.png" id="4_1imag"]
 [ext_resource type="Texture2D" uid="uid://7370t5uys68" path="res://skill/asset/card.png" id="5_i51vy"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_iph8u"]
@@ -45,7 +45,8 @@ theme_override_constants/margin_bottom = 64
 clip_contents = true
 custom_minimum_size = Vector2(400, 400)
 layout_mode = 2
-texture = ExtResource("4_1imag")
+texture = ExtResource("3_bstxo")
+expand_mode = 1
 
 [node name="card" type="TextureRect" parent="card_bg"]
 layout_mode = 0

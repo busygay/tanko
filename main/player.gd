@@ -8,8 +8,8 @@ class_name players
 @onready var label: Label = $Label
 @onready var gun_shoot_player_2d: AudioStreamPlayer2D = $gunShootPlayer2D
 
-@export var MaxHelth:int =10
-var helth:int = 10
+@export var MaxHealth:int =10
+var health:int = 10
 
 @export var baseshootCD:float
 @export var baseDamage:float
@@ -225,8 +225,8 @@ func _showTips(stext: String):
 	newtween.tween_callback(templabel.queue_free)
 
 func getHurt(damage:int):
-	helth -= damage
-	if helth <= 0:
+	health -= damage
+	if health <= 0:
 		Eventmanger.gameover.emit()
 	modulate=Color(1.0, 0.0, 0.0)
 	await get_tree().create_timer(0.1).timeout

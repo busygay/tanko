@@ -1,10 +1,11 @@
 extends Node
 
 var _skillDataPath:Dictionary={
-	"doubleShoot":'res://skill/resource/doubleShoot.tres',
+#	"doubleShoot":'res://skill/resource/doubleShoot.tres',
 	"cdSub":'res://skill/resource/cdSub.tres',
 	"baseDamageUp":'res://skill/resource/baseDamageUp.tres',
-	"ricochetShoot":"res://skill/resource/ricochetShoot.tres"
+#	"ricochetShoot":"res://skill/resource/ricochetShoot.tres",
+	"BT-7270":'res://skill/resource/BT-7270.tres',
 }
 var _skillDataManager:Dictionary={
 }
@@ -14,7 +15,8 @@ var _SkillCount:Dictionary={
 	"doubleShoot":1,
 	"cdSub":9,
 	"baseDamageUp":99,
-	"ricochetShoot":1
+	"ricochetShoot":1,
+	"BT-7270":1
 }
 var _SkillCountCopy:Dictionary
 func _ready() -> void:
@@ -31,7 +33,7 @@ func loadAllSkill():
 		if count %3<=0:
 			await get_tree().process_frame
 	_skillBoxSet()
-	print("over")
+
 	
 func _skillBoxSet():
 	_skillDataCopy = _skillDataManager.duplicate()

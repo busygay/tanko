@@ -24,6 +24,7 @@ func setSkillRow():
 	tempSkillBox = SkillManager._getRandomSkill()
 	if tempSkillBox.size()>3:
 		push_error("tempSkillBox数量有问题！")
+	
 	for i in range(tempSkillBox.size()):
 		var temp = skillrow.instantiate()
 		h_box_container.get_child(i).add_child(temp)

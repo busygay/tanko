@@ -17,8 +17,8 @@ extends Node2D
 @onready var pos: Node3D = $SubViewportContainer/SubViewport/Node3D/Turret/Swivel/pos
 
 const example = preload('uid://c4877mqotbwnh')
-var helth
-var damage
+var health
+var damage:float
 var targetArray:Array
 var attCd:float = 0.15
 var shootReloading:bool = false
@@ -26,19 +26,23 @@ var shootCount:int =4
 var soundsPlaying:bool =false
 var rotationSpeed:float 
 enum state{
+	spawn,
 	idle,
 	aim,
 	att,
-	nothing
+	die,
+	broken,
+	nothing,
+	
 }
 var currentState=state.nothing
 var swivelPos:Vector2
 
 func _ready() -> void:
-	swivelPos = sub_viewport_container.global_position+camera_3d.unproject_position(pos.global_position)*scale
-	
 	enterState(state.idle)
-
+	await get_tree().process_frame
+	swivelPos = sub_viewport_container.global_position+camera_3d.unproject_position(pos.global_position)*scale
+	$Timer.start()
 func _process(delta: float) -> void:
 	
 	var tempPos = sub_viewport_container.global_position+camera_3d.unproject_position(marker_3d.global_position)*scale
@@ -72,9 +76,10 @@ func state_logic_aim():
 		enterState(state.idle)
 		return
 	var target = targetArray[0]
+	
 	var targetDir = (target.global_position-swivelPos)
 	var targetAngle =targetDir.angle()*-1
-
+	
 	swivels.rotation.y = lerp_angle(swivels.rotation.y,targetAngle,0.02)
 	swivels.rotation.y = wrapf(swivels.rotation.y,-PI,PI)
 	var angleDif = angle_difference(targetAngle,swivels.rotation.y)
@@ -102,6 +107,7 @@ func state_logic_att():
 			shootReloading = false
 			,CONNECT_ONE_SHOT)
 	var target = targetArray[0]
+	
 	var targetDir = (target.global_position-swivelPos)
 	var targetAngle =targetDir.angle()*-1
 	swivels.rotation.y = lerp_angle(swivels.rotation.y,targetAngle,0.02)
@@ -136,14 +142,18 @@ func enterState(newState:state):
 				gpu_particles_2d.emitting = false
 			state.att:
 				pass
+			state.die:
+				queue_free()
+			state.broken:
+				queue_free()
 
-func _setData(_helth:int,_damage:int,_pos:Vector2,_rotSpeed:float):
-	helth = _helth
+func _setData(_health:int,_damage:float,_pos:Vector2,_rotSpeed:float,liveTime:float):
+	health = _health
 	damage =_damage
 	global_position = _pos
 	rotationSpeed = _rotSpeed
+	$Timer.wait_time = liveTime
 	
-
 
 
 
@@ -153,12 +163,13 @@ func _on_eye_body_entered(body: Node2D) -> void:
 	pass # Replace with function body.
 
 
-func _on_live_timer_timeout() -> void:
-	queue_free()
-	pass # Replace with function body.
-
 
 func _on_eye_body_exited(body: Node2D) -> void:
 	if targetArray.has(body):
 		targetArray.erase(body)
+	pass # Replace with function body.
+
+
+func _on_timer_timeout() -> void:
+	enterState(state.die)
 	pass # Replace with function body.

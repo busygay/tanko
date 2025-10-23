@@ -1,10 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://cpwfxq46j3tfy"]
+[gd_scene load_steps=2 format=3 uid="uid://cpwfxq46j3tfy"]
 
 [ext_resource type="PackedScene" uid="uid://cx62cfyexmotj" path="res://globalSkillData/asset/Turret/Turret.glb" id="1_j4sky"]
-[ext_resource type="Script" uid="uid://dg1p3scgr6rui" path="res://globalSkillData/asset/Turret/turret.gd" id="2_dtxnp"]
 
 [node name="Turret" instance=ExtResource("1_j4sky")]
-script = ExtResource("2_dtxnp")
 
 [node name="Swivel" parent="." index="1"]
 transform = Transform3D(0.99999994, 0, 0, 0, -4.3711385e-08, -1, 0, 0.99999994, -4.371139e-08, 0, 0, 0)
