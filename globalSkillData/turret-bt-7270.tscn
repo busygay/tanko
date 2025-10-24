@@ -1,7 +1,242 @@
-[gd_scene load_steps=10 format=3 uid="uid://d1t5wfugr4e7j"]
+[gd_scene load_steps=23 format=3 uid="uid://d1t5wfugr4e7j"]
 
 [ext_resource type="Script" uid="uid://b4wlx21grybh0" path="res://globalSkillData/turret-bt-7270.gd" id="1_w1ban"]
 [ext_resource type="PackedScene" uid="uid://cpwfxq46j3tfy" path="res://globalSkillData/asset/Turret/turret.tscn" id="2_ehopc"]
+
+[sub_resource type="Animation" id="Animation_ehopc"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("left:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, -1.5707964)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("right:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, -1.5707964)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("front:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 1.5707964, -1.5707964)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("black:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 1.5707964, -1.5707964)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("left/top:rotation")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, -1.5707964)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("left/top:position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-2.5, 0, 0)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("MeshInstance3D:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_w1ban"]
+resource_name = "enter"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("left:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, -1.5707964), Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("right:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, -1.5707964), Vector3(0, 0, -3.1415927)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("front:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 1.5707964, -1.5707964), Vector3(0, 1.5707964, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("black:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 1.5707964, -1.5707964), Vector3(0, 1.5707964, -3.1415927)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("left/top:rotation")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 1.5707964), Vector3(0, 0, 3.1415927)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("left/top:position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-2.5, 0, 0), Vector3(-2.5, 0, 0)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("MeshInstance3D:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0.05),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ehopc"]
+_data = {
+&"RESET": SubResource("Animation_ehopc"),
+&"spawn": SubResource("Animation_w1ban")
+}
+
+[sub_resource type="BoxMesh" id="BoxMesh_ehopc"]
+size = Vector3(2, 0.01, 2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w1ban"]
+albedo_color = Color(0.87058824, 0.72156864, 0.5294118, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_r501o"]
+size = Vector3(2.5, 0.01, 2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ehopc"]
+albedo_color = Color(0.87058824, 0.72156864, 0.5294118, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_w1ban"]
+size = Vector3(2, 0.02, 2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r501o"]
+albedo_color = Color(0.87058824, 0.72156864, 0.5294118, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yygim"]
+albedo_color = Color(0.87058824, 0.72156864, 0.5294118, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6pbbk"]
+albedo_color = Color(0.87058824, 0.72156864, 0.5294118, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3l2qo"]
+albedo_color = Color(0.87058824, 0.72156864, 0.5294118, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_yygim"]
+size = Vector3(2, 2.5, 2)
 
 [sub_resource type="Gradient" id="Gradient_65205"]
 colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
@@ -66,18 +301,86 @@ render_target_update_mode = 4
 [node name="Node3D" type="Node3D" parent="SubViewportContainer/SubViewport"]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
 
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewportContainer/SubViewport/Node3D"]
+transform = Transform3D(0.86088413, -1.6159454e-08, 0.50880104, -0.50880104, -1.539004e-08, 0.86088413, -6.080949e-09, -1, -2.1470989e-08, 6.083858, 14.049195, -0.40012905)
+light_energy = 4.0
+shadow_enabled = true
+
+[node name="spawn" type="AnimationPlayer" parent="SubViewportContainer/SubViewport/Node3D"]
+root_node = NodePath("../spawnNode3d")
+libraries = {
+&"": SubResource("AnimationLibrary_ehopc")
+}
+
 [node name="Turret" parent="SubViewportContainer/SubViewport/Node3D" instance=ExtResource("2_ehopc")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
 
 [node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/Node3D"]
-transform = Transform3D(1, 3.184072e-08, 1.376387e-08, -3.184072e-08, 0.68511945, 0.7284308, 1.37638665e-08, -0.7284308, 0.68511945, -8.69562e-08, 2.5594926, 1.989326)
+transform = Transform3D(1, 3.184072e-08, 1.376387e-08, -3.184072e-08, 0.68511945, 0.7284308, 1.37638665e-08, -0.7284308, 0.68511945, 0.4145407, 3.8712332, 2.8023248)
 projection = 1
-size = 2.2
+size = 2.7
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewportContainer/SubViewport/Node3D"]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 7.9747586, 0.29401922)
-light_energy = 4.0
-shadow_enabled = true
+[node name="spawnNode3d" type="Node3D" parent="SubViewportContainer/SubViewport/Node3D"]
+transform = Transform3D(0.79274744, 0, -0.6095505, 0, 1, 0, 0.6095505, 0, 0.79274744, 0, 0, 0)
+visible = false
+
+[node name="down" type="Node3D" parent="SubViewportContainer/SubViewport/Node3D/spawnNode3d"]
+transform = Transform3D(0.71006244, 0, -0.70413846, 0, 1, 0, 0.70413846, 0, 0.71006244, 0, 0, 0)
+
+[node name="box" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/spawnNode3d/down"]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0, 0)
+mesh = SubResource("BoxMesh_ehopc")
+skeleton = NodePath("../../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_w1ban")
+
+[node name="left" type="Node3D" parent="SubViewportContainer/SubViewport/Node3D/spawnNode3d"]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, -1, 0, 0)
+
+[node name="box" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/spawnNode3d/left"]
+transform = Transform3D(-1, 8.742278e-08, 0, -8.742278e-08, -1, 0, 0, 0, 1, -1.25, 0, 0)
+mesh = SubResource("BoxMesh_r501o")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_ehopc")
+
+[node name="top" type="Node3D" parent="SubViewportContainer/SubViewport/Node3D/spawnNode3d/left"]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, -2.5, 0, 0)
+
+[node name="box" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/spawnNode3d/left/top"]
+transform = Transform3D(-1, 8.7422784e-08, -2.9802322e-08, -8.742278e-08, -1, 3.5527137e-15, -2.9802322e-08, 0, 1, 1, 0, 0)
+mesh = SubResource("BoxMesh_w1ban")
+skeleton = NodePath("../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_r501o")
+
+[node name="right" type="Node3D" parent="SubViewportContainer/SubViewport/Node3D/spawnNode3d"]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 1, 0, 0)
+
+[node name="box" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/spawnNode3d/right"]
+transform = Transform3D(-1, 8.742278e-08, 0, -8.742278e-08, -1, 0, 0, 0, 1, -1.25, 0, 0)
+mesh = SubResource("BoxMesh_r501o")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_yygim")
+
+[node name="front" type="Node3D" parent="SubViewportContainer/SubViewport/Node3D/spawnNode3d"]
+transform = Transform3D(1.9106855e-15, -4.371139e-08, 1, -1, -4.371139e-08, 0, 4.371139e-08, -1, -4.371139e-08, 0, 0, 1)
+
+[node name="box" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/spawnNode3d/front"]
+transform = Transform3D(-1, 8.742278e-08, 0, -8.742278e-08, -1, 0, 0, 0, 1, -1.25, 0, 0)
+mesh = SubResource("BoxMesh_r501o")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_6pbbk")
+
+[node name="black" type="Node3D" parent="SubViewportContainer/SubViewport/Node3D/spawnNode3d"]
+transform = Transform3D(1.9106855e-15, -4.371139e-08, 1, -1, -4.371139e-08, 0, 4.371139e-08, -1, -4.371139e-08, 0, 0, -1)
+
+[node name="box" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/spawnNode3d/black"]
+transform = Transform3D(-1, 8.742278e-08, 0, -8.742278e-08, -1, 0, 0, 0, 1, -1.25, 0, 0)
+mesh = SubResource("BoxMesh_r501o")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_3l2qo")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D/spawnNode3d"]
+transform = Transform3D(1, 0, 2.9802322e-08, 0, 1, 0, -2.9802322e-08, 0, 1, 0, 1.25, 0)
+mesh = SubResource("BoxMesh_yygim")
 
 [node name="Marker2D" type="Marker2D" parent="."]
 position = Vector2(260, -93.33333)

@@ -22,4 +22,4 @@ texture = ExtResource("3_hrq6i")
 shape = SubResource("CircleShape2D_tbfq4")
 
 [node name="Marker2D" type="Marker2D" parent="."]
-position = Vector2(342, 1049)
+position = Vector2(628, 1197)

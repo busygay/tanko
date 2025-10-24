@@ -15,6 +15,9 @@ extends Node2D
 @onready var camera_3d: Camera3D = $SubViewportContainer/SubViewport/Node3D/Camera3D
 @onready var marker_3d: Marker3D = $SubViewportContainer/SubViewport/Node3D/Turret/Swivel/Marker3D
 @onready var pos: Node3D = $SubViewportContainer/SubViewport/Node3D/Turret/Swivel/pos
+@onready var spawn: AnimationPlayer = $SubViewportContainer/SubViewport/Node3D/spawn
+
+var gPosition:Vector2
 
 const example = preload('uid://c4877mqotbwnh')
 var health
@@ -39,15 +42,13 @@ var currentState=state.nothing
 var swivelPos:Vector2
 
 func _ready() -> void:
-	enterState(state.idle)
+	enterState(state.spawn)
 	await get_tree().process_frame
-	swivelPos = sub_viewport_container.global_position+camera_3d.unproject_position(pos.global_position)*scale
 	$Timer.start()
 func _process(delta: float) -> void:
-	
 	var tempPos = sub_viewport_container.global_position+camera_3d.unproject_position(marker_3d.global_position)*scale
 	marker_2d.global_position = tempPos
-	
+	swivelPos = sub_viewport_container.global_position+camera_3d.unproject_position(pos.global_position)*scale
 	gpu_particles_2d.global_position = marker_2d.global_position
 	gpu_particles_2d.global_rotation = swivels.rotation.y*-1
 	eye.global_position = marker_2d.global_position
@@ -60,8 +61,8 @@ func _process(delta: float) -> void:
 		state.att:
 			state_logic_att()
 
-	
-
+func state_logic_spawn():
+	pass
 func state_logic_idle(delta):
 	if not targetArray.is_empty():
 		enterState(state.aim)
@@ -133,6 +134,16 @@ func enterState(newState:state):
 	if newState != currentState:
 		currentState = newState
 		match currentState:
+			state.spawn:
+				$SubViewportContainer/SubViewport/Node3D/spawnNode3d.show()
+				var tween = get_tree().create_tween()
+				tween.tween_property(self,"global_position",gPosition,0.3)
+				tween.finished.connect(func():
+					spawn.play(&'spawn')
+					spawn.animation_finished.connect(func(_nothing):
+						enterState(state.idle)
+						)
+					)
 			state.idle:
 				turret.scale = Vector3.ONE
 				gpu_particles_2d.emitting = false
@@ -150,7 +161,9 @@ func enterState(newState:state):
 func _setData(_health:int,_damage:float,_pos:Vector2,_rotSpeed:float,liveTime:float):
 	health = _health
 	damage =_damage
-	global_position = _pos
+	gPosition = _pos
+	var tempPos = _pos-Vector2(300,300)
+	global_position = tempPos
 	rotationSpeed = _rotSpeed
 	$Timer.wait_time = liveTime
 	
