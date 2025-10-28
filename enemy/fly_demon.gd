@@ -21,5 +21,5 @@ func att():
 	
 func fireBallShoot(_target):
 	var temp = fireBall.instantiate()
-	temp.initData(_target,marker_2d.global_position,200,1)
+	temp.initData(_target,marker_2d.global_position,1)
 	get_tree().root.add_child(temp)

@@ -4,6 +4,7 @@ extends "res://enemy/base_enemy.gd"
 var idleTween:Tween
 
 func _ready() -> void:
+
 	super()
 	attCd = 1
 	death.hide()

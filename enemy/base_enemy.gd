@@ -5,6 +5,8 @@ class_name baseEnemy extends CharacterBody2D
 @onready var area_2d: Area2D = $eye
 @onready var timer: Timer = $Timer
 
+
+var armor:float = 0.0
 var speed:int = 50
 var baseScale:Vector2
 var attCd:int = 10
@@ -40,6 +42,7 @@ func initData(Mul:float):
 	health = int( temp/5.0)*2+5
 	var tempRandf:float = randf_range(0.8,1.2)
 	speed = int ( speed *tempRandf)
+	
 	
 	if Mul >1:
 		var healthMul:float = Mul

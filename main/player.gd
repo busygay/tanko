@@ -9,10 +9,16 @@ class_name players
 @onready var gun_shoot_player_2d: AudioStreamPlayer2D = $gunShootPlayer2D
 
 @export var MaxHealth:int =10
-var health:int = 10
-
 @export var baseshootCD:float
 @export var baseDamage:float
+
+var health:int
+#基础伤害加成变量
+var attackBonus:int = 0      #攻击力加成(百分比，如10表示10%)
+var globalDamageBonus:int = 0 #全局伤害加成(百分比，如20表示20%)
+var trueDamageRatio:float = 0.0  #真实伤害系数(0-0.3的小数)
+var criticalChance:int = 10    #暴击率(百分比，初始10%)
+var criticalRatio:int = 50     #暴击伤害加成(百分比，初始50%)
 
 var inshootcd:bool = false
 var reloading:bool
@@ -137,8 +143,9 @@ func baseshootingline():
 		# 创建一个计时器来延时删除这条线，避免阻塞
 		var timer = get_tree().create_timer(0.1)
 		timer.timeout.connect(line.queue_free)
+		var damage = calculate_damage(enemy[i].armor)
 		if enemy[i].has_method("getHurt"):
-			enemy[i].getHurt(baseDamage)
+			enemy[i].getHurt(damage)
 		Eventmanger.playerShooted.emit(enemy[i],ends,baseDamage)
 		
 	bulletCount = max(bulletCount,1)
@@ -250,7 +257,34 @@ func BaseDamageUp():
 	baseDamage +=baseDamage*0.1
 
 
+
+
 func _on_eye_body_entered(body: Node2D) -> void:
 	if body.is_in_group("enemy"):
 		enemy.append(body)
 	pass # Replace with function body.
+
+func calculate_damage(enemy_armor: float = 0.0) -> float:
+	# 基础伤害计算 
+	var attack_bonus = float(attackBonus) / 100.0  # 整数百分比转小数
+	var global_damage_bonus = float(globalDamageBonus) / 100.0
+	var base_damage = baseDamage * (1.0 + attack_bonus) * (1.0 + global_damage_bonus)
+	
+	# 真实伤害计算 (修正:使用base_damage而不是baseDamage)
+	var true_damage = base_damage * trueDamageRatio
+	
+	# 普通伤害计算(考虑护甲)
+	var normal_damage = base_damage * (1.0 - clampf(enemy_armor, 0.0, 1.0))
+	
+	# 暴击判定和计算 (使用整数百分比)
+	var is_crit = randf() < (float(criticalChance) / 100.0)
+	var final_normal_damage = normal_damage
+	if is_crit:
+		final_normal_damage = normal_damage * (1.0 + float(criticalRatio) / 100.0)
+	
+	# 最终伤害 = 真实伤害 + 普通伤害(可能暴击)
+	var final_damage = true_damage + final_normal_damage
+	
+	return final_damage
+	# 使用示例:
+	# var damage = calculate_damage(enemy.armor)
