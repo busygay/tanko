@@ -2,7 +2,7 @@ extends Line2D
 
 var damage:float
 var speed =3000
-@onready var marker_2d: Marker2D = $'../Marker2D'
+
 @onready var att_area_2d: Area2D = $attArea2D
 
 func _ready() -> void:

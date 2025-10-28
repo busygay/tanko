@@ -11,5 +11,5 @@ func _process(delta: float) -> void:
 	character_body_2d.global_position = get_global_mouse_position()
 func spwan():
 	var temp = TURRET.instantiate()
-	temp._setData(10,1,marker_2d.global_position,PI/2,300)
+	temp._setData(10,1,marker_2d.global_position,PI/2,10)
 	add_child(temp)

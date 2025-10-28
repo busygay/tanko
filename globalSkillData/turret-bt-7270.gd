@@ -34,7 +34,6 @@ enum state{
 	aim,
 	att,
 	die,
-	broken,
 	nothing,
 	
 }
@@ -137,7 +136,8 @@ func enterState(newState:state):
 			state.spawn:
 				$SubViewportContainer/SubViewport/Node3D/spawnNode3d.show()
 				var tween = get_tree().create_tween()
-				tween.tween_property(self,"global_position",gPosition,0.3)
+				tween.tween_property(self,"global_position",gPosition,1)
+				tween.set_ease(Tween.EASE_IN)
 				tween.finished.connect(func():
 					spawn.play(&'spawn')
 					spawn.animation_finished.connect(func(_nothing):
@@ -154,15 +154,17 @@ func enterState(newState:state):
 			state.att:
 				pass
 			state.die:
-				queue_free()
-			state.broken:
-				queue_free()
+				spawn.play(&'broken')
+				spawn.animation_finished.connect(func(_nothing):
+					queue_free()
+					)
+	
 
 func _setData(_health:int,_damage:float,_pos:Vector2,_rotSpeed:float,liveTime:float):
 	health = _health
 	damage =_damage
 	gPosition = _pos
-	var tempPos = _pos-Vector2(300,300)
+	var tempPos = _pos-Vector2(500,500)
 	global_position = tempPos
 	rotationSpeed = _rotSpeed
 	$Timer.wait_time = liveTime

@@ -34,10 +34,11 @@ func getrandipos():
 	var randipos:Vector2
 	if randi()%2:
 		randipos.x = viewport.position.x
-		randipos.y = randf_range(viewport.size.y,0)
+		randipos.y = randf_range(viewport.size.y*0.75,0)
 	else:
 		randipos.x = viewport.size.x
-		randipos.y = randf_range(viewport.size.y,0)
+		randipos.y = randf_range(viewport.size.y*0.75,0)
+		
 	return randipos
 	
 func spawnenemy(_spawnQueue:Array,spawncd:float):
@@ -84,7 +85,7 @@ func getSpawnQueue():
 	var eliiteEnemyCount:int= int (baseEnemyCount/5.0)
 	var baseEnemys:Array
 	var enemysKeys=enemys.keys()
-	var enemysSpawnType:int= min(currentLevel/5.0+1,enemys.size())
+	var enemysSpawnType:int= min((currentLevel-1)/5.0+1,enemys.size())
 	for i in range(enemysSpawnType):
 		baseEnemys.append(enemys.get(enemysKeys[i]))
 		
@@ -107,8 +108,8 @@ func getSpawnQueue():
 	if currentLevel%5 ==0:
 		var boss
 		var mul = 2.0
-		if (currentLevel/5.0 +2) >enemys.size():
-			boss =enemys.get(enemysKeys[currentLevel/5.0 +2])
+		if (currentLevel/5.0 ) <=enemys.size()-1:
+			boss =enemys.get(enemysKeys[currentLevel/5.0])
 		else:
 			var temp = randi()%enemys.size()
 			boss = enemys.get(temp)

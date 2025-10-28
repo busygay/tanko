@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("1_1j1u7")
-skill_type = "自动炮塔"
+skill_type = "爱与机器人"
 skill_name = "BT-7270"
 skill_cname = "BT-7270"
 sprite = ExtResource("2_falng")
