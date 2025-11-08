@@ -1,10 +1,15 @@
 extends "res://enemy/base_enemy.gd"
 const fireBall:PackedScene = preload('uid://bvagk68wcdq0f')
 @onready var marker_2d: Marker2D = $AnimatedSprite2D/Marker2D
+@onready var collision_shape_2d: CollisionShape2D = $eye/CollisionShape2D
 
 func _ready() -> void:
 	super()
 	baseDir = false
+	var tempshape = collision_shape_2d.shape.duplicate() as CircleShape2D
+	tempshape.radius = randf_range(400,550 )
+	collision_shape_2d.shape = tempshape
+
 
 func att():
 	if playerbox.is_empty():
