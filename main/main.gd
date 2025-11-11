@@ -4,7 +4,7 @@ extends Node2D
 @onready var score_label: Label = $CanvasLayer/score/Panel/scoreLabel
 @onready var player:players 
 @onready var on_combo_timer: Timer = $onComboTimer
-
+@onready var test:VBoxContainer = $CanvasLayer/test
 
 const TURRET = preload('uid://d1t5wfugr4e7j')
 
@@ -17,6 +17,8 @@ var word_Data:Dictionary
 var allkeys:Array
 var Correctcount :int =5
 var combo:int =0
+
+
 var NextLevelExpBase:int =5
 var NextLevelExp:int= 5
 var ExpPow:float = 2.1
@@ -41,7 +43,7 @@ var currentExp:
 			
 
 func _ready() -> void:
-	
+
 
 
 	
@@ -62,6 +64,13 @@ func _ready() -> void:
 	Eventmanger.enterTreeEnemy.connect(enterTreeEnemyfunc)
 	Eventmanger.exitTreeEnemy.connect(exitTreeEnemyfunc)
 
+	###test mode
+	if globalSet.isTestMode:
+		test.show()
+	else:
+		test.hide()
+
+		
 func _addcorrectcount(iscorrect):
 	if iscorrect:
 		if Correctcount >=10 :
@@ -91,6 +100,7 @@ func upDatascore(_node):
 func comboChange(iscorrect):
 	Eventmanger.comboChange.emit(iscorrect)
 	if iscorrect:
+		Eventmanger.parryInvincible.emit()
 		currentExp+=1
 		var tempCombo = combo
 		combo += 1

@@ -157,7 +157,6 @@ texture_normal = ExtResource("3_3qrbh")
 stretch_mode = 4
 
 [node name="TipsPanel" type="Panel" parent="."]
-visible = false
 layout_mode = 0
 offset_left = 325.0
 offset_top = 324.0
@@ -180,6 +179,11 @@ label_settings = SubResource("LabelSettings_4tgdy")
 [node name="TipsScrollContainer" type="ScrollContainer" parent="TipsPanel/VBoxContainer"]
 clip_contents = false
 layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TipsPanel/VBoxContainer/TipsScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [connection signal="pressed" from="Panel/MarginContainer/VBoxContainer/HBoxContainer2/buttonLeft" to="." method="_on_button_left_pressed"]

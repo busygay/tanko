@@ -16,9 +16,12 @@ var health:int
 #基础伤害加成变量
 var attackBonus:int = 0      #攻击力加成(百分比，如10表示10%)
 var globalDamageBonus:int = 0 #全局伤害加成(百分比，如20表示20%)
-var trueDamageRatio:float = 0.0  #真实伤害系数(0-0.3的小数)
+var trueDamageRatio:float = 0.0  
 var criticalChance:int = 10    #暴击率(百分比，初始10%)
 var criticalRatio:int = 50     #暴击伤害加成(百分比，初始50%)
+
+var is_hurt_invincible := false
+var is_parry_invincible := false
 
 var inshootcd:bool = false
 var reloading:bool
@@ -41,15 +44,40 @@ enum State {
 # 用于管理当前状态的变量
 var current_state: State =State.NOTHING
 
-
+var is_hurt_invincibleTimer:Timer
+var is_parry_invincibleTimer:Timer
 func _ready() -> void:
 	Eventmanger.register_player(self)
 	##skillSingal
+	Eventmanger.playerGlobalDammageBonusChange.connect(func(bonus:int):
+		globalDamageBonus = bonus
+	)
 	Eventmanger.playerCdSub.connect(BaseShootCdSub)
 	Eventmanger.playerbulletCount.connect(_bulletCountChangeFunc)
 	Eventmanger.playerBaseDamageUp.connect(BaseDamageUp)
+	Eventmanger.playerTrueDamageUp.connect(TrueDamageUp)
 	Eventmanger.reloadAmmo.connect(reloadAmmofunc)
 	Eventmanger.playerGotHurt.connect(getHurt)
+	#无敌信号连接
+	Eventmanger.parryInvincible.connect(func():
+		is_parry_invincible = true
+		is_parry_invincibleTimer.start()
+	)
+	is_hurt_invincibleTimer = Timer.new()
+	is_hurt_invincibleTimer.wait_time = 0.5
+	is_hurt_invincibleTimer.one_shot = true
+	is_hurt_invincibleTimer.timeout.connect(func():
+		is_hurt_invincible = false
+	)
+	add_child(is_hurt_invincibleTimer)
+	is_parry_invincibleTimer = Timer.new()
+	is_parry_invincibleTimer.wait_time = 0.2
+	is_parry_invincibleTimer.one_shot = true
+	is_parry_invincibleTimer.timeout.connect(func():
+		is_parry_invincible = false
+	)
+	add_child(is_parry_invincibleTimer)	
+	
 	# 将动画完成的逻辑连接到一个更具体的处理函数
 	animation_player.animation_finished.connect(_on_animation_finished)
 	
@@ -232,12 +260,20 @@ func _showTips(stext: String):
 	newtween.tween_callback(templabel.queue_free)
 
 func getHurt(damage:int):
+	if is_hurt_invincible or is_parry_invincible:
+		if is_parry_invincible:
+			return
+			###还未完成
+		return
 	health -= damage
 	if health <= 0:
 		Eventmanger.gameover.emit()
 	modulate=Color(1.0, 0.0, 0.0)
 	await get_tree().create_timer(0.1).timeout
 	modulate = Color(1.0, 1.0, 1.0)
+
+
+
 
 func gunshootingsounds():
 	if currentAmmo >0 :
@@ -254,10 +290,11 @@ func BaseShootCdSub():
 	baseshootCD -=0.1
 	
 func BaseDamageUp():
-	baseDamage +=baseDamage*0.1
+	attackBonus += 10 # 将原本对 baseDamage 的复杂计算改为直接增加 attackBonus
 
-
-
+func TrueDamageUp():
+	# 每次增加0.1的真实伤害系数.
+	trueDamageRatio = trueDamageRatio + 0.1
 
 func _on_eye_body_entered(body: Node2D) -> void:
 	if body.is_in_group("enemy"):

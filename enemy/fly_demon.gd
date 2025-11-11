@@ -7,7 +7,7 @@ func _ready() -> void:
 	super()
 	baseDir = false
 	var tempshape = collision_shape_2d.shape.duplicate() as CircleShape2D
-	tempshape.radius = randf_range(400,550 )
+	tempshape.radius = randf_range(400,550 ) / self.scale.x
 	collision_shape_2d.shape = tempshape
 
 

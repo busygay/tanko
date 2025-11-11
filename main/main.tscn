@@ -1,10 +1,11 @@
-[gd_scene load_steps=39 format=4 uid="uid://ch1wwpmk3c6wq"]
+[gd_scene load_steps=40 format=4 uid="uid://ch1wwpmk3c6wq"]
 
 [ext_resource type="Script" uid="uid://lfc73u04r0om" path="res://main/main.gd" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://cxnnivoip7stv" path="res://main/UI/Answering.tscn" id="2_0xm2m"]
 [ext_resource type="Script" uid="uid://7awcycff23wp" path="res://main/UI/canvas_layer.gd" id="2_grrlh"]
 [ext_resource type="Texture2D" uid="uid://c2swp2mqmrido" path="res://asset/lightning.png" id="3_0i4oc"]
 [ext_resource type="Texture2D" uid="uid://yn1kaglso8vx" path="res://asset/bar_shadow_round_large.png" id="3_1bvp3"]
+[ext_resource type="Script" uid="uid://idih5kypejnt" path="res://main/test.gd" id="3_4hmqs"]
 [ext_resource type="PackedScene" uid="uid://csk33yb7rnhf1" path="res://main/UI/gameover.tscn" id="3_73k8k"]
 [ext_resource type="PackedScene" uid="uid://ccdvqjok7b0ih" path="res://main/UI/word_confirm.tscn" id="3_bsumw"]
 [ext_resource type="PackedScene" uid="uid://bsf5waejnw8gp" path="res://shop/shoping.tscn" id="3_fwcvl"]
@@ -227,6 +228,29 @@ script = ExtResource("1_0xm2m")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 script = ExtResource("2_grrlh")
 
+[node name="test" type="VBoxContainer" parent="CanvasLayer"]
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(4, 4)
+script = ExtResource("3_4hmqs")
+
+[node name="PlayerLevelUpButton" type="Button" parent="CanvasLayer/test"]
+layout_mode = 2
+text = "PlayerLevelUp"
+
+[node name="Invincible ModeButton" type="Button" parent="CanvasLayer/test"]
+layout_mode = 2
+text = "InvincibleMode"
+
+[node name="AddEnemyButton" type="Button" parent="CanvasLayer/test"]
+layout_mode = 2
+text = "AddEnemy"
+
+[node name="GetSkillButton" type="Button" parent="CanvasLayer/test"]
+layout_mode = 2
+text = "GetSkill
+"
+
 [node name="shoping" parent="CanvasLayer" instance=ExtResource("3_fwcvl")]
 visible = false
 
@@ -271,6 +295,11 @@ texture = ExtResource("3_0i4oc")
 expand_mode = 1
 
 [node name="answerpanel" parent="CanvasLayer" instance=ExtResource("2_0xm2m")]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_bottom = 1.0
+grow_vertical = 0
+size_flags_vertical = 8
 mouse_filter = 2
 
 [node name="poewrBar" type="TextureProgressBar" parent="CanvasLayer"]
@@ -381,6 +410,7 @@ scale = Vector2(0.1, 0.1)
 texture = ExtResource("13_73k8k")
 
 [node name="FPS" type="Label" parent="CanvasLayer"]
+visible = false
 offset_right = 40.0
 offset_bottom = 24.0
 text = "fps"
@@ -405,4 +435,8 @@ tile_set = SubResource("TileSet_vapsy")
 [node name="test" type="Marker2D" parent="."]
 position = Vector2(342, 1049)
 
+[connection signal="pressed" from="CanvasLayer/test/PlayerLevelUpButton" to="CanvasLayer/test" method="_on_player_level_up_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/test/Invincible ModeButton" to="CanvasLayer/test" method="_on_invincible_mode_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/test/AddEnemyButton" to="CanvasLayer/test" method="_on_add_enemy_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/test/GetSkillButton" to="CanvasLayer/test" method="_on_get_skill_button_pressed"]
 [connection signal="timeout" from="onComboTimer" to="." method="_on_on_combo_timer_timeout"]

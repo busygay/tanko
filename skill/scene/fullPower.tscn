@@ -1,0 +1,184 @@
+[gd_scene load_steps=23 format=3 uid="uid://csgqimkhye53w"]
+
+[ext_resource type="Script" uid="uid://b4i1mc3exbb6l" path="res://skill/scene/full_power.gd" id="1_o4afb"]
+[ext_resource type="Texture2D" uid="uid://cgbi7d4axwrdx" path="res://skill/asset/card_bg.png" id="2_7ndaw"]
+[ext_resource type="Resource" uid="uid://bpnqx2g5hynm" path="res://skill/resource/fullPower.tres" id="2_mg7xs"]
+[ext_resource type="Texture2D" uid="uid://bxf56nt3ilt4k" path="res://skill/asset/BT-7270.png" id="3_dlknp"]
+[ext_resource type="Texture2D" uid="uid://7370t5uys68" path="res://skill/asset/card.png" id="4_2aqss"]
+[ext_resource type="Texture2D" uid="uid://clgll0md1v6uq" path="res://skill/asset/littleMage/StaffWoodBreakBuff/AttackWood1.png" id="5_4ddmf"]
+[ext_resource type="Texture2D" uid="uid://5ngms21yctmr" path="res://skill/asset/littleMage/StaffWoodBreakBuff/AttackWood2.png" id="6_u4nd5"]
+[ext_resource type="Texture2D" uid="uid://dsksfs4p4hlkk" path="res://skill/asset/littleMage/StaffWoodBreakBuff/AttackWood3.png" id="7_ahpuw"]
+[ext_resource type="Texture2D" uid="uid://wi5wd7jysf2t" path="res://skill/asset/littleMage/StaffWoodBreakBuff/AttackWood4.png" id="8_2jfsx"]
+[ext_resource type="Texture2D" uid="uid://ccb5ieytu4kjj" path="res://skill/asset/littleMage/StaffWoodBreakBuff/AttackWood5.png" id="9_mg7xs"]
+[ext_resource type="Texture2D" uid="uid://btuio5weqbasg" path="res://skill/asset/littleMage/StaffWoodBreakBuff/AttackWood6.png" id="10_130pb"]
+[ext_resource type="Texture2D" uid="uid://bd8b48sqmbr7l" path="res://skill/asset/littleMage/StaffWoodBuff/ChargeWood1.png" id="11_2jfsx"]
+[ext_resource type="Texture2D" uid="uid://cls7yqlm4rnpt" path="res://skill/asset/littleMage/StaffWoodBuff/ChargeWood2.png" id="12_mg7xs"]
+[ext_resource type="Texture2D" uid="uid://shux44ltijai" path="res://skill/asset/littleMage/StaffWoodBuff/ChargeWood3.png" id="13_130pb"]
+[ext_resource type="Texture2D" uid="uid://tfb31c18eiox" path="res://skill/asset/littleMage/StaffWoodBuff/ChargeWood4.png" id="14_on7dk"]
+[ext_resource type="Texture2D" uid="uid://j01kh6ym5i15" path="res://skill/asset/littleMage/StaffWoodBuff/ChargeWood5.png" id="15_0dpmd"]
+[ext_resource type="Texture2D" uid="uid://bg7kgdjvikels" path="res://skill/asset/littleMage/StaffWoodBuff/ChargeWood6.png" id="16_x4d7t"]
+[ext_resource type="Texture2D" uid="uid://ccysljpuhancy" path="res://skill/asset/littleMage/Hit/Hit1.png" id="17_esnxr"]
+[ext_resource type="Texture2D" uid="uid://bfqt2kj05e51x" path="res://skill/asset/littleMage/Hit/Hit2.png" id="18_h2a0e"]
+[ext_resource type="Texture2D" uid="uid://e51s3bjdhdma" path="res://skill/asset/littleMage/Hit/Hit3.png" id="19_ur0i4"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_iph8u"]
+font_size = 96
+outline_size = 1
+shadow_size = 2
+shadow_color = Color(1, 0, 0, 1)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_uusxh"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_4ddmf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_u4nd5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_ahpuw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_2jfsx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_mg7xs")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_130pb")
+}],
+"loop": false,
+"name": &"breakBuff",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("11_2jfsx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_mg7xs")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_130pb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_on7dk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_0dpmd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_x4d7t")
+}],
+"loop": true,
+"name": &"buff",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("17_esnxr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_h2a0e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_ur0i4")
+}],
+"loop": false,
+"name": &"hit",
+"speed": 5.0
+}]
+
+[node name="fullPower" type="Control"]
+process_mode = 1
+z_index = 99
+layout_mode = 3
+anchors_preset = 0
+offset_right = 744.0
+offset_bottom = 1039.0
+script = ExtResource("1_o4afb")
+Data = ExtResource("2_mg7xs")
+
+[node name="card_bg" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("2_7ndaw")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="card_bg"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="card_bg/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/margin_top = 109
+theme_override_constants/margin_bottom = 64
+
+[node name="TextureRect" type="TextureRect" parent="card_bg/VBoxContainer/MarginContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(400, 400)
+layout_mode = 2
+texture = ExtResource("3_dlknp")
+expand_mode = 1
+
+[node name="card" type="TextureRect" parent="card_bg"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("4_2aqss")
+
+[node name="MarginContainer2" type="MarginContainer" parent="card_bg/card"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 140.0
+grow_horizontal = 2
+theme_override_constants/margin_top = 425
+
+[node name="Label" type="Label" parent="card_bg/card/MarginContainer2"]
+layout_mode = 2
+text = "墙都输"
+label_settings = SubResource("LabelSettings_iph8u")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="card_bg/card"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 33
+theme_override_constants/margin_top = 577
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 24
+
+[node name="RichTextLabel" type="RichTextLabel" parent="card_bg/card/MarginContainer"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 32
+theme_override_font_sizes/bold_font_size = 48
+theme_override_font_sizes/bold_italics_font_size = 64
+bbcode_enabled = true
+
+[node name="BreakBuff" type="AnimatedSprite2D" parent="."]
+position = Vector2(11.999985, 2.3841858e-07)
+scale = Vector2(3, 3)
+sprite_frames = SubResource("SpriteFrames_uusxh")
+animation = &"buff"
+
+[node name="Buff" type="AnimatedSprite2D" parent="."]
+position = Vector2(-1.0000076, 1.0000005)
+scale = Vector2(3, 3)
+sprite_frames = SubResource("SpriteFrames_uusxh")
+animation = &"buff"
+
+[node name="Marker2D" type="Marker2D" parent="Buff"]
+position = Vector2(-18.199999, 0.59999996)

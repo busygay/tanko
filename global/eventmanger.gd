@@ -67,9 +67,18 @@ signal FinishReloadAmmo
 @warning_ignore('unused_signal')
 signal playerbulletCount(count:int)
 @warning_ignore('unused_signal')
+signal parryInvincible()
+
+###玩家数值提升相关
+@warning_ignore('unused_signal')
 signal playerCdSub()
 @warning_ignore('unused_signal')
 signal playerBaseDamageUp()
+@warning_ignore('unused_signal')
+signal playerTrueDamageUp()
+@warning_ignore('unused_signal')
+signal playerGlobalDammageBonusChange(bonus:int)
+
 
 signal answered(isanswer:bool)
 @warning_ignore('unused_signal')

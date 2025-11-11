@@ -10,6 +10,8 @@ var memEnemys:Array
 var currentLevel:int =0
 var enemysSpanwFinsh:Array =[]
 var spawnQueue:Array
+
+
 func _ready() -> void:
 	self.process_mode = Node.PROCESS_MODE_PAUSABLE
 	loadAllenemy()
@@ -50,7 +52,8 @@ func spawnenemy(_spawnQueue:Array,spawncd:float):
 	var obj =_spawnQueue.pop_front()
 	var tempPack =obj[0]
 	var tempMul = obj[1]
-	var temptimer = get_tree().create_timer(cd)
+	var temptimer= get_tree().create_timer(cd,false)
+	
 	var temp = tempPack.instantiate()
 	temp.initData(tempMul)
 	temp.position = getrandipos()

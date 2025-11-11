@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="skill" load_steps=2 format=3 uid="uid://bpnqx2g5hynm"]
+
+[ext_resource type="Script" uid="uid://c1djkh2or1f4p" path="res://skill/resource/skill.gd" id="1_bs7n2"]
+
+[resource]
+script = ExtResource("1_bs7n2")
+skill_type = "基础训练"
+skill_name = "fullPower"
+skill_cname = "活力全开"
+tips = "buff期间全局伤害大幅提升100%，持续10秒。效果不可叠加，重复释放会清除buff。"
+path = "res://skill/scene/fullPower.tscn"
+metadata/_custom_type_script = "uid://c1djkh2or1f4p"
