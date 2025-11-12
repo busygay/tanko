@@ -2,7 +2,7 @@ extends Area2D
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var damage_area: Area2D = $damageArea
 
-@export var speed:int
+var speed:int = 200
 var damage:int
 enum state{
 	idle,
@@ -15,7 +15,6 @@ var targetDir
 var Group
 var currentState = state.nothing
 func _ready() -> void:
-	
 	enterState(state.idle)
 	
 func _physics_process(_delta: float) -> void:
@@ -46,10 +45,9 @@ func enterState(newState:state,_lastState:state=state.nothing):
 				queue_free()
 				,CONNECT_ONE_SHOT)
 				
-func initData(_target,selfpos:Vector2,_speed:int,_damage:int):
+func initData(_target,selfpos:Vector2,_damage:int):
 	self.position = selfpos
 	target=_target
-	speed = _speed
 	damage = _damage
 	if _target.is_in_group("player"):
 		Group = "player"

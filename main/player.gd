@@ -8,11 +8,20 @@ class_name players
 @onready var label: Label = $Label
 @onready var gun_shoot_player_2d: AudioStreamPlayer2D = $gunShootPlayer2D
 
-@export var MaxHelth:int =10
-var helth:int = 10
-
+@export var MaxHealth:int =10
 @export var baseshootCD:float
 @export var baseDamage:float
+
+var health:int
+#基础伤害加成变量
+var attackBonus:int = 0      #攻击力加成(百分比，如10表示10%)
+var globalDamageBonus:int = 0 #全局伤害加成(百分比，如20表示20%)
+var trueDamageRatio:float = 0.0  
+var criticalChance:int = 10    #暴击率(百分比，初始10%)
+var criticalRatio:int = 50     #暴击伤害加成(百分比，初始50%)
+
+var is_hurt_invincible := false
+var is_parry_invincible := false
 
 var inshootcd:bool = false
 var reloading:bool
@@ -35,21 +44,52 @@ enum State {
 # 用于管理当前状态的变量
 var current_state: State =State.NOTHING
 
-
+var is_hurt_invincibleTimer:Timer
+var is_parry_invincibleTimer:Timer
 func _ready() -> void:
 	Eventmanger.register_player(self)
 	##skillSingal
+	Eventmanger.playerGlobalDammageBonusChange.connect(func(bonus:int):
+		globalDamageBonus = bonus
+	)
 	Eventmanger.playerCdSub.connect(BaseShootCdSub)
 	Eventmanger.playerbulletCount.connect(_bulletCountChangeFunc)
 	Eventmanger.playerBaseDamageUp.connect(BaseDamageUp)
+	Eventmanger.playerTrueDamageUp.connect(TrueDamageUp)
 	Eventmanger.reloadAmmo.connect(reloadAmmofunc)
 	Eventmanger.playerGotHurt.connect(getHurt)
+	#无敌信号连接
+	Eventmanger.parryInvincible.connect(func():
+		is_parry_invincible = true
+		is_parry_invincibleTimer.start()
+	)
+	is_hurt_invincibleTimer = Timer.new()
+	is_hurt_invincibleTimer.wait_time = 0.5
+	is_hurt_invincibleTimer.one_shot = true
+	is_hurt_invincibleTimer.timeout.connect(func():
+		is_hurt_invincible = false
+	)
+	add_child(is_hurt_invincibleTimer)
+	is_parry_invincibleTimer = Timer.new()
+	is_parry_invincibleTimer.wait_time = 0.2
+	is_parry_invincibleTimer.one_shot = true
+	is_parry_invincibleTimer.timeout.connect(func():
+		is_parry_invincible = false
+	)
+	add_child(is_parry_invincibleTimer)	
+	
 	# 将动画完成的逻辑连接到一个更具体的处理函数
 	animation_player.animation_finished.connect(_on_animation_finished)
-	
+	_init()
 	# 初始化进入IDLE状态
 	_enter_state(State.IDLE)
 	
+
+func _init() -> void:
+	health = MaxHealth
+	currentAmmo = MaxAmmo
+	enemy = []
+
 @warning_ignore('unused_parameter')
 func _physics_process(delta: float) -> void:
 	# 每帧都执行的逻辑，与状态无关或在多数状态下都需要
@@ -137,8 +177,9 @@ func baseshootingline():
 		# 创建一个计时器来延时删除这条线，避免阻塞
 		var timer = get_tree().create_timer(0.1)
 		timer.timeout.connect(line.queue_free)
+		var damage = calculate_damage(enemy[i].armor)
 		if enemy[i].has_method("getHurt"):
-			enemy[i].getHurt(baseDamage)
+			enemy[i].getHurt(damage)
 		Eventmanger.playerShooted.emit(enemy[i],ends,baseDamage)
 		
 	bulletCount = max(bulletCount,1)
@@ -225,15 +266,24 @@ func _showTips(stext: String):
 	newtween.tween_callback(templabel.queue_free)
 
 func getHurt(damage:int):
-	helth -= damage
-	if helth <= 0:
+	if is_hurt_invincible or is_parry_invincible:
+		if is_parry_invincible:
+			return
+			###还未完成
+		return
+	health -= damage
+	if health <= 0:
 		Eventmanger.gameover.emit()
 	modulate=Color(1.0, 0.0, 0.0)
 	await get_tree().create_timer(0.1).timeout
 	modulate = Color(1.0, 1.0, 1.0)
 
+
+
+
 func gunshootingsounds():
-	if currentAmmo >0 :
+	## 由于声音播放在子弹数量减一后调用，所以这里子弹=0也有射击声音
+	if currentAmmo >=0 :
 		AudioManager.play_sfx_at_position("22LRSingleMP3", shoot_point_mark.global_position)
 	elif  get_tree().get_first_node_in_group(&'main').power <=0:
 		AudioManager.play_sfx_at_position("Semi22LRCantReloadMP3",shoot_point_mark.global_position)
@@ -247,10 +297,38 @@ func BaseShootCdSub():
 	baseshootCD -=0.1
 	
 func BaseDamageUp():
-	baseDamage +=baseDamage*0.1
+	attackBonus += 10 # 将原本对 baseDamage 的复杂计算改为直接增加 attackBonus
 
+func TrueDamageUp():
+	# 每次增加0.1的真实伤害系数.
+	trueDamageRatio = trueDamageRatio + 0.1
 
 func _on_eye_body_entered(body: Node2D) -> void:
 	if body.is_in_group("enemy"):
 		enemy.append(body)
 	pass # Replace with function body.
+
+func calculate_damage(enemy_armor: float = 0.0) -> float:
+	# 基础伤害计算 
+	var attack_bonus = float(attackBonus) / 100.0  # 整数百分比转小数
+	var global_damage_bonus = float(globalDamageBonus) / 100.0
+	var base_damage = baseDamage * (1.0 + attack_bonus) * (1.0 + global_damage_bonus)
+	
+	# 真实伤害计算 (修正:使用base_damage而不是baseDamage)
+	var true_damage = base_damage * trueDamageRatio
+	
+	# 普通伤害计算(考虑护甲)
+	var normal_damage = base_damage * (1.0 - clampf(enemy_armor, 0.0, 1.0))
+	
+	# 暴击判定和计算 (使用整数百分比)
+	var is_crit = randf() < (float(criticalChance) / 100.0)
+	var final_normal_damage = normal_damage
+	if is_crit:
+		final_normal_damage = normal_damage * (1.0 + float(criticalRatio) / 100.0)
+	
+	# 最终伤害 = 真实伤害 + 普通伤害(可能暴击)
+	var final_damage = true_damage + final_normal_damage
+	
+	return final_damage
+	# 使用示例:
+	# var damage = calculate_damage(enemy.armor)

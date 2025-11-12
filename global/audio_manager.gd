@@ -25,7 +25,7 @@ func play_sfx(sound_name: String):
 # --- 这是关键：播放空间化音效 ---
 func play_sfx_at_position(sound_name: String, position: Vector2,_DB:float=1.0):
 	var player:AudioStreamPlayer2D = AudioStreamPlayer2D.new()
-	player.volume_db =_DB
+	player.volume_linear = _DB
 	player.stream = sfx_library.get(sound_name)
 	# 把它添加到主场景树的根节点，这样它的位置才是世界坐标
 	get_tree().root.add_child(player)

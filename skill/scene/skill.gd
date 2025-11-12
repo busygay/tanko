@@ -13,7 +13,10 @@ var skill_cname:String
 var derivedSkill:Dictionary
 var sprite
 func GetData():
-	texture_rect.texture =Data.sprite
+	if Data.sprite == null:
+		texture_rect.texture = load('uid://brxi0odd5t6ap')
+	else:
+		texture_rect.texture =Data.sprite
 	sprite =Data.sprite
 	skill_name = Data.skill_name
 	header = Data.skill_type

@@ -1,4 +1,4 @@
-[gd_scene load_steps=57 format=3 uid="uid://b2srsnxwwp6yd"]
+[gd_scene load_steps=58 format=3 uid="uid://b2srsnxwwp6yd"]
 
 [ext_resource type="Texture2D" uid="uid://7lkg3xwj2574" path="res://asset/button.png" id="1_lti8b"]
 [ext_resource type="Script" uid="uid://hoyga8h0qlov" path="res://menu/menu.gd" id="1_ouk20"]
@@ -291,6 +291,8 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0, 0.8, 0.8, 1)
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bc54p"]
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_h1wq0"]
 atlas = ExtResource("4_ytr4m")
 region = Rect2(0, 0, 96, 24)
@@ -436,7 +438,6 @@ custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="setPanel" type="Panel" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -542,6 +543,18 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "JLPTN4"
 
+[node name="testmode" type="MarginContainer" parent="setPanel/MarginContainer/NinePatchRect/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="CheckButton" type="CheckButton" parent="setPanel/MarginContainer/NinePatchRect/VBoxContainer/testmode"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBoxEmpty_bc54p")
+text = "测试模式"
+
 [node name="Control" type="Control" parent="setPanel/MarginContainer/NinePatchRect/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -579,4 +592,5 @@ offset_bottom = 40.0
 [connection signal="timeout" from="BG/bgSpawnTimer" to="." method="_on_bg_spawn_timer_timeout"]
 [connection signal="pressed" from="HBoxContainer/startButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/setBtton" to="." method="_on_set_btton_pressed"]
+[connection signal="toggled" from="setPanel/MarginContainer/NinePatchRect/VBoxContainer/testmode/CheckButton" to="." method="_on_check_button_toggled"]
 [connection signal="pressed" from="setPanel/MarginContainer/NinePatchRect/VBoxContainer/MarginContainer2/back" to="." method="_on_back_pressed"]

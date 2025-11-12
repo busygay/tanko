@@ -7,9 +7,9 @@ func _ready() -> void:
 	super()
 	attCd = 1
 	death.hide()
-	baseDir= true
+	baseDir = true
 	if player.position.x - self.position.x <0:
-		death.scale = Vector2(-1,1)
+		death.scale = Vector2(-1,1) * death.scale.x
 
 
 func idleAnime():

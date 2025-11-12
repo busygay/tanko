@@ -1,24 +1,48 @@
-[gd_scene load_steps=5 format=3 uid="uid://ctmq2bwmf3b7k"]
+[gd_scene load_steps=2 format=3 uid="uid://ctmq2bwmf3b7k"]
 
 [ext_resource type="Script" uid="uid://dx0o2v2wih0v2" path="res://test/test.gd" id="1_8a8pi"]
-[ext_resource type="Script" uid="uid://dk3quh4728wjs" path="res://test/character_body_2d.gd" id="2_65205"]
-[ext_resource type="Texture2D" uid="uid://bp6iy1taqp8fu" path="res://enemy/asset/zombie/Zombie_noShadowr.png" id="3_hrq6i"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_tbfq4"]
 
 [node name="Test" type="Node2D"]
 script = ExtResource("1_8a8pi")
 
-[node name="CharacterBody2D" type="CharacterBody2D" parent="." groups=["enemy"]]
-position = Vector2(736, 730)
-scale = Vector2(5, 5)
-script = ExtResource("2_65205")
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D"]
-texture = ExtResource("3_hrq6i")
+[node name="test" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
-shape = SubResource("CircleShape2D_tbfq4")
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/test"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(2, 2)
 
-[node name="Marker2D" type="Marker2D" parent="."]
-position = Vector2(407, 436)
+[node name="NextLevelButton" type="Button" parent="CanvasLayer/test/VBoxContainer"]
+layout_mode = 2
+text = "nextLevel
+"
+
+[node name="addEnemyButton" type="Button" parent="CanvasLayer/test/VBoxContainer"]
+layout_mode = 2
+text = "addenemy"
+
+[node name="creatPlayer" type="Button" parent="CanvasLayer/test/VBoxContainer"]
+layout_mode = 2
+text = "creatPlayer"
+
+[node name="PlayerLevelUpButton" type="Button" parent="CanvasLayer/test/VBoxContainer"]
+layout_mode = 2
+text = "playerLevelUp
+"
+
+[node name="GetNewSkillButton" type="Button" parent="CanvasLayer/test/VBoxContainer"]
+layout_mode = 2
+text = "getnewskill"
+
+[connection signal="pressed" from="CanvasLayer/test/VBoxContainer/NextLevelButton" to="." method="_on_next_level_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/test/VBoxContainer/addEnemyButton" to="." method="_on_add_enemy_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/test/VBoxContainer/creatPlayer" to="." method="_on_creat_player_pressed"]
+[connection signal="pressed" from="CanvasLayer/test/VBoxContainer/PlayerLevelUpButton" to="." method="_on_player_level_up_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/test/VBoxContainer/GetNewSkillButton" to="." method="_on_get_new_skill_button_pressed"]

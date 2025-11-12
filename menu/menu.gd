@@ -117,3 +117,9 @@ func _on_area_2d_area_entered(area: Area2D) -> void:
 	if temp.has_method("startMove"):
 		bgInEyeBox.append(temp)
 	pass # Replace with function body.
+
+
+func _on_check_button_toggled(toggled_on: bool) -> void:
+	globalSet.isTestMode = toggled_on
+	
+	pass # Replace with function body.

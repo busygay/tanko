@@ -15,10 +15,13 @@ extends Node2D
 @onready var camera_3d: Camera3D = $SubViewportContainer/SubViewport/Node3D/Camera3D
 @onready var marker_3d: Marker3D = $SubViewportContainer/SubViewport/Node3D/Turret/Swivel/Marker3D
 @onready var pos: Node3D = $SubViewportContainer/SubViewport/Node3D/Turret/Swivel/pos
+@onready var spawn: AnimationPlayer = $SubViewportContainer/SubViewport/Node3D/spawn
+
+var gPosition:Vector2
 
 const example = preload('uid://c4877mqotbwnh')
-var helth
-var damage
+var health
+var damage:float
 var targetArray:Array
 var attCd:float = 0.15
 var shootReloading:bool = false
@@ -26,24 +29,25 @@ var shootCount:int =4
 var soundsPlaying:bool =false
 var rotationSpeed:float 
 enum state{
+	spawn,
 	idle,
 	aim,
 	att,
-	nothing
+	die,
+	nothing,
+	
 }
 var currentState=state.nothing
 var swivelPos:Vector2
 
 func _ready() -> void:
-	swivelPos = sub_viewport_container.global_position+camera_3d.unproject_position(pos.global_position)*scale
-	
-	enterState(state.idle)
-
+	enterState(state.spawn)
+	await get_tree().process_frame
+	$Timer.start()
 func _process(delta: float) -> void:
-	
 	var tempPos = sub_viewport_container.global_position+camera_3d.unproject_position(marker_3d.global_position)*scale
 	marker_2d.global_position = tempPos
-	
+	swivelPos = sub_viewport_container.global_position+camera_3d.unproject_position(pos.global_position)*scale
 	gpu_particles_2d.global_position = marker_2d.global_position
 	gpu_particles_2d.global_rotation = swivels.rotation.y*-1
 	eye.global_position = marker_2d.global_position
@@ -56,8 +60,8 @@ func _process(delta: float) -> void:
 		state.att:
 			state_logic_att()
 
-	
-
+func state_logic_spawn():
+	pass
 func state_logic_idle(delta):
 	if not targetArray.is_empty():
 		enterState(state.aim)
@@ -72,9 +76,10 @@ func state_logic_aim():
 		enterState(state.idle)
 		return
 	var target = targetArray[0]
+	
 	var targetDir = (target.global_position-swivelPos)
 	var targetAngle =targetDir.angle()*-1
-
+	
 	swivels.rotation.y = lerp_angle(swivels.rotation.y,targetAngle,0.02)
 	swivels.rotation.y = wrapf(swivels.rotation.y,-PI,PI)
 	var angleDif = angle_difference(targetAngle,swivels.rotation.y)
@@ -91,7 +96,7 @@ func state_logic_att():
 		if soundsPlaying:
 			pass
 		else:
-			AudioManager.play_sfx_at_position("762x54rSprayIsolatedMP3",marker_2d.global_position,0.5)
+			AudioManager.play_sfx_at_position("762x54rSprayIsolatedMP3",marker_2d.global_position,0.1)
 			soundsPlaying = true
 			shooting()
 	elif not shootReloading:
@@ -102,6 +107,7 @@ func state_logic_att():
 			shootReloading = false
 			,CONNECT_ONE_SHOT)
 	var target = targetArray[0]
+	
 	var targetDir = (target.global_position-swivelPos)
 	var targetAngle =targetDir.angle()*-1
 	swivels.rotation.y = lerp_angle(swivels.rotation.y,targetAngle,0.02)
@@ -127,6 +133,17 @@ func enterState(newState:state):
 	if newState != currentState:
 		currentState = newState
 		match currentState:
+			state.spawn:
+				$SubViewportContainer/SubViewport/Node3D/spawnNode3d.show()
+				var tween = get_tree().create_tween()
+				tween.tween_property(self,"global_position",gPosition,1)
+				tween.set_ease(Tween.EASE_IN)
+				tween.finished.connect(func():
+					spawn.play(&'spawn')
+					spawn.animation_finished.connect(func(_nothing):
+						enterState(state.idle)
+						)
+					)
 			state.idle:
 				turret.scale = Vector3.ONE
 				gpu_particles_2d.emitting = false
@@ -136,14 +153,22 @@ func enterState(newState:state):
 				gpu_particles_2d.emitting = false
 			state.att:
 				pass
-
-func _setData(_helth:int,_damage:int,_pos:Vector2,_rotSpeed:float):
-	helth = _helth
-	damage =_damage
-	global_position = _pos
-	rotationSpeed = _rotSpeed
+			state.die:
+				spawn.play(&'broken')
+				spawn.animation_finished.connect(func(_nothing):
+					queue_free()
+					)
 	
 
+func _setData(_health:int,_damage:float,_pos:Vector2,_rotSpeed:float,liveTime:float):
+	health = _health
+	damage =_damage
+	gPosition = _pos
+	var tempPos = _pos-Vector2(500,500)
+	global_position = tempPos
+	rotationSpeed = _rotSpeed
+	$Timer.wait_time = liveTime
+	
 
 
 
@@ -153,12 +178,13 @@ func _on_eye_body_entered(body: Node2D) -> void:
 	pass # Replace with function body.
 
 
-func _on_live_timer_timeout() -> void:
-	queue_free()
-	pass # Replace with function body.
-
 
 func _on_eye_body_exited(body: Node2D) -> void:
 	if targetArray.has(body):
 		targetArray.erase(body)
+	pass # Replace with function body.
+
+
+func _on_timer_timeout() -> void:
+	enterState(state.die)
 	pass # Replace with function body.

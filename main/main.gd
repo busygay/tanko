@@ -4,7 +4,7 @@ extends Node2D
 @onready var score_label: Label = $CanvasLayer/score/Panel/scoreLabel
 @onready var player:players 
 @onready var on_combo_timer: Timer = $onComboTimer
-
+@onready var test:VBoxContainer = $CanvasLayer/test
 
 const TURRET = preload('uid://d1t5wfugr4e7j')
 
@@ -17,12 +17,15 @@ var word_Data:Dictionary
 var allkeys:Array
 var Correctcount :int =5
 var combo:int =0
+
+
 var NextLevelExpBase:int =5
 var NextLevelExp:int= 5
 var ExpPow:float = 2.1
 var cosFre:float = 0.5
 var playerLevel:int =1
 var islevelDone:bool
+
 
 var allInTreeEnemyCount:int = 0
 var currentExp:
@@ -38,15 +41,11 @@ var currentExp:
 			playerLevel +=1
 			currentExp -=NextLevelExp
 			
+
 func _ready() -> void:
-	
-	###测试
-	
-	var temp = TURRET.instantiate()
-	temp._setData(10,1,$Marker2D.global_position,PI/2)
-	get_tree().get_first_node_in_group("main").add_child(temp)
-	
-	
+
+
+
 	
 	currentExp = 0
 	Eventmanger.GameStart.emit()
@@ -65,6 +64,7 @@ func _ready() -> void:
 	Eventmanger.enterTreeEnemy.connect(enterTreeEnemyfunc)
 	Eventmanger.exitTreeEnemy.connect(exitTreeEnemyfunc)
 
+		
 func _addcorrectcount(iscorrect):
 	if iscorrect:
 		if Correctcount >=10 :
@@ -94,6 +94,7 @@ func upDatascore(_node):
 func comboChange(iscorrect):
 	Eventmanger.comboChange.emit(iscorrect)
 	if iscorrect:
+		Eventmanger.parryInvincible.emit()
 		currentExp+=1
 		var tempCombo = combo
 		combo += 1
@@ -155,4 +156,5 @@ func enterTreeEnemyfunc():
 func exitTreeEnemyfunc():
 	allInTreeEnemyCount-=1
 	if allInTreeEnemyCount<=0 and Level.enemysSpanwFinsh.size()==0:
+		stopgamefunc()
 		Eventmanger.levelOver.emit()

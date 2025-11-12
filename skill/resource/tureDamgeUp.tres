@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="skill" load_steps=3 format=3 uid="uid://cfugggvelouaw"]
+
+[ext_resource type="Script" uid="uid://c1djkh2or1f4p" path="res://skill/resource/skill.gd" id="1_bwl5o"]
+[ext_resource type="Texture2D" uid="uid://dj7l7iu1s6u76" path="res://skill/asset/BreakArmor.png" id="2_58mpv"]
+
+[resource]
+script = ExtResource("1_bwl5o")
+skill_type = "强化训练"
+skill_name = "trueDamageUp"
+skill_cname = "真实伤害"
+sprite = ExtResource("2_58mpv")
+tips = "无视敌人护甲的真实伤害，+10%"
+path = "res://skill/scene/trueDamageUp.tscn"
+metadata/_custom_type_script = "uid://c1djkh2or1f4p"

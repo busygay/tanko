@@ -2,6 +2,7 @@ extends Control
 
 @onready var v_box_container: VBoxContainer = $Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer
 @onready var scroll_container: ScrollContainer = $Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer
+@onready var rich_text_label: RichTextLabel = $Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/RichTextLabel
 
 # 使用枚举来定义显示模式，更清晰
 var menuPath:String = 'res://menu/menu.tscn'
@@ -53,9 +54,17 @@ func _process(_delta: float) -> void:
 		ChangeScenceLoad.loading(menu,false,loadPro)
 func show_game_over() -> void:
 	show()
+	var correct_count: int = Jlptn5.allcorrectWord.size()
+	var error_count: int = Jlptn5.allErrorWord.size()
+	var total_count: int = correct_count + error_count
+	var accuracy: float = 0.0
+	if total_count > 0:
+		accuracy = float(correct_count) / total_count * 100.0
+	
+	rich_text_label.text = "此次游戏共使用%d个单词，正确数为%d，错误数为%d。准确率为%.2f%%。" % [total_count, correct_count, error_count, accuracy]
+	
 	# 默认显示错误单词列表
 	_on_error_pressed()
-	
 
 # 清空VBoxContainer中的所有Label
 func _clear_list() -> void:
