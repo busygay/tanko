@@ -80,10 +80,16 @@ func _ready() -> void:
 	
 	# 将动画完成的逻辑连接到一个更具体的处理函数
 	animation_player.animation_finished.connect(_on_animation_finished)
-	
+	_init()
 	# 初始化进入IDLE状态
 	_enter_state(State.IDLE)
 	
+
+func _init() -> void:
+	health = MaxHealth
+	currentAmmo = MaxAmmo
+	enemy = []
+
 @warning_ignore('unused_parameter')
 func _physics_process(delta: float) -> void:
 	# 每帧都执行的逻辑，与状态无关或在多数状态下都需要
@@ -276,7 +282,8 @@ func getHurt(damage:int):
 
 
 func gunshootingsounds():
-	if currentAmmo >0 :
+	## 由于声音播放在子弹数量减一后调用，所以这里子弹=0也有射击声音
+	if currentAmmo >=0 :
 		AudioManager.play_sfx_at_position("22LRSingleMP3", shoot_point_mark.global_position)
 	elif  get_tree().get_first_node_in_group(&'main').power <=0:
 		AudioManager.play_sfx_at_position("Semi22LRCantReloadMP3",shoot_point_mark.global_position)

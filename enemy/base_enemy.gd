@@ -14,7 +14,8 @@ var damage:int =1
 var health:int
 var player
 var playerbox:Array
-var baseDir:bool = true #true为朝右，false为朝左
+var currentFacingDir:bool = true # 当前面朝的方向，避免频繁翻转
+var baseDir :bool  # 初始面朝的方向，true为右，false为左
 enum state{
 	idle,
 	walk,
@@ -35,6 +36,26 @@ func _ready() -> void:
 		push_error("找不到player节点，敌人将无法行动！")
 		set_physics_process(false) # 禁用 _physics_process
 		return
+	
+	# 根据敌人相对玩家的初始位置设置朝向
+	var initialDirection = global_position.direction_to(player.global_position)
+	currentFacingDir = initialDirection.x > 0
+	if baseDir ==true:
+		if currentFacingDir:
+			# 初始朝右
+			scale.x = baseScale.x
+		else:
+			# 初始朝左
+			scale.x = -baseScale.x
+	else:
+		if currentFacingDir:
+			# 初始朝右
+			scale.x = -baseScale.x
+		else:
+			# 初始朝左
+			scale.x = baseScale.x
+	
+	
 	_enter_state(state.walk)
 
 func initData(Mul:float):
@@ -71,12 +92,18 @@ func _state_logic_walk():
 	velocity = direction * speed
 	move_and_slide()
 	if direction.x != 0:
-		var targetDir = direction.x >0
-		var flip_multiplier = 1 - 2 * int(targetDir != baseDir)
-		#self.scale.x = flip_multiplier
-		animated_sprite_2d.scale.x = flip_multiplier
-		#animated_sprite_2d.flip_h = (targetDir != baseDir)
-		
+		var targetDir = direction.x >0 #大于0朝右，小于0朝左
+		# 只有当朝向真正改变时才翻转
+		if targetDir != currentFacingDir: 
+			currentFacingDir = targetDir 
+			# 简化逻辑：直接根据目标朝向设置缩放
+			if targetDir:
+				# 目标朝右
+				scale.x = baseScale.x
+			else:
+				# 目标朝左
+				scale.x = -baseScale.x
+
 	if not playerbox.is_empty():
 		_enter_state(state.att,)
 		

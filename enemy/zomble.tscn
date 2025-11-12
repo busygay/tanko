@@ -436,19 +436,20 @@ _data = {
 }
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_b45vm"]
-radius = 44.102154
+radius = 60.00833
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_775g5"]
+radius = 25.0
 
 [node name="Zomble" type="CharacterBody2D" groups=["enemy"]]
 z_index = 1
 y_sort_enabled = true
-scale = Vector2(5, 5)
 collision_layer = 2
 motion_mode = 1
 script = ExtResource("1_b0l8h")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(5, 5)
 sprite_frames = SubResource("SpriteFrames_3agur")
 animation = &"hurt"
 offset = Vector2(0, -6)
@@ -465,12 +466,14 @@ libraries = {
 shape = SubResource("CircleShape2D_b45vm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -4)
 shape = SubResource("CircleShape2D_775g5")
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 5.0
 
 [node name="death" type="Node2D" parent="."]
+scale = Vector2(5, 5)
 
 [node name="shadow" type="Sprite2D" parent="death"]
 scale = Vector2(0.99999994, 0.99999994)

@@ -9,18 +9,6 @@
 
 [sub_resource type="Animation" id="Animation_lmvol"]
 length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:animation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"hurt"]
-}
 
 [sub_resource type="Animation" id="Animation_7lgel"]
 step = 0.125
@@ -400,11 +388,13 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_b45vm"]
-radius = 500.0
+radius = 406.51
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_775g5"]
+radius = 85.09406
 
-[node name="flyDemon" type="CharacterBody2D"]
+[node name="flyDemon" type="CharacterBody2D" groups=["remoteAtt"]]
+disable_mode = 1
 collision_layer = 2
 motion_mode = 1
 script = ExtResource("1_r1f7i")
@@ -416,11 +406,12 @@ libraries = {
 }
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." groups=["enemy"]]
+scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_3agur")
-animation = &"hurt"
+animation = &"att"
 
 [node name="Marker2D" type="Marker2D" parent="AnimatedSprite2D"]
-position = Vector2(-21, 8)
+position = Vector2(-18.666666, 7.333333)
 
 [node name="eye" type="Area2D" parent="."]
 
@@ -428,6 +419,7 @@ position = Vector2(-21, 8)
 shape = SubResource("CircleShape2D_b45vm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-12, 17)
 shape = SubResource("CircleShape2D_775g5")
 
 [node name="Timer" type="Timer" parent="."]

@@ -3,6 +3,7 @@ var viewport
 var enemyspath:Array=[
 	'res://enemy/zomble.tscn',
 	'res://enemy/flyDemon.tscn',
+	'res://enemy/slime.tscn',
 	
 ]
 var enemys:Dictionary

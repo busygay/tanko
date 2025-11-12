@@ -5,11 +5,10 @@ const fireBall:PackedScene = preload('uid://bvagk68wcdq0f')
 
 func _ready() -> void:
 	super()
-	baseDir = false
 	var tempshape = collision_shape_2d.shape.duplicate() as CircleShape2D
-	tempshape.radius = randf_range(400,550 ) / self.scale.x
+	tempshape.radius = randf_range(400,550 ) /  abs (self.scale.x)
 	collision_shape_2d.shape = tempshape
-
+	baseDir = false
 
 func att():
 	if playerbox.is_empty():
