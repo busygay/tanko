@@ -27,7 +27,7 @@ font = ExtResource("5_3qrbh")
 font_size = 32
 outline_size = 1
 
-[node name="skillAssembly" type="Control"]
+[node name="skillAssembly" type="Control" groups=["popup"]]
 process_mode = 3
 layout_mode = 3
 anchors_preset = 15

@@ -1,6 +1,14 @@
 extends VBoxContainer
 
 
+func _ready() -> void:
+		###test mode
+	if globalSet.isTestMode:
+		self.show()
+	else:
+		self.add_to_group("popup")
+		self.hide()
+
 func _on_player_level_up_button_pressed() -> void:
 	var existing_scroll = get_node_or_null("../tempScroll")
 	if existing_scroll:

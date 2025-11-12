@@ -96,7 +96,7 @@ func state_logic_att():
 		if soundsPlaying:
 			pass
 		else:
-			AudioManager.play_sfx_at_position("762x54rSprayIsolatedMP3",marker_2d.global_position,0.5)
+			AudioManager.play_sfx_at_position("762x54rSprayIsolatedMP3",marker_2d.global_position,0.1)
 			soundsPlaying = true
 			shooting()
 	elif not shootReloading:

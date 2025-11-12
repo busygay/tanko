@@ -251,7 +251,7 @@ layout_mode = 2
 text = "GetSkill
 "
 
-[node name="shoping" parent="CanvasLayer" instance=ExtResource("3_fwcvl")]
+[node name="shoping" parent="CanvasLayer" groups=["popup"] instance=ExtResource("3_fwcvl")]
 visible = false
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer"]
@@ -370,7 +370,7 @@ scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_re7it")
 frame_progress = 0.678809
 
-[node name="wordConfirm" parent="CanvasLayer" instance=ExtResource("3_bsumw")]
+[node name="wordConfirm" parent="CanvasLayer" groups=["popup"] instance=ExtResource("3_bsumw")]
 visible = false
 
 [node name="card_pile" type="TextureRect" parent="CanvasLayer" groups=["card_pile"]]
@@ -390,7 +390,7 @@ size_flags_horizontal = 4
 texture = ExtResource("11_fwcvl")
 expand_mode = 1
 
-[node name="gameover" parent="CanvasLayer" instance=ExtResource("3_73k8k")]
+[node name="gameover" parent="CanvasLayer" groups=["popup"] instance=ExtResource("3_73k8k")]
 visible = false
 
 [node name="Path2D" type="Path2D" parent="CanvasLayer" groups=["cardPath2D"]]

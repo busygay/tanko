@@ -50,8 +50,10 @@ func hideAll(_node):
 	
 func ShowAll():
 	for i in self.get_children():
-		if i == word_confirm or i == shoping or i == gameover or i == skill_assembly:
+
+		if i.is_in_group("popup"):
 			i.hide()
+		#if i == word_confirm or i == shoping or i == gameover or i == skill_assembly:
 		else:
 			i.show()
 

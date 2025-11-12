@@ -64,12 +64,6 @@ func _ready() -> void:
 	Eventmanger.enterTreeEnemy.connect(enterTreeEnemyfunc)
 	Eventmanger.exitTreeEnemy.connect(exitTreeEnemyfunc)
 
-	###test mode
-	if globalSet.isTestMode:
-		test.show()
-	else:
-		test.hide()
-
 		
 func _addcorrectcount(iscorrect):
 	if iscorrect:
@@ -162,4 +156,5 @@ func enterTreeEnemyfunc():
 func exitTreeEnemyfunc():
 	allInTreeEnemyCount-=1
 	if allInTreeEnemyCount<=0 and Level.enemysSpanwFinsh.size()==0:
+		stopgamefunc()
 		Eventmanger.levelOver.emit()
