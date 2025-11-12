@@ -371,6 +371,7 @@ sprite_frames = SubResource("SpriteFrames_re7it")
 frame_progress = 0.678809
 
 [node name="wordConfirm" parent="CanvasLayer" groups=["popup"] instance=ExtResource("3_bsumw")]
+process_mode = 3
 visible = false
 
 [node name="card_pile" type="TextureRect" parent="CanvasLayer" groups=["card_pile"]]

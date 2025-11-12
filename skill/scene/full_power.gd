@@ -43,6 +43,7 @@ func creatBuff():
 	else :
 		var tempBreakBuff = break_buff.duplicate()
 		tempBreakBuff.global_position = buffnode.get_child(0).global_position
+		tempBreakBuff.show()
 		get_tree().get_first_node_in_group(&'main').add_child(tempBreakBuff)
 		tempBreakBuff.play("breakBuff")
 		buffnode.offset = Vector2(0,8)

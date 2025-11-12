@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://csgqimkhye53w"]
+[gd_scene load_steps=24 format=3 uid="uid://csgqimkhye53w"]
 
 [ext_resource type="Script" uid="uid://b4i1mc3exbb6l" path="res://skill/scene/full_power.gd" id="1_o4afb"]
 [ext_resource type="Texture2D" uid="uid://cgbi7d4axwrdx" path="res://skill/asset/card_bg.png" id="2_7ndaw"]
@@ -20,6 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://ccysljpuhancy" path="res://skill/asset/littleMage/Hit/Hit1.png" id="17_esnxr"]
 [ext_resource type="Texture2D" uid="uid://bfqt2kj05e51x" path="res://skill/asset/littleMage/Hit/Hit2.png" id="18_h2a0e"]
 [ext_resource type="Texture2D" uid="uid://e51s3bjdhdma" path="res://skill/asset/littleMage/Hit/Hit3.png" id="19_ur0i4"]
+[ext_resource type="Texture2D" uid="uid://6hm7a2ulwdk8" path="res://enemy/asset/zombie/Zombie_shadow.png" id="21_130pb"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_iph8u"]
 font_size = 96
@@ -169,10 +170,14 @@ theme_override_font_sizes/bold_italics_font_size = 64
 bbcode_enabled = true
 
 [node name="BreakBuff" type="AnimatedSprite2D" parent="."]
-position = Vector2(11.999985, 2.3841858e-07)
+position = Vector2(-55, 3.0000038)
 scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_uusxh")
 animation = &"buff"
+
+[node name="Sprite2D" type="Sprite2D" parent="BreakBuff"]
+position = Vector2(0, 15.999999)
+texture = ExtResource("21_130pb")
 
 [node name="Buff" type="AnimatedSprite2D" parent="."]
 position = Vector2(-1.0000076, 1.0000005)
@@ -182,3 +187,7 @@ animation = &"buff"
 
 [node name="Marker2D" type="Marker2D" parent="Buff"]
 position = Vector2(-18.199999, 0.59999996)
+
+[node name="Sprite2D" type="Sprite2D" parent="Buff"]
+position = Vector2(2.503395e-06, 17)
+texture = ExtResource("21_130pb")
