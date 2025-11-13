@@ -11,6 +11,7 @@ var memEnemys:Array
 var currentLevel:int =0
 var enemysSpanwFinsh:Array =[]
 var spawnQueue:Array
+var enemysKeys:Array
 
 
 func _ready() -> void:
@@ -33,6 +34,11 @@ func loadAllenemy():
 		enemys.set(sname,load(path))
 		if i%3 :
 			await get_tree().process_frame
+	
+	# 获取并随机打乱敌人顺序
+	enemysKeys = enemys.keys()
+	enemysKeys.shuffle()
+	
 func getrandipos():
 	var randipos:Vector2
 	if randi()%2:
@@ -88,7 +94,6 @@ func getSpawnQueue():
 	var baseEnemyCount:int = (currentLevel-1)*3+5
 	var eliiteEnemyCount:int= int (baseEnemyCount/5.0)
 	var baseEnemys:Array
-	var enemysKeys=enemys.keys()
 	var enemysSpawnType:int= min((currentLevel-1)/5.0+1,enemys.size())
 	for i in range(enemysSpawnType):
 		baseEnemys.append(enemys.get(enemysKeys[i]))

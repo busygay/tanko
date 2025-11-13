@@ -2,8 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://bveueqdnn2l7p" path="res://skill/scene/skill.tscn" id="1_tmiai"]
 [ext_resource type="Script" uid="uid://bcdt10tuo0s8p" path="res://skill/scene/true_damage_up.gd" id="2_25co6"]
-[ext_resource type="Resource" uid="uid://cfugggvelouaw" path="res://skill/resource/trueDamageUp.tres" id="3_25co6"]
+[ext_resource type="Resource" path="res://skill/resource/trueDamageUp.tres" id="3_cife6"]
 
 [node name="trueDamageUp" instance=ExtResource("1_tmiai")]
 script = ExtResource("2_25co6")
-Data = ExtResource("3_25co6")
+Data = ExtResource("3_cife6")

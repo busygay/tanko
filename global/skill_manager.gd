@@ -7,6 +7,7 @@ var _skillDataPath:Dictionary={
 	"ricochetShoot":"res://skill/resource/ricochetShoot.tres",
 	"BT-7270":'res://skill/resource/BT-7270.tres',
 	"fullPower":'res://skill/resource/fullPower.tres',
+	"tueDamageUp":'res://skill/resource/trueDamageUp.tres',
 }
 var _skillDataManager:Dictionary={
 }
@@ -15,10 +16,11 @@ var _skillDataCopy:Dictionary
 var _SkillCount:Dictionary={
 	"doubleShoot":1,
 	"cdSub":9,
-	"baseDamageUp":99,
+	"baseDamageUp":5,
 	"ricochetShoot":1,
 	"BT-7270":1,
 	"fullPower":1,
+	"trueDamageUp":5,
 }
 var _SkillCountCopy:Dictionary
 func _ready() -> void:

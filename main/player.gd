@@ -301,7 +301,7 @@ func BaseDamageUp():
 
 func TrueDamageUp():
 	# 每次增加0.1的真实伤害系数.
-	trueDamageRatio = trueDamageRatio + 0.1
+	trueDamageRatio = trueDamageRatio + 0.3
 
 func _on_eye_body_entered(body: Node2D) -> void:
 	if body.is_in_group("enemy"):
