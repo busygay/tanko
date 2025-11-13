@@ -1,0 +1,9 @@
+[gd_scene load_steps=4 format=3 uid="uid://berfv1dg3ybhw"]
+
+[ext_resource type="PackedScene" uid="uid://bveueqdnn2l7p" path="res://skill/scene/skill.tscn" id="1_8h3l8"]
+[ext_resource type="Script" path="res://skill/scene/ricochet_shoot_up.gd" id="2_4a686"]
+[ext_resource type="Resource" path="res://skill/resource/ricochetShootUp.tres" id="3_pvr1a"]
+
+[node name="ricochetShootUp" instance=ExtResource("1_8h3l8")]
+script = ExtResource("2_4a686")
+Data = ExtResource("3_pvr1a")

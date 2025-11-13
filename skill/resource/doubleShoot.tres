@@ -13,7 +13,7 @@ tips = "在连击达到2时下次攻击发射两发子弹。"
 path = "res://skill/scene/doubleShoot.tscn"
 derivedSkill = Dictionary[String, Dictionary]({
 "doubleShootUp": {
-"count": 10,
+"count": 5,
 "path": "res://skill/resource/doubleShootUp.tres"
 }
 })

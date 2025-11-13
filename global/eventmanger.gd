@@ -142,6 +142,9 @@ signal ShowSkillAssembly
 
 ##技能效果
 @warning_ignore('unused_signal')
+signal ricochetShootUp
+
+@warning_ignore('unused_signal')
 signal doubleShootUP
 var isQuiting:bool
 func _notification(what: int) -> void:

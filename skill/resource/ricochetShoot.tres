@@ -11,4 +11,10 @@ skill_cname = "QQ弹"
 sprite = ExtResource("2_peh2h")
 tips = "接下来的一颗子弹获得弹射效果"
 path = "res://skill/scene/ricochetShoot.tscn"
+derivedSkill = Dictionary[String, Dictionary]({
+"ricochetShoot": {
+"count": 5,
+"path": "res://skill/resource/ricochetShootUp.tres"
+}
+})
 metadata/_custom_type_script = "uid://c1djkh2or1f4p"

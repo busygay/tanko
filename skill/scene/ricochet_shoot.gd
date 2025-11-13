@@ -3,10 +3,16 @@ extends "res://skill/scene/skill.gd"
 var baseRicochet:int = 1
 var lock:bool = true
 var player:players 
+var ricochetBonus:int = 0
 func _ready() -> void:
 	super()
 	Eventmanger.playerShooted.connect(ricoChet)
+	Eventmanger.ricochetShootUp.connect(_on_ricochet_shoot_up)
 	player = get_tree().get_first_node_in_group("player")
+
+func _on_ricochet_shoot_up():
+	ricochetBonus += 1
+
 func _skillEmit(_dic:Dictionary={}):
 	await super()
 	if _dic.has("fiveCombo"):
@@ -32,10 +38,10 @@ func ricoChet(enemy,pos:Vector2,baseDamage:float):
 			if allenemys.has(enemy):
 				allenemys.erase(enemy)
 				
-			count = min(allenemys.size(),baseRicochet)
+			count = min(allenemys.size(),baseRicochet + ricochetBonus)
 		else:
 			start = pos
-			count = min(allenemys.size(),baseRicochet)
+			count = min(allenemys.size(),baseRicochet + ricochetBonus)
 		for i in range(count):
 			line = Line2D.new()
 			line.width = 1
@@ -56,4 +62,3 @@ func ricoChet(enemy,pos:Vector2,baseDamage:float):
 			enemy=allenemys[y]
 			if enemy.has_method("gotHurt") :
 				enemy.gotHurt(baseDamage)
-			
