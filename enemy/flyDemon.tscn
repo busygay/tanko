@@ -410,7 +410,7 @@ scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_3agur")
 animation = &"att"
 
-[node name="Marker2D" type="Marker2D" parent="AnimatedSprite2D"]
+[node name="Marker2D" type="Marker2D" parent="AnimatedSprite2D" groups=["enemy"]]
 position = Vector2(-18.666666, 7.333333)
 
 [node name="eye" type="Area2D" parent="."]

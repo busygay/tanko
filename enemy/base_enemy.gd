@@ -39,23 +39,23 @@ func _ready() -> void:
 	
 	# 根据敌人相对玩家的初始位置设置朝向
 	var initialDirection = global_position.direction_to(player.global_position)
-	currentFacingDir = initialDirection.x > 0
-	if baseDir ==true:
+	var targetDir = initialDirection.x > 0
+	if baseDir != true:
+		currentFacingDir = targetDir
 		if currentFacingDir:
 			# 初始朝右
-			scale.x = baseScale.x
+			scale.x = -baseScale.x
 		else:
 			# 初始朝左
-			scale.x = -baseScale.x
+			scale.x = baseScale.x
 	else:
+		currentFacingDir = targetDir
 		if currentFacingDir:
 			# 初始朝右
-			scale.x = -baseScale.x
+			scale.x = baseScale.x
 		else:
 			# 初始朝左
-			scale.x = baseScale.x
-	
-	
+			scale.x = -baseScale.x
 	_enter_state(state.walk)
 
 func initData(Mul:float):
@@ -91,6 +91,9 @@ func _state_logic_walk():
 	var direction = global_position.direction_to(player.global_position)
 	velocity = direction * speed
 	move_and_slide()
+	#确保 图像纹理朝向已经被设置
+	if baseDir == null :
+		return
 	if direction.x != 0:
 		var targetDir = direction.x >0 #大于0朝右，小于0朝左
 		# 只有当朝向真正改变时才翻转
