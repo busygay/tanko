@@ -17,6 +17,7 @@ var word_Data:Dictionary
 var allkeys:Array
 var Correctcount :int =5
 var combo:int =0
+var wrongAnswerCount:int =0  # 新增：答错计数器
 
 
 var NextLevelExpBase:int =5
@@ -66,6 +67,9 @@ func _ready() -> void:
 
 		
 func _addcorrectcount(iscorrect):
+	# 获取当前题目单词
+	var current_word = Jlptn5._getCurrentTitleWord()
+	
 	if iscorrect:
 		if Correctcount >=10 :
 			if power <maxpower:
@@ -77,12 +81,21 @@ func _addcorrectcount(iscorrect):
 		else:
 			Correctcount +=1
 		Eventmanger.correctcountchange.emit()
+		
+		# 回答正确，减少错误次数
+		if current_word != null:
+			Jlptn5._updateErrorWordCount(current_word, -1)
 	else:
-		if Correctcount <=0:
-			pass
-		else:
-			Correctcount -=1
+		wrongAnswerCount += 1
+		if wrongAnswerCount >= 2:
+			if Correctcount > 0:
+				Correctcount -= 1
+			wrongAnswerCount = 0
 		Eventmanger.correctcountchange.emit()
+		
+		# 回答错误，增加错误次数
+		if current_word != null:
+			Jlptn5._updateErrorWordCount(current_word, 3)
 
 func upDatascore(_node):
 	coin+=1

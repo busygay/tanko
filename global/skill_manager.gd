@@ -7,7 +7,7 @@ var _skillDataPath:Dictionary={
 	"ricochetShoot":"res://skill/resource/ricochetShoot.tres",
 	"BT-7270":'res://skill/resource/BT-7270.tres',
 	"fullPower":'res://skill/resource/fullPower.tres',
-	"tueDamageUp":'res://skill/resource/trueDamageUp.tres',
+	"trueDamageUp":'res://skill/resource/trueDamageUp.tres',
 }
 var _skillDataManager:Dictionary={
 }

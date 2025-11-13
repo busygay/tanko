@@ -393,7 +393,7 @@ radius = 406.51
 [sub_resource type="CircleShape2D" id="CircleShape2D_775g5"]
 radius = 85.09406
 
-[node name="flyDemon" type="CharacterBody2D" groups=["remoteAtt"]]
+[node name="flyDemon" type="CharacterBody2D" groups=["enemy", "remoteAtt"]]
 disable_mode = 1
 collision_layer = 2
 motion_mode = 1

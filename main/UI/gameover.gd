@@ -111,12 +111,19 @@ func _load_word_batch() -> void:
 	var count = min(BATCH_SIZE, source_array.size() - current_index)
 	
 	for i in range(count):
-		var word_data:Dictionary = source_array[current_index]
+		var word_item = source_array[current_index]
+		var word_data:Dictionary
 		var temp_word: String
-		if  not word_data.get("日语汉字").is_empty():
-			temp_word = word_data.get("日语汉字")
+		
+		# 处理错误单词的数据结构（包含error_count）
+		if current_mode == DisplayMode.ERROR and word_item is Dictionary and word_item.has("word_data"):
+			word_data = word_item.word_data
 		else:
-			temp_word = word_data.get("假名")
+			word_data = word_item
+		
+		temp_word = word_data.get("日语汉字", "")
+		if temp_word.is_empty():
+			temp_word = word_data.get("假名", "")
 			
 		var temp_label = Label.new()
 		temp_label.label_settings = label_settings
@@ -134,6 +141,7 @@ func _reset_loading_flag():
 	is_loading = false
 
 func _on_restart_button_pressed() -> void:
+	print("gameover _on_restart_button_pressed: 保存错题并重新开始")
 	Eventmanger.saveErrorWord.emit()
 	Eventmanger.restartGame.emit()
 	_changeScenceToMenu()
@@ -141,6 +149,7 @@ func _on_restart_button_pressed() -> void:
 	
 
 func _on_do_not_add_error_book_pressed() -> void:
+	print("gameover _on_do_not_add_error_book_pressed: 不添加错题本，直接返回菜单")
 	Eventmanger.restartGame.emit()
 	_changeScenceToMenu()
 	hide() # 游戏重新开始时隐藏这个界面

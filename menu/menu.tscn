@@ -432,12 +432,33 @@ label_settings = SubResource("LabelSettings_kk3ma")
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="errorWordButton" type="TextureButton" parent="HBoxContainer"]
+custom_minimum_size = Vector2(248, 82)
+layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = SubResource("AtlasTexture_l48gv")
+texture_pressed = SubResource("AtlasTexture_ecwwl")
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="HBoxContainer/errorWordButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "错题本"
+label_settings = SubResource("LabelSettings_kk3ma")
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Control2" type="Control" parent="HBoxContainer"]
 clip_contents = true
 custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="setPanel" type="Panel" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -584,13 +605,93 @@ label_settings = SubResource("LabelSettings_g7jxm")
 horizontal_alignment = 1
 
 [node name="ErrorWordPanel" type="Panel" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="ErrorWordPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="NinePatchRect" type="NinePatchRect" parent="ErrorWordPanel/MarginContainer"]
+layout_mode = 2
+texture = ExtResource("3_4hy44")
+patch_margin_left = 15
+patch_margin_top = 20
+patch_margin_right = 14
+patch_margin_bottom = 4
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ErrorWordPanel/MarginContainer/NinePatchRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleLabel" type="Label" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 40
+text = "错题本"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ErrorWordVBox" type="VBoxContainer" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainer2" type="MarginContainer" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="BackButton" type="TextureButton" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/MarginContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = SubResource("AtlasTexture_h1wq0")
+texture_pressed = SubResource("AtlasTexture_dwrpx")
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/MarginContainer2/BackButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "返回"
+label_settings = SubResource("LabelSettings_g7jxm")
+horizontal_alignment = 1
 
 [connection signal="area_entered" from="BG/bgPlayer/Area2D" to="." method="_on_area_2d_area_entered"]
 [connection signal="timeout" from="BG/bgSpawnTimer" to="." method="_on_bg_spawn_timer_timeout"]
 [connection signal="pressed" from="HBoxContainer/startButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/setBtton" to="." method="_on_set_btton_pressed"]
+[connection signal="pressed" from="HBoxContainer/errorWordButton" to="." method="_on_error_word_button_pressed"]
 [connection signal="toggled" from="setPanel/MarginContainer/NinePatchRect/VBoxContainer/testmode/CheckButton" to="." method="_on_check_button_toggled"]
 [connection signal="pressed" from="setPanel/MarginContainer/NinePatchRect/VBoxContainer/MarginContainer2/back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/MarginContainer2/BackButton" to="." method="_on_error_word_back_pressed"]

@@ -11,6 +11,7 @@ var allkeys:Array
 var tiltle_ran:int
 var tiltle:Dictionary
 var error_word
+var current_title_word:Dictionary  # 存储当前题目的单词数据
 func _ready() -> void:
 	Jlptn5._gameStart()
 	_initset()
@@ -34,6 +35,7 @@ func _settilte():
 	var temp_Tiltle:Dictionary = Jlptn5._getNextWordData()
 	var temp_key = temp_Tiltle.keys()[0]
 	tiltle =temp_Tiltle.get(temp_key)
+	current_title_word = tiltle  # 保存当前题目的单词数据
 	error_word = Jlptn5._getErrorWordData()
 	
 	error_word.append(tiltle.get("容易混淆的单词"))
@@ -89,6 +91,9 @@ func _reloadtiltle(isanswer:bool):
 			_settilte()
 			)
 	pass
+
+func _getCurrentTitleWord():
+	return current_title_word
 
 func answerPanlePos():
 	var temprect = nine_patch_rect.get_global_rect()

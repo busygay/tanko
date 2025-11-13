@@ -152,14 +152,22 @@ func _returnidle():
 	_enter_state(State.IDLE)
 
 func baseshootingline():
+	print("baseshootingline: 开始执行，bulletCount=%d, enemy.size=%d, currentAmmo=%d, reloading=%s" % [bulletCount, enemy.size(), currentAmmo, str(reloading)])
+	
 	# 在射击前进行最终检查，虽然状态机已经保证了大部分情况
 	var tempcount :int
 	tempcount=min(bulletCount,enemy.size())
+	print("baseshootingline: tempcount=%d" % tempcount)
+	
 	if currentAmmo <= 0 and  (not reloading):
+		print("baseshootingline: 弹药不足，触发reload")
 		Eventmanger.reloadAmmo.emit()
 		return
 	if reloading or currentAmmo <=0:
+		print("baseshootingline: 正在reload或弹药不足，返回")
 		return
+		
+	print("baseshootingline: 开始创建射击线")
 		
 	# 优化：原先的await会阻塞函数，改为为每条线创建一个独立的计时器来销毁
 	for i in range(tempcount):
@@ -167,6 +175,7 @@ func baseshootingline():
 		line.width = 1
 		# 确保敌人实例仍然有效
 		if not is_instance_valid(enemy[i]):
+			print("baseshootingline: 敌人实例无效，跳过")
 			continue
 		else :
 			bulletCount -=1
@@ -181,10 +190,12 @@ func baseshootingline():
 		if enemy[i].has_method("getHurt"):
 			enemy[i].getHurt(damage)
 		Eventmanger.playerShooted.emit(enemy[i],ends,baseDamage)
+		print("baseshootingline: 发射子弹到敌人，伤害=%.2f" % damage)
 		
 	bulletCount = max(bulletCount,1)
 	currentAmmo -= 1
 	Eventmanger.playershooting.emit(currentAmmo)
+	print("baseshootingline: 射击完成，剩余弹药=%d" % currentAmmo)
 
 
 		
@@ -230,10 +241,12 @@ func _on_baseshoot_c_dtimer_timeout() -> void:
 
 # 新的动画完成处理函数
 func _on_animation_finished(anim_name: StringName):
+	print("_on_animation_finished: 动画完成 - %s" % anim_name)
 	# 只在"shoot"动画完成时自动返回idle
 	# "reloadAmmo"动画的结束逻辑由其最后一帧调用的 reloadFinishfunc() 处理
 	# "idle"动画是循环的，通常不会触发这个（除非设置为不循环）
 	if anim_name == &"shoot":
+		print("_on_animation_finished: shoot动画完成，返回IDLE")
 		_returnidle()
 
 func _showTips(stext: String):
