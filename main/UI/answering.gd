@@ -5,6 +5,7 @@ const ANSWER_BUTTON = preload('res://main/UI/answer_button.tscn')
 @onready var h_box_container_1: HBoxContainer =$VBoxContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer1
 @onready var h_box_container_2: HBoxContainer =$VBoxContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer2
 @onready var nine_patch_rect: NinePatchRect = $VBoxContainer/NinePatchRect
+@onready var skip_button: Button = $VBoxContainer/NinePatchRect/VBoxContainer/SkipButton
 
 
 var allkeys:Array
@@ -18,6 +19,7 @@ func _ready() -> void:
 	Eventmanger.answered.connect(_reloadtiltle)
 	Eventmanger.setbulletPos(self,true)
 	Eventmanger.setpowerPos(self,true)
+	skip_button.pressed.connect(_on_skip_pressed)
 ##获取随机题目，返回一个拥有题目所有信息的字典，包含中文翻译，日语汉字，混淆词等
 
 	
@@ -99,3 +101,11 @@ func answerPanlePos():
 	var temprect = nine_patch_rect.get_global_rect()
 	print(temprect.position,temprect.size," 。by:answering.gd")
 	return temprect
+
+func _on_skip_pressed() -> void:
+	# 跳过题目：不获得/损失资源，不触发技能，不影响错题记录和连击
+	print("跳过按钮被点击")
+	Eventmanger.questionSkipped.emit()  # 发送跳过信号
+	Eventmanger.answerFinsh.emit()  # 触发答题结束事件
+	# 直接加载下一题
+	_settilte()

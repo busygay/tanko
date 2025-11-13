@@ -84,6 +84,8 @@ signal answered(isanswer:bool)
 @warning_ignore('unused_signal')
 signal answerFinsh
 @warning_ignore('unused_signal')
+signal questionSkipped  # 新增跳过信号
+@warning_ignore('unused_signal')
 signal comboChange
 
 @warning_ignore('unused_signal')

@@ -56,6 +56,7 @@ func _ready() -> void:
 	allkeys = word_Data.keys()
 	Eventmanger.answered.connect(_addcorrectcount)
 	Eventmanger.answered.connect(comboChange)
+	Eventmanger.questionSkipped.connect(_on_question_skipped)  # 连接跳过信号
 	Eventmanger.correctcountchange.connect(func():
 		powerBar.value = Correctcount
 		)
@@ -96,6 +97,11 @@ func _addcorrectcount(iscorrect):
 		# 回答错误，增加错误次数
 		if current_word != null:
 			Jlptn5._updateErrorWordCount(current_word, 3)
+
+func _on_question_skipped() -> void:
+	# 跳过题目：不获得/损失资源，不触发技能，不影响错题记录
+	# 连击数保持不变
+	print("题目被跳过")
 
 func upDatascore(_node):
 	coin+=1

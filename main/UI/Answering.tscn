@@ -102,3 +102,9 @@ layout_mode = 2
 clip_contents = true
 custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
+
+[node name="SkipButton" type="Button" parent="VBoxContainer/NinePatchRect/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_font_sizes/font_size = 24
+text = "跳过题目"
