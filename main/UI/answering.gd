@@ -111,9 +111,9 @@ func _triggerSpecialQuestion():
 
 func _setErrorReviewQuestion():
 	current_question_type = "error_review"
-	var error_word = Jlptn5._getHighestErrorWord()
+	var error_review_word = Jlptn5._getHighestErrorWord()
 	
-	if error_word == null:
+	if error_review_word == null:
 		# 如果没有错题，返回普通题目
 		_setNormalQuestion()
 		return
@@ -125,13 +125,13 @@ func _setErrorReviewQuestion():
 	for i in h_box_container_2.get_children():
 		i.queue_free()
 	
-	var temp_key = error_word.get("中文翻译", "")
-	tiltle = error_word
+	var temp_key = error_review_word.get("中文翻译", "")
+	tiltle = error_review_word
 	current_title_word = tiltle
 	
 	# 获取错误答案
 	var error_options = Jlptn5._getErrorWordData()
-	error_options.append(error_word.get("容易混淆的单词", ""))
+	error_options.append(error_review_word.get("容易混淆的单词", ""))
 	
 	title_label.text = "    错题复习：选择\""+temp_key+"\"的日文翻译"
 	var Correct : int = randi()%4

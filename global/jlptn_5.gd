@@ -15,7 +15,7 @@ var wordBookPath:Dictionary={
 # 存储所有已加载的单词数据，键为单词本名称，值为该单词本的所有单词数据
 var word_data:Dictionary={}
 
-# 当前选择的单词本列表，用于确定游戏中使用的单词范围
+# 当前选择的单词本列表，用于确定游戏中使用的单词范围，默认情况下使用JLPT N5级别单词本
 var wordBookList:Array=[
 	"JLPTN5",
 ]
