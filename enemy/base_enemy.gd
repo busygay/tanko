@@ -75,6 +75,9 @@ func initData(Mul:float):
 		speed = int (speed *speedMul)
 		damage = int (damage*damageMul)
 	
+	# 限制最小移动速度
+	if speed < 25:
+		speed = 25
 	
 func _physics_process(_delta: float) -> void:
 	match currentState:
@@ -122,6 +125,7 @@ func _enter_state(new_state:state,):
 			state.att:
 				animation_player.play("att")
 				timer.start(attCd)
+				# 在动画中途触发攻击伤害
 				animation_player.animation_finished.connect(func(_animeName):
 					_enter_state(state.idle)
 					,CONNECT_ONE_SHOT)
@@ -150,7 +154,8 @@ func _state_logic_idle():
 func _on_timer_timeout() -> void:
 	if currentState == state.idle and (not playerbox.is_empty()):
 		_enter_state(state.att)
-	
+
+#通常通过animationplayer调用，对于攻击动画简单的也可以直接在状态机调用。
 func att():
 	if playerbox.is_empty():
 		return

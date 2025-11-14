@@ -486,8 +486,7 @@ libraries = {
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_3agur")
-animation = &"idle"
-frame_progress = 0.4050477
+animation = &"att"
 offset = Vector2(0, -6)
 
 [node name="eye" type="Area2D" parent="."]
