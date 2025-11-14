@@ -28,9 +28,11 @@ enum state{
 var currentState=state.idle
 
 func _ready() -> void:
+	print("base_enemy _ready() 开始")
 	Eventmanger.enterTreeEnemy.emit()
 	# 获取玩家引用
 	baseScale = self.scale
+	print("设置 baseScale: ", baseScale)
 	player = get_tree().get_first_node_in_group("player")
 	if not is_instance_valid(player):
 		push_error("找不到player节点，敌人将无法行动！")
@@ -40,6 +42,7 @@ func _ready() -> void:
 	# 根据敌人相对玩家的初始位置设置朝向
 	var initialDirection = global_position.direction_to(player.global_position)
 	var targetDir = initialDirection.x > 0
+	print("初始方向检查 - baseDir: ", baseDir, " targetDir: ", targetDir, " 初始scale: ", scale)
 	if baseDir != true:
 		currentFacingDir = targetDir
 		if currentFacingDir:
@@ -56,6 +59,7 @@ func _ready() -> void:
 		else:
 			# 初始朝左
 			scale.x = -baseScale.x
+	print("朝向设置完成 - currentFacingDir: ", currentFacingDir, " 最终scale: ", scale)
 	_enter_state(state.walk)
 
 func initData(Mul:float):
@@ -100,8 +104,9 @@ func _state_logic_walk():
 	if direction.x != 0:
 		var targetDir = direction.x >0 #大于0朝右，小于0朝左
 		# 只有当朝向真正改变时才翻转
-		if targetDir != currentFacingDir: 
-			currentFacingDir = targetDir 
+		if targetDir != currentFacingDir:
+			print("朝向改变 - 从 ", currentFacingDir, " 到 ", targetDir, " baseScale: ", baseScale, " 当前scale: ", scale)
+			currentFacingDir = targetDir
 			# 简化逻辑：直接根据目标朝向设置缩放
 			if targetDir:
 				# 目标朝右
@@ -109,6 +114,7 @@ func _state_logic_walk():
 			else:
 				# 目标朝左
 				scale.x = -baseScale.x
+			print("朝向更新完成 - 新scale: ", scale)
 
 	if not playerbox.is_empty():
 		_enter_state(state.att,)
@@ -187,6 +193,11 @@ func _on_eye_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		playerbox.append(body)
 	pass # Replace with function body.
+
+func _on_eye_body_exited(body: Node2D) -> void:
+	if body.is_in_group("player"):
+		if playerbox.has(body):
+			playerbox.erase(body)
 
 func _exit_tree() -> void:
 	Eventmanger.exitTreeEnemy.emit()

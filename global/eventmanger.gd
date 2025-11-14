@@ -13,8 +13,14 @@ func _ready() -> void:
 func enemySpawnfunc(enemynode):
 	player.enemy.append(enemynode)
 func enemydeathfunc(enemynode):
+	# 检查并清理所有无效的敌人引用
+	for i in range(player.enemy.size() - 1, -1, -1):
+		if not is_instance_valid(player.enemy[i]):
+			player.enemy.remove_at(i)
+	
+	# 移除特定的敌人节点
 	if player.enemy.has(enemynode):
-		player.enemy.remove_at( player.enemy.find(enemynode))
+		player.enemy.remove_at(player.enemy.find(enemynode))
 func reloadAmmofunc():
 	player.animation_player.play("reloadAmmo")
 func addCurrentAmmo(isanswer:bool):
