@@ -66,6 +66,8 @@ func _ready() -> void:
 	Eventmanger.enterTreeEnemy.connect(enterTreeEnemyfunc)
 	Eventmanger.exitTreeEnemy.connect(exitTreeEnemyfunc)
 
+	# 连接单词重组完成的信号
+	Eventmanger.wordReorderCompleted.connect(_on_word_reorder_completed)
 		
 func _addcorrectcount(iscorrect):
 	# 获取当前题目单词
@@ -97,6 +99,20 @@ func _addcorrectcount(iscorrect):
 		# 回答错误，增加错误次数
 		if current_word != null:
 			Jlptn5._updateErrorWordCount(current_word, 3)
+
+func _on_word_reorder_completed():
+	# 单词重组完成，额外奖励1AP
+	print("单词重组完成，额外奖励1AP")
+	if Correctcount >=10 :
+		if power <maxpower:
+			Eventmanger.actionPointUp.emit()
+			power+=1
+			Correctcount = 5
+		else:
+			Correctcount = 10
+	else:
+		Correctcount +=1
+	Eventmanger.correctcountchange.emit()
 
 func _on_question_skipped() -> void:
 	# 跳过题目：不获得/损失资源，不触发技能，不影响错题记录

@@ -93,6 +93,8 @@ signal answerFinsh
 signal questionSkipped  # 新增跳过信号
 @warning_ignore('unused_signal')
 signal comboChange
+@warning_ignore('unused_signal')
+signal wordReorderCompleted  # 单词重组完成信号
 
 @warning_ignore('unused_signal')
 signal enterTreeEnemy
