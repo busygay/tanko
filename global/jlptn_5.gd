@@ -49,6 +49,7 @@ var masteredWord:Dictionary  # 存储已掌握的单词（错误次数为0且从
 func _ready() -> void:
 	# 调用方: Godot引擎自动调用
 	_loadWord()
+	_loadErrorWord()  # 加载已保存的错误单词和已掌握单词数据
 	Eventmanger.restartGame.connect(_restartGame)
 	Eventmanger.saveErrorWord.connect(_saveErrorWord)
 	Eventmanger.gameover.connect(_clearWord)
@@ -71,16 +72,16 @@ func _addCorrectWord(sword:Dictionary):
 func _updateErrorWordCount(word:Dictionary, count_change:int):
 	# 调用方: main/main.gd (第90行, 第101行), main/UI/answerButton.gd (第41行, 第52行)
 	# 功能: 更新单词的错误次数，支持增加或减少错误次数
-	# 逻辑问题: 当count_change为负数且单词不在错误列表中时，函数不会添加新条目，这是正确的
+	
 	var word_key = word.get("假名", "")
 	if word_key.is_empty():
 		return
 	
 	# 检查单词是否在当前错误列表中
+
 	if errorWord.has(word_key):
 		var error_word_data = errorWord.get(word_key)
 		error_word_data.error_count += count_change
-		
 		# 如果错误次数小于等于0，从错误列表中移除
 		if error_word_data.error_count <= 0:
 			errorWord.erase(word_key)
@@ -96,20 +97,28 @@ func _updateErrorWordCount(word:Dictionary, count_change:int):
 			}
 			errorWord.set(word_key, error_word_data)
 			print("新单词 '%s' 加入错误列表，错误次数: %d" % [word.get("日语汉字", word_key), count_change])
+		else : # 如果是减少错误次数且不在错误列表中，则检查savedErrorWord
+			for i in savedErrorWord:
+				if i.word_data.get("假名","") == word_key:
+					i.error_count += count_change
+					if i.error_count <=0:
+						savedErrorWord.erase(i)
+						print("单词 '%s' 错误次数已降为0，从已保存错误列表中移除" % word.get("日语汉字", word_key))
+					else:
+						print("单词 '%s' 已保存错误次数更新为: %d" % [word.get("日语汉字", word_key), i.error_count])
+					break
+				
+
 
 func _clearWord():
 	# 调用方: Eventmanger.gameover信号触发 (第26行), main/UI/word_confirm.gd (第22行)
 	# 功能: 游戏结束时清理当前游戏的单词数据，将正确和错误单词保存到历史记录
 	allcorrectWord.append_array(correctWord.values())
 	
-	# 处理错误单词，只添加错误次数大于0的
 	for word_key in errorWord.keys():
 		var error_word = errorWord.get(word_key)
-		if error_word.error_count > 0:
-			allErrorWord.append(error_word)
-		else:
-			# 错误次数为0的单词加入已掌握单词库
-			masteredWord.set(word_key, error_word.word_data)
+		allErrorWord.append(error_word)
+
 	
 	errorWord.clear()
 	correctWord.clear()
@@ -128,24 +137,20 @@ func _restartGame():
 	# 功能: 重置游戏状态，清空所有单词记录
 	allcorrectWord.clear()
 	allErrorWord.clear()
-	masteredWord.clear()
-	pass
+	
 
 
 func _saveErrorWord():
 	# 调用方: Eventmanger.saveErrorWord信号触发 (第25行)
-	# 功能: 保存错误单词和已掌握单词到文件
-	print("_saveErrorWord: 开始保存错误单词")
-	print("_saveErrorWord: errorWord字典大小: %d" % errorWord.size())
-	print("_saveErrorWord: allErrorWord数组大小: %d" % allErrorWord.size())
-	print("_saveErrorWord: masteredWord字典大小: %d" % masteredWord.size())
+	# 功能: 保存错误单词和已掌握单词到不同文件
 	
 	var savepath = "user://saveErrorWordData.json"
+	var saveMasteredPath = "user://masteredWordData.json"
 	var exitWord:Array = []
 	
 	# 加载已保存的错误单词
 	if FileAccess.file_exists(savepath):
-		print("_saveErrorWord: 发现已存在的保存文件")
+		print("_saveErrorWord: 发现已存在的错误单词保存文件")
 		var openData = FileAccess.open(savepath,FileAccess.READ)
 		if openData:
 			var tempjson = openData.get_as_text()
@@ -154,10 +159,10 @@ func _saveErrorWord():
 				exitWord = tempData
 				print("_saveErrorWord: 已加载 %d 个已保存的错误单词" % exitWord.size())
 			else:
-				push_error("数据加载失败")
+				push_error("错误单词数据加载失败")
 		openData.close()
 	else:
-		print("_saveErrorWord: 保存文件不存在，将创建新文件")
+		print("_saveErrorWord: 错误单词保存文件不存在，将创建新文件")
 	
 	# 合并当前游戏的错误单词到已保存的列表
 	var saved_word_dict:Dictionary = {}
@@ -168,9 +173,6 @@ func _saveErrorWord():
 			var word_key = saved_word.word_data.get("假名", "")
 			if not word_key.is_empty():
 				saved_word_dict[word_key] = saved_word
-	
-	print("_saveErrorWord: 当前游戏错误单词数量: %d" % errorWord.size())
-	print("_saveErrorWord: 当前游戏allErrorWord数量: %d" % allErrorWord.size())
 	
 	# 使用allErrorWord而不是errorWord，因为errorWord在游戏结束时已被清空
 	var source_error_words = allErrorWord if errorWord.is_empty() else errorWord.values()
@@ -186,42 +188,45 @@ func _saveErrorWord():
 			var existing_word = saved_word_dict.get(word_key)
 			existing_word.error_count += current_word.error_count
 			saved_word_dict[word_key] = existing_word
-			print("_saveErrorWord: 更新已存在的单词 '%s'，错误次数累加到 %d" % [word_key, existing_word.error_count])
 		else:
 			# 如果不存在，直接添加
 			saved_word_dict[word_key] = current_word
-			print("_saveErrorWord: 添加新单词 '%s'，错误次数: %d" % [word_key, current_word.error_count])
 	
-	# 保存已掌握的单词（错误次数为0且从错题本移除的单词）
-	for mastered_key in masteredWord.keys():
-		var mastered_data = masteredWord.get(mastered_key)
-		# 检查是否已在保存数据中（避免重复保存）
-		if not saved_word_dict.has(mastered_key):
-			var mastered_entry = {
-				"word_data": mastered_data,
-				"error_count": 0,
-				"mastered": true  # 标记为已掌握
-			}
-			saved_word_dict[mastered_key] = mastered_entry
-			print("_saveErrorWord: 保存已掌握单词 '%s'" % mastered_key)
-		else:
-			print("_saveErrorWord: 已掌握单词 '%s' 已存在，跳过保存" % mastered_key)
-	
-	# 将字典转换回数组
-	var save_array:Array = []
+	# 将错误单词字典转换回数组
+	var error_save_array:Array = []
 	for word_key in saved_word_dict.keys():
-		save_array.append(saved_word_dict.get(word_key))
+		error_save_array.append(saved_word_dict.get(word_key))
 	
-	print("_saveErrorWord: 最终保存 %d 个单词（包含错误单词和已掌握单词）" % save_array.size())
+	print("_saveErrorWord: 最终保存 %d 个错误单词" % error_save_array.size())
 	
-	# 保存到文件
+	# 保存错误单词到文件
 	var file = FileAccess.open(savepath,FileAccess.WRITE)
 	if file:
-		var tempjson = JSON.stringify(save_array, "\t")
+		var tempjson = JSON.stringify(error_save_array, "\t")
 		file.store_string(tempjson)
-		print("单词数据已保存，共 %d 个单词" % save_array.size())
+		print("错误单词数据已保存，共 %d 个单词" % error_save_array.size())
 	else:
-		print("保存失败")
+		print("错误单词保存失败")
+	
+	# 保存已掌握的单词到单独的文件
+	var mastered_save_array:Array = []
+	for mastered_key in masteredWord.keys():
+		var mastered_data = masteredWord.get(mastered_key)
+		var mastered_entry = {
+			"word_data": mastered_data,
+		}
+		mastered_save_array.append(mastered_entry)
+	
+	print("_saveErrorWord: 保存 %d 个已掌握单词到单独文件" % mastered_save_array.size())
+	
+	# 保存已掌握单词到文件
+	var mastered_file = FileAccess.open(saveMasteredPath, FileAccess.WRITE)
+	if mastered_file:
+		var mastered_json = JSON.stringify(mastered_save_array, "\t")
+		mastered_file.store_string(mastered_json)
+		print("已掌握单词数据已保存，共 %d 个单词" % mastered_save_array.size())
+	else:
+		print("已掌握单词保存失败")
 	
 	print("_saveErrorWord: 保存完成")
 
@@ -229,7 +234,9 @@ func _loadErrorWord():
 	# 调用方: menu/menu.gd (第104行)
 	# 功能: 从文件加载错误单词和已掌握单词数据
 	var savepath = "user://saveErrorWordData.json"
+	var saveMasteredPath = "user://masteredWordData.json"
 
+	# 加载错误单词数据
 	if FileAccess.file_exists(savepath):
 		var openData = FileAccess.open(savepath,FileAccess.READ)
 		if openData:
@@ -237,20 +244,34 @@ func _loadErrorWord():
 			var tempData = JSON.parse_string(tempjson)
 			if typeof(tempData) == TYPE_ARRAY:
 				savedErrorWord = tempData
-				print("已加载 %d 个单词数据" % savedErrorWord.size())
+				print("已加载 %d 个错误单词数据" % savedErrorWord.size())
+			else:
+				push_error("错误单词数据加载失败")
+		openData.close()
+	else:
+		print("错误单词保存文件不存在，将创建新文件")
+	
+	# 加载已掌握单词数据
+	if FileAccess.file_exists(saveMasteredPath):
+		var masteredData = FileAccess.open(saveMasteredPath, FileAccess.READ)
+		if masteredData:
+			var mastered_json = masteredData.get_as_text()
+			var mastered_parsed = JSON.parse_string(mastered_json)
+			if typeof(mastered_parsed) == TYPE_ARRAY:
+				print("已加载 %d 个已掌握单词数据" % mastered_parsed.size())
 				
 				# 从保存数据中恢复已掌握的单词
-				for saved_entry in savedErrorWord:
-					if typeof(saved_entry) == TYPE_DICTIONARY and saved_entry.has("mastered") and saved_entry.mastered:
+				for saved_entry in mastered_parsed:
+					if typeof(saved_entry) == TYPE_DICTIONARY and saved_entry.has("word_data"):
 						var word_key = saved_entry.word_data.get("假名", "")
 						if not word_key.is_empty():
 							masteredWord.set(word_key, saved_entry.word_data)
 							print("恢复已掌握单词: %s" % word_key)
 			else:
-				push_error("数据加载失败")
-		openData.close()
+				push_error("已掌握单词数据加载失败")
+		masteredData.close()
 	else:
-		print("错误单词保存文件不存在，将创建新文件")
+		print("已掌握单词保存文件不存在，将创建新文件")
 	
 func _loadWord():
 	# 调用方: _ready()函数 (第23行)

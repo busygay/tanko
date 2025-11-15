@@ -4,6 +4,9 @@ extends Control
 @onready var error_word_panel: Panel = $ErrorWordPanel
 @onready var error_word_vbox: VBoxContainer = %ErrorWordVBox
 @onready var button_v_box_container: VBoxContainer = $setPanel/MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/Panel/MarginContainer/HBoxContainer/MarginContainer/ColorRect/buttonVBoxContainer
+@onready var error_word_data_button: Button = $ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/errorWordData
+@onready var rebuild_error_word_data_button: Button = $ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/reBuildErrorWordData
+@onready var header: HBoxContainer = error_word_vbox.get_node("header")
 
 ###控制背景用
 @onready var bg_player: Node2D = $BG/bgPlayer
@@ -26,6 +29,10 @@ func _ready() -> void:
 	ChangeScenceLoad.loadPath(mainPath)
 	bg_player.get_node(^"body").play("idle")
 	bg_player.get_node(^"gun").play("idle")
+	
+	# 连接错题本相关按钮信号
+	error_word_data_button.pressed.connect(_on_error_word_data_button_pressed)
+	rebuild_error_word_data_button.pressed.connect(_on_rebuild_error_word_data_button_pressed)
 func _process(_delta: float) -> void:
 	BG()
 
@@ -37,7 +44,7 @@ func _on_set_btton_pressed() -> void:
 	pass # Replace with function body.
 
 func _on_error_word_button_pressed() -> void:
-	_loadErrorWordData()
+	_loadErrorWordData("error_book")  # 默认显示错题本
 	error_word_panel.show()
 
 func _on_back_pressed() -> void:
@@ -94,10 +101,12 @@ func _on_bg_spawn_timer_timeout() -> void:
 	bg_spawn_timer.start(randf_range(1,4))
 	pass # Replace with function body.
 
-func _loadErrorWordData() -> void:
-	print("menu _loadErrorWordData: 开始加载错题数据")
-	# 清空现有的错题显示
+func _loadErrorWordData(display_mode: String) -> void:
+	print("menu _loadErrorWordData: 开始加载数据，显示模式: %s" % display_mode)
+	# 清空现有的显示内容
 	for child in error_word_vbox.get_children():
+		if child.name == "header":
+			continue  # 保留头部
 		child.queue_free()
 	
 	# 重新加载错误单词数据
@@ -106,78 +115,94 @@ func _loadErrorWordData() -> void:
 	# 从Jlptn5获取保存的错题数据
 	var saved_error_words = Jlptn5.savedErrorWord
 	
-	print("menu _loadErrorWordData: 从 Jlptn5 获取到 %d 个错误单词" % saved_error_words.size())
+	print("menu _loadErrorWordData: 从 Jlptn5 获取到 %d 个单词数据" % saved_error_words.size())
 	
-	if saved_error_words.is_empty():
-		print("menu _loadErrorWordData: 没有错题记录")
+	# 根据显示模式筛选数据
+	var display_data = []
+	
+	if display_mode == "error_book":
+		# 错题本模式：只显示错误次数大于0的单词
+		for word_entry in saved_error_words:
+			if word_entry.has("error_count") and word_entry.error_count > 0:
+				display_data.append(word_entry)
+		print("menu _loadErrorWordData: 错题本模式，筛选出 %d 个错题" % display_data.size())
+	elif display_mode == "rebuild_book":
+		# 单词重组词库模式：显示所有单词（包括已掌握的）
+		display_data = Jlptn5.masteredWord
+		print("menu _loadErrorWordData: 单词重组词库模式，共 %d 个单词" % display_data.size())
+	
+	if display_data.is_empty():
+		print("menu _loadErrorWordData: 没有数据记录")
 		var no_data_label = Label.new()
-		no_data_label.text = "暂无错题记录"
+		if display_mode == "error_book":
+			no_data_label.text = "暂无错题记录"
+		else:
+			no_data_label.text = "暂无单词记录"
 		no_data_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		no_data_label.add_theme_font_size_override("font_size", 32)
 		error_word_vbox.add_child(no_data_label)
 		return
 	
-	# 按错误次数排序（从高到低）
-	saved_error_words.sort_custom(func(a, b): return a.error_count > b.error_count)
+	#无需创建头部，头部不会被删除。
+	#var header = _createWordHeader()
+	#error_word_vbox.add_child(header)
 	
-	print("menu _loadErrorWordData: 开始创建 %d 个错题条目" % saved_error_words.size())
+	# 按错误次数排序（从高到低），对于单词重组词库模式，已掌握的（error_count=0）排在后面
+	display_data.sort_custom(func(a, b):
+		if a.error_count == 0 and b.error_count > 0:
+			return false
+		elif a.error_count > 0 and b.error_count == 0:
+			return true
+		else:
+			return a.error_count > b.error_count
+	)
 	
-	# 创建错题条目
-	for error_word_data in saved_error_words:
-		var word_data = error_word_data.word_data
-		var error_count = error_word_data.error_count
+	print("menu _loadErrorWordData: 开始创建 %d 个单词条目" % display_data.size())
+	
+	# 创建单词条目
+	for word_entry in display_data:
+		var word_data = word_entry.word_data
+		var error_count = word_entry.error_count
+		var is_mastered = word_entry.get("mastered", false)
 		
-		var word_item = Panel.new()
-		word_item.custom_minimum_size = Vector2(0, 80)
-		
-		var hbox = HBoxContainer.new()
-		hbox.alignment = BoxContainer.ALIGNMENT_CENTER
-		hbox.add_theme_constant_override("separation", 20)
-		
-		
-		# 单词信息
-		var word_label = Label.new()
-		var word_text = word_data.get("日语汉字", "")
-		if word_text.is_empty():
-			word_text = word_data.get("假名", "")
-		word_label.text = word_text
-		word_label.add_theme_font_size_override("font_size", 28)
-		word_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		
-		# 假名
-		var kana_label = Label.new()
-		kana_label.text = word_data.get("假名", "")
-		kana_label.add_theme_font_size_override("font_size", 24)
-		kana_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		
-		# 中文翻译
-		var meaning_label = Label.new()
-		meaning_label.text = word_data.get("中文翻译", "")
-		meaning_label.add_theme_font_size_override("font_size", 24)
-		meaning_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		
-		# 错误次数
-		var error_count_label = Label.new()
-		error_count_label.text = "错误: %d次" % error_count
-		error_count_label.add_theme_font_size_override("font_size", 24)
-		error_count_label.add_theme_color_override("font_color", Color(1, 0.2, 0.2))
-		
-		hbox.add_child(word_label)
-		hbox.add_child(kana_label)
-		hbox.add_child(meaning_label)
-		hbox.add_child(error_count_label)
-		
-		var margin = MarginContainer.new()
-		margin.add_theme_constant_override("margin_top", 5)
-		margin.add_theme_constant_override("margin_bottom", 5)
-		margin.add_theme_constant_override("margin_left", 10)
-		margin.add_theme_constant_override("margin_right", 10)
-		margin.add_child(hbox)
-		
-		word_item.add_child(margin)
+		var word_item = _createWordItem(word_data, error_count, display_mode, is_mastered)
 		error_word_vbox.add_child(word_item)
 	
-	print("menu _loadErrorWordData: 错题条目创建完成")
+	print("menu _loadErrorWordData: 单词条目创建完成")
+
+
+func _createWordItem(word_data: Dictionary, error_count: int, display_mode: String, is_mastered: bool = false) -> HBoxContainer:
+	var tempWordHbox:HBoxContainer = header.duplicate()
+
+	var tempJapaneseLabel:Label = tempWordHbox.get_child(0) as Label
+	var tempChineseLabel:Label = tempWordHbox.get_child(1) as Label
+	var tempCountLabel:Label = tempWordHbox.get_child(2) as Label
+	tempJapaneseLabel.text = word_data.get("日语汉字", "")
+	if tempJapaneseLabel.text.is_empty():
+		tempJapaneseLabel.text = word_data.get("假名", "")
+	tempChineseLabel.text = word_data.get("中文翻译", "")
+	if display_mode == "error_book":
+		# 错题本模式：显示错误次数
+		tempCountLabel.text = "错误: %d次" % error_count
+		tempCountLabel.add_theme_color_override("font_color", Color(1, 0.2, 0.2))
+	else:
+		# 单词重组词库模式：用"-"代替次数
+		if is_mastered:
+			tempCountLabel.text = "已掌握"
+			tempCountLabel.add_theme_color_override("font_color", Color(0.2, 1, 0.2))
+		else:
+			tempCountLabel.text = "-"
+			tempCountLabel.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+	return tempWordHbox
+
+
+func _on_error_word_data_button_pressed() -> void:
+	print("错题本按钮被按下")
+	_loadErrorWordData("error_book")
+
+func _on_rebuild_error_word_data_button_pressed() -> void:
+	print("单词重组词库按钮被按下")
+	_loadErrorWordData("rebuild_book")
 
 
 ###debug用寻找孤立实例

@@ -1,4 +1,4 @@
-[gd_scene load_steps=58 format=3 uid="uid://b2srsnxwwp6yd"]
+[gd_scene load_steps=61 format=3 uid="uid://b2srsnxwwp6yd"]
 
 [ext_resource type="Texture2D" uid="uid://7lkg3xwj2574" path="res://asset/button.png" id="1_lti8b"]
 [ext_resource type="Script" uid="uid://hoyga8h0qlov" path="res://menu/menu.gd" id="1_ouk20"]
@@ -307,6 +307,15 @@ font_color = Color(0, 0, 0, 1)
 outline_size = 1
 outline_color = Color(0, 0, 0, 1)
 
+[sub_resource type="LabelSettings" id="LabelSettings_bc54p"]
+font_size = 32
+
+[sub_resource type="LabelSettings" id="LabelSettings_043lm"]
+font_size = 32
+
+[sub_resource type="LabelSettings" id="LabelSettings_iesyu"]
+font_size = 32
+
 [node name="menu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -605,7 +614,6 @@ label_settings = SubResource("LabelSettings_g7jxm")
 horizontal_alignment = 1
 
 [node name="ErrorWordPanel" type="Panel" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -643,25 +651,89 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TitleLabel" type="Label" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_right = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 20
+
+[node name="errorWordData" type="Button" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 40
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 32
 text = "错题本"
+
+[node name="reBuildErrorWordData" type="Button" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 32
+text = "单词重组词库"
+
+[node name="MarginContainer2" type="MarginContainer" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_top = 36
+theme_override_constants/margin_right = 26
+
+[node name="Panel" type="Panel" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer/MarginContainer2"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer/MarginContainer2/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ErrorWordVBox" type="VBoxContainer" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer/MarginContainer2/Panel/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="header" type="HBoxContainer" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer/MarginContainer2/Panel/ScrollContainer/ErrorWordVBox"]
+layout_mode = 2
+size_flags_vertical = 4
+alignment = 1
+
+[node name="日语" type="Label" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer/MarginContainer2/Panel/ScrollContainer/ErrorWordVBox/header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "日语"
+label_settings = SubResource("LabelSettings_bc54p")
+horizontal_alignment = 1
+
+[node name="中文" type="Label" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer/MarginContainer2/Panel/ScrollContainer/ErrorWordVBox/header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "中文"
+label_settings = SubResource("LabelSettings_043lm")
+horizontal_alignment = 1
+
+[node name="记录次数" type="Label" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer/MarginContainer2/Panel/ScrollContainer/ErrorWordVBox/header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "被记录次数"
+label_settings = SubResource("LabelSettings_iesyu")
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer"]
 layout_mode = 2
-
-[node name="ScrollContainer" type="ScrollContainer" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="ErrorWordVBox" type="VBoxContainer" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/ScrollContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
 
 [node name="MarginContainer2" type="MarginContainer" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer"]
 layout_mode = 2
@@ -670,6 +742,7 @@ theme_override_constants/margin_bottom = 20
 
 [node name="BackButton" type="TextureButton" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/MarginContainer2"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 70)
 layout_mode = 2
 size_flags_horizontal = 4
 texture_normal = SubResource("AtlasTexture_h1wq0")
@@ -678,9 +751,15 @@ stretch_mode = 0
 
 [node name="Label" type="Label" parent="ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/MarginContainer2/BackButton"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -24.0
+offset_right = 32.0
+offset_bottom = 24.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "返回"
