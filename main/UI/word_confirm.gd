@@ -69,18 +69,19 @@ func showWord(isCorrect:bool):
 				# 尝试通过 word_data 访问（新方式）
 				var word_data = tempword.get("word_data", {})
 				print("word_data: ", word_data)
-				var kana = word_data.get("假名") if typeof(word_data) == TYPE_DICTIONARY else direct_kana
-				var kanji = word_data.get("日语汉字") if typeof(word_data) == TYPE_DICTIONARY else tempword.get("日语汉字")
-				var translation = word_data.get("中文翻译") if typeof(word_data) == TYPE_DICTIONARY else tempword.get("中文翻译")
-				
-				print("最终值 - 假名: ", kana, ", 日语汉字: ", kanji, ", 中文翻译: ", translation)
-				
+				var kana = tempword.get("假名")
+				var kanji = tempword.get("日语汉字","--")
+				var translation = tempword.get("中文翻译")
+
+
 				temp.get_child(0).text = kana
 				temp.get_child(1).text = kanji
 				temp.get_child(2).text = translation
 				content.add_child(temp)
 			else:
 				push_error("header的节点数量不对。by:WordConfirm.gd")
+
+
 func clearChild():
 	for i in content.get_children():
 		i.queue_free()

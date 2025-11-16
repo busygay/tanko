@@ -25,8 +25,6 @@ func _ready() -> void:
 	Eventmanger.setpowerPos(self,true)
 	skip_button.pressed.connect(_on_skip_pressed)
 ##获取随机题目，返回一个拥有题目所有信息的字典，包含中文翻译，日语汉字，混淆词等
-
-	
 ##获取错误答案，放回一个拥有2个错误答案的数组，答案由随机日语汉字和假名随机组成
 
 func _initset():

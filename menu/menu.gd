@@ -7,6 +7,8 @@ extends Control
 @onready var error_word_data_button: Button = $ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/errorWordData
 @onready var rebuild_error_word_data_button: Button = $ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/reBuildErrorWordData
 @onready var header: HBoxContainer = error_word_vbox.get_node("header")
+@onready var testmodeButton: CheckButton= $setPanel/MarginContainer/NinePatchRect/VBoxContainer/testmode/CheckButton
+
 
 ###控制背景用
 @onready var bg_player: Node2D = $BG/bgPlayer
@@ -18,8 +20,10 @@ var bgInEyeBox:Array
 var loadmain
 var loadProgress:Array
 var loadAnima:bool = false
-var wordBook:Array=[]
 var mainPath:String="res://main/main.tscn"
+
+var wordBook:Array=[]
+var isTestMode:bool=false
 
 func _ready() -> void:
 	if get_tree().paused ==true:
@@ -33,6 +37,26 @@ func _ready() -> void:
 	# 连接错题本相关按钮信号
 	error_word_data_button.pressed.connect(_on_error_word_data_button_pressed)
 	rebuild_error_word_data_button.pressed.connect(_on_rebuild_error_word_data_button_pressed)
+	_readSvaeData()
+
+
+func _readSvaeData() -> void:
+	isTestMode = globalSet.isTestMode
+	wordBook = globalSet.wordBookList.duplicate()
+	Jlptn5._setWordBookList(wordBook)
+	##设置单词本选择按钮状态
+	for i in button_v_box_container.get_children():
+		if wordBook.has(i.text):
+			i.button_pressed = true
+		else:
+			i.button_pressed = false
+	##设置测试模式按钮状态
+	testmodeButton.button_pressed = isTestMode
+	pass # Replace with function body
+
+
+
+
 func _process(_delta: float) -> void:
 	BG()
 
@@ -47,8 +71,12 @@ func _on_error_word_button_pressed() -> void:
 	_loadErrorWordData("error_book")  # 默认显示错题本
 	error_word_panel.show()
 
+
+##发送单词本选择变化给JLPNT5，并向globalSet发生设置
 func _on_back_pressed() -> void:
 	connectWordSelectButton()
+	globalSet.setIsTestMode(isTestMode)
+	globalSet.setWordBookList(wordBook)
 	set_panel.hide()
 	pass # Replace with function body.
 
@@ -122,9 +150,8 @@ func _loadErrorWordData(display_mode: String) -> void:
 	
 	if display_mode == "error_book":
 		# 错题本模式：只显示错误次数大于0的单词
-		for word_entry in saved_error_words:
-			if word_entry.has("error_count") and word_entry.error_count > 0:
-				display_data.append(word_entry)
+		for wordKey in saved_error_words:
+			display_data.append(saved_error_words.get(wordKey))
 		print("menu _loadErrorWordData: 错题本模式，筛选出 %d 个错题" % display_data.size())
 	elif display_mode == "rebuild_book":
 		# 单词重组词库模式：显示所有单词（包括已掌握的）
@@ -161,17 +188,15 @@ func _loadErrorWordData(display_mode: String) -> void:
 	
 	# 创建单词条目
 	for word_entry in display_data:
-		var word_data = word_entry.word_data
+		var word_data = word_entry
 		var error_count = word_entry.error_count
-		var is_mastered = word_entry.get("mastered", false)
-		
-		var word_item = _createWordItem(word_data, error_count, display_mode, is_mastered)
+		var word_item = _createWordItem(word_data, error_count, display_mode,)
 		error_word_vbox.add_child(word_item)
 	
 	print("menu _loadErrorWordData: 单词条目创建完成")
 
 
-func _createWordItem(word_data: Dictionary, error_count: int, display_mode: String, is_mastered: bool = false) -> HBoxContainer:
+func _createWordItem(word_data: Dictionary, error_count: int, display_mode: String) -> HBoxContainer:
 	var tempWordHbox:HBoxContainer = header.duplicate()
 
 	var tempJapaneseLabel:Label = tempWordHbox.get_child(0) as Label
@@ -187,12 +212,7 @@ func _createWordItem(word_data: Dictionary, error_count: int, display_mode: Stri
 		tempCountLabel.add_theme_color_override("font_color", Color(1, 0.2, 0.2))
 	else:
 		# 单词重组词库模式：用"-"代替次数
-		if is_mastered:
-			tempCountLabel.text = "已掌握"
-			tempCountLabel.add_theme_color_override("font_color", Color(0.2, 1, 0.2))
-		else:
-			tempCountLabel.text = "-"
-			tempCountLabel.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+		pass
 	return tempWordHbox
 
 
@@ -240,6 +260,6 @@ func _on_area_2d_area_entered(area: Area2D) -> void:
 
 
 func _on_check_button_toggled(toggled_on: bool) -> void:
-	globalSet.isTestMode = toggled_on
+	isTestMode = toggled_on
 	
 	pass # Replace with function body.

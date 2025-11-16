@@ -3,6 +3,10 @@ extends Control
 @onready var v_box_container: VBoxContainer = $Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer
 @onready var scroll_container: ScrollContainer = $Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer
 @onready var rich_text_label: RichTextLabel = $Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/RichTextLabel
+@onready var header: HBoxContainer = $Panel/MarginContainer/NinePatchRect/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/VBoxContainer/header
+
+
+
 
 # 使用枚举来定义显示模式，更清晰
 var menuPath:String = 'res://menu/menu.tscn'
@@ -15,9 +19,10 @@ enum DisplayMode {
 }
 
 var current_mode: DisplayMode = DisplayMode.NONE
-var error_words: Array
-var correct_words: Array
+var error_words: Dictionary
+var correct_words: Dictionary
 var current_index: int = 0
+var current_keys:Array = []
 
 var v_scrollbar: VScrollBar
 var label_settings: LabelSettings
@@ -69,6 +74,8 @@ func show_game_over() -> void:
 # 清空VBoxContainer中的所有Label
 func _clear_list() -> void:
 	for child in v_box_container.get_children():
+		if child.name == "header":
+			continue
 		child.queue_free()
 
 func _on_correct_pressed() -> void:
@@ -92,47 +99,43 @@ func _on_error_pressed() -> void:
 func _load_word_batch() -> void:
 	if is_loading:
 		return
-	
-	var source_array: Array
+	var sourceData: Dictionary
 	match current_mode:
 		DisplayMode.CORRECT:
-			source_array = correct_words
+			sourceData = correct_words
 		DisplayMode.ERROR:
-			source_array = error_words
+			sourceData = error_words
 		_: # 如果是 NONE 或其他情况，则不加载
 			return
+	current_keys = sourceData.keys()
 
 	# 如果所有单词都已加载，则返回
-	if current_index >= source_array.size():
+	if current_index >= sourceData.size():
 		return
-
+	#开始加载上锁
 	is_loading = true
 	
-	var count = min(BATCH_SIZE, source_array.size() - current_index)
+	var count = min(BATCH_SIZE, sourceData.size() - current_index)
 	
 	for i in range(count):
-		var word_item = source_array[current_index]
-		var word_data:Dictionary
-		var temp_word: String
 		
 		# 处理错误单词的数据结构（包含error_count）
-		if current_mode == DisplayMode.ERROR and word_item is Dictionary and word_item.has("word_data"):
-			word_data = word_item.word_data
-		else:
-			word_data = word_item
+		var temp = header.duplicate()
+		var label1 = temp.get_child(0) as Label #日语
+		var label2 = temp.get_child(1) as Label #中文/翻译
+		var label3 = temp.get_child(2) as Label #错误次数
+		var temp_word:Dictionary = sourceData.get(current_keys.get(current_index))
 		
-		temp_word = word_data.get("日语汉字", "")
-		if temp_word.is_empty():
-			temp_word = word_data.get("假名", "")
-			
-		var temp_label = Label.new()
-		temp_label.label_settings = label_settings
-		# 【关键修正】设置文本并添加到场景树
-		temp_label.text = "%d. %s" % [current_index + 1, temp_word] # 加上序号更友好
-		v_box_container.add_child(temp_label)
-		
+		label1.text = temp_word.get("日语汉字",null)
+		if label1.text == null:
+			label1.text =temp_word.get("假名",null)
+		label2.text = temp_word.get("中文翻译")
+		if current_mode == DisplayMode.ERROR:
+			label3.text = str(temp_word.get("error_count"))
+		else :
+			label3.text = "--"
 		current_index += 1
-	
+		header.get_parent().add_child(temp)
 	# 使用 call_deferred 确保在下一帧重置 is_loading 状态，
 	# 避免因UI更新延迟导致滚动条max_value未及时更新而连续触发加载。
 	call_deferred("_reset_loading_flag")
@@ -159,26 +162,3 @@ func _on_do_not_add_error_book_pressed() -> void:
 func _changeScenceToMenu():
 	ChangeScenceLoad.changeScence(menuPath)
 		
-func check_leaked_object(id):
-	print("--- 正在检查实例 ID: ",id, " ---")
-	
-	# 使用 instance_from_id 查找对象
-	var obj = instance_from_id(id)
-	
-	if is_instance_valid(obj):
-		print("!!! 找到了对象 !!!")
-		print("  - 对象类型 (Class): ", obj.get_class())
-		print("  - 对象的脚本 (Script): ", obj.get_script())
-		print("  - 对象的字符串表示: ", str(obj))
-		# 我们可以尝试获取更多信息
-		if obj is Resource:
-			print("  - 这是一个资源, 路径: ", obj.resource_path)
-
-		if obj is SceneTreeTimer:
-			print("  - 这是一个 SceneTreeTimer!")
-			print("    - 剩余时间: ", obj.time_left)
-
-		if obj is Tween:
-			print("  - 这是一个 Tween!")
-	else:
-		print("--- 对象未找到或已失效 ---")

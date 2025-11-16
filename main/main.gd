@@ -70,9 +70,6 @@ func _ready() -> void:
 	Eventmanger.wordReorderCompleted.connect(_on_word_reorder_completed)
 		
 func _addcorrectcount(iscorrect):
-	# 获取当前题目单词
-	var current_word = Jlptn5._getCurrentTitleWord()
-	
 	if iscorrect:
 		if Correctcount >=10 :
 			if power <maxpower:
@@ -84,10 +81,6 @@ func _addcorrectcount(iscorrect):
 		else:
 			Correctcount +=1
 		Eventmanger.correctcountchange.emit()
-		
-		# 回答正确，减少错误次数
-		if current_word != null:
-			Jlptn5._updateErrorWordCount(current_word, -1)
 	else:
 		wrongAnswerCount += 1
 		if wrongAnswerCount >= 2:
@@ -95,11 +88,6 @@ func _addcorrectcount(iscorrect):
 				Correctcount -= 1
 			wrongAnswerCount = 0
 		Eventmanger.correctcountchange.emit()
-		
-		# 回答错误，增加错误次数
-		if current_word != null:
-			Jlptn5._updateErrorWordCount(current_word, 3)
-
 func _on_word_reorder_completed():
 	# 单词重组完成，额外奖励1AP
 	print("单词重组完成，额外奖励1AP")
