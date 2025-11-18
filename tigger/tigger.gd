@@ -12,14 +12,14 @@ var unequip:Array=[]
 }
 
 func _ready() -> void:
-	Eventmanger.setequidDAta.connect(_setunequip)
-	Eventmanger.equidSkill.connect(equipSkill)
+	Eventmanger.setequipData.connect(_setunequip)
+	Eventmanger.equipSkill.connect(equipSkill)
 	
 func _setunequip(skillnode:):
 	skillnode.get_parent().remove_child(skillnode)
 	unequip.append(skillnode)
 	pass
-func _returnUnequid():
+func _returnUnequip():
 	return unequip
 
 func equipSkill(tiggerd:StringName,skillnode):

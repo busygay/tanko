@@ -58,10 +58,10 @@ signal correctcountchange
 @warning_ignore('unused_signal')
 signal actionPointUp
 @warning_ignore('unused_signal')
-signal actionPoinSub
+signal actionPointSub
 
 @warning_ignore('unused_signal')
-signal buttelCountChange(count:int)
+signal bulletCountChange(count:int)
 @warning_ignore('unused_signal')
 signal playershooting
 @warning_ignore('unused_signal')
@@ -85,7 +85,7 @@ signal playerBaseDamageUp()
 @warning_ignore('unused_signal')
 signal playerTrueDamageUp()
 @warning_ignore('unused_signal')
-signal playerGlobalDammageBonusChange(bonus:int)
+signal playerGlobalDamageBonusChange(bonus:int)
 
 
 signal answered(isanswer:bool)
@@ -143,11 +143,11 @@ signal APGainedEmit
 @warning_ignore('unused_signal')
 signal APSpentEmit
 @warning_ignore('unused_signal')
-signal setequidDAta(_node)
+signal setequipData(_node)
 @warning_ignore('unused_signal')
 signal drag_ended(_node,pos)
 @warning_ignore('unused_signal')
-signal equidSkill(tiggerName,SkillNode)
+signal equipSkill(tiggerName,SkillNode)
 @warning_ignore('unused_signal')
 signal ShowSkillAssembly
 

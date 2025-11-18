@@ -11,7 +11,7 @@
    - [数据加载方法](#数据加载方法)
    - [题目生成方法](#题目生成方法)
    - [错题本管理](#错题本管理)
-   - [统计查询方法](#统计查询方法)
+   - [游戏状态管理方法](#游戏状态管理方法)
 
 3. [技能管理器API (SkillManager)](#技能管理器api-skillmanager)
    - [技能获取和装备](#技能获取和装备)
@@ -24,7 +24,7 @@
    - [升级系统](#升级系统)
    - [游戏流程控制](#游戏流程控制)
 
-5. [敌人基类API (BaseEnemy)](#敌人基类api-baseenemy)
+5. [敌人基类API (baseEnemy)](#敌人基类api-baseenemy)
    - [状态管理](#状态管理)
    - [属性访问](#属性访问)
    - [伤害处理](#伤害处理)
@@ -34,6 +34,15 @@
    - [关卡生成](#关卡生成)
    - [难度计算](#难度计算)
    - [敌人配置](#敌人配置)
+
+7. [音频管理器API (AudioManager)](#音频管理器api-audiomanager)
+   - [音频播放控制](#音频播放控制)
+   - [音效资源管理](#音效资源管理)
+
+8. [场景加载管理器API (ChangeSceneLoad)](#场景加载管理器api-changesceneload)
+   - [场景切换控制](#场景切换控制)
+   - [加载状态管理](#加载状态管理)
+   - [过渡效果](#过渡效果)
 
 ---
 
@@ -47,20 +56,19 @@
 |--------|------|----------|------|
 | `correctcountchange` | 无 | 正确答案计数变化时 | 当玩家答对题目导致正确计数变化时触发 |
 | `actionPointUp` | 无 | 行动点增加时 | 玩家获得额外行动点时触发 |
-| `actionPoinSub` | 无 | 行动点减少时 | 玩家消耗行动点时触发 |
+| `actionPointSub` | 无 | 行动点减少时 | 玩家消耗行动点时触发 |
 | `playershooting` | 无 | 玩家射击开始时 | 玩家开始射击动作时触发 |
 | `playerShooted` | 无 | 玩家射击完成时 | 玩家完成射击动作时触发 |
 | `playerGotHurt` | `damage: int` | 玩家受伤时 | 玩家受到伤害时触发，传递伤害值 |
 | `reloadAmmo` | 无 | 开始换弹时 | 玩家开始换弹动作时触发 |
 | `FinishReloadAmmo` | 无 | 换弹完成时 | 玩家完成换弹动作时触发 |
-| `playerbulletCount` | `count: int` | 弹药数量变化时 | 玩家弹药数量变化时触发，传递当前弹药数 |
+| `bulletCountChange` | `count: int` | 弹药数量变化时 | 玩家弹药数量变化时触发，传递当前弹药数 |
 | `parryInvincible` | 无 | 无敌状态时 | 玩家进入无敌状态时触发 |
 | `playerCdSub` | 无 | 冷却减少时 | 玩家技能冷却时间减少时触发 |
 | `playerBaseDamageUp` | 无 | 基础伤害提升时 | 玩家基础伤害值提升时触发 |
 | `playerTrueDamageUp` | 无 | 真实伤害提升时 | 玩家真实伤害值提升时触发 |
-| `playerGlobalDammageBonusChange` | `bonus: int` | 全局伤害加成变化时 | 玩家全局伤害加成变化时触发，传递加成值 |
+| `playerGlobalDamageBonusChange` | `bonus: int` | 全局伤害加成变化时 | 玩家全局伤害加成变化时触发，传递加成值 |
 | `answered` | `isanswer: bool` | 回答完成时 | 玩家回答题目完成时触发，传递是否正确 |
-| `answerFinsh` | 无 | 回答结束时 | 回答流程完全结束时触发 |
 | `questionSkipped` | 无 | 题目跳过时 | 玩家选择跳过当前题目时触发 |
 | `comboChange` | 无 | 连击变化时 | 玩家连击数发生变化时触发 |
 | `wordReorderCompleted` | 无 | 单词重组完成时 | 玩家完成单词重组题目时触发 |
@@ -84,9 +92,9 @@
 | `brokenComboEmit` | 无 | 连击中断时 | 玩家连击中断时触发 |
 | `APGainedEmit` | 无 | 获得AP时 | 玩家获得行动点时触发 |
 | `APSpentEmit` | 无 | 消耗AP时 | 玩家消耗行动点时触发 |
-| `setequidDAta` | `_node` | 设置装备数据时 | 设置装备数据时触发，传递节点 |
+| `setequipData` | `_node` | 设置装备数据时 | 设置装备数据时触发，传递节点 |
 | `drag_ended` | `_node, pos` | 拖拽结束时 | 拖拽操作结束时触发，传递节点和位置 |
-| `equidSkill` | `tiggerName, SkillNode` | 装备技能时 | 装备技能时触发，传递触发器名和技能节点 |
+| `equipSkill` | `tiggerName, SkillNode` | 装备技能时 | 装备技能时触发，传递触发器名和技能节点 |
 | `ShowSkillAssembly` | 无 | 显示技能装配时 | 显示技能装配界面时触发 |
 | `ricochetShootUp` | 无 | 跳弹射击提升时 | 跳弹射击能力提升时触发 |
 | `doubleShootUP` | 无 | 双重射击提升时 | 双重射击能力提升时触发 |
@@ -155,6 +163,46 @@ Eventmanger.setbulletPos(bullet_node, false)   # 设置子弹位置
 # 使用示例
 Eventmanger.setpowerPos(answer_panel, true)  # 设置答题面板
 Eventmanger.setpowerPos(power_bar, false)    # 设置能量条位置
+```
+
+#### `reloadAmmofunc()`
+
+执行换弹动作。
+
+**参数：** 无
+
+**返回值：** 无
+
+**功能说明：** 触发玩家换弹动画。
+
+**调用时机：** 需要换弹时调用。
+
+**注意事项：** 通过玩家节点的动画播放器执行换弹动画。
+
+```gdscript
+# 使用示例
+Eventmanger.reloadAmmofunc()  # 执行换弹动作
+```
+
+#### `addCurrentAmmo(isanswer: bool)`
+
+根据答题结果增加弹药。
+
+**参数：**
+- `isanswer: bool` - 是否回答正确
+
+**返回值：** 无
+
+**功能说明：** 当玩家回答正确时增加弹药数量。
+
+**调用时机：** 玩家完成答题时通过信号自动调用。
+
+**注意事项：** 只有回答正确时才会增加弹药。
+
+```gdscript
+# 使用示例
+Eventmanger.addCurrentAmmo(true)   # 回答正确，增加弹药
+Eventmanger.addCurrentAmmo(false)  # 回答错误，不增加弹药
 ```
 
 ### 使用示例
@@ -318,203 +366,86 @@ Jlptn5._setWordBookList(selected_books)
 Jlptn5._gameStart()  # 初始化游戏单词数据
 ```
 
-#### `_getNextWordData()`
-
-获取下一个题目单词数据。
-
-**参数：** 无
-
-**返回值：** `Dictionary` - 包含一个单词数据的字典
-
-**功能说明：** 从当前可用单词中随机获取一个单词作为题目，并从可用列表中移除。
-
-**调用时机：** 需要生成新题目时调用。
-
-**注意事项：** 每次调用都会从allCurrentKeys中移除一个元素，可能导致题目数量减少。
-
-```gdscript
-# 使用示例
-var next_word_data = Jlptn5._getNextWordData()
-if not next_word_data.is_empty():
-    var word_key = next_word_data.keys()[0]
-    var word_info = next_word_data[word_key]
-    print("下一题: ", word_info["中文翻译"])
-```
-
-#### `_getCurrentTitleWord()`
-
-获取当前题目单词，用于更新错误次数。
-
-**参数：** 无
-
-**返回值：** `Dictionary` - 当前题目单词数据，如果没有题目则返回null
-
-**功能说明：** 获取当前正在显示的题目单词数据，用于更新错误次数。
-
-**调用时机：** 需要获取当前题目信息时调用。
-
-**注意事项：** 此函数会调用_getNextWordData()，可能导致题目顺序混乱。
-
-```gdscript
-# 使用示例
-var current_word = Jlptn5._getCurrentTitleWord()
-if current_word != null:
-    print("当前题目: ", current_word["中文翻译"])
-```
-
-#### `_getErrorWordData()`
-
-随机获取2个错误选项，用于选择题。
-
-**参数：** 无
-
-**返回值：** `Array` - 包含2个错误选项的数组
-
-**功能说明：** 从当前单词中随机选择2个作为选择题的错误选项。
-
-**调用时机：** 生成选择题时调用。
-
-**注意事项：** 可能会返回重复的选项，因为随机数可能相同。
-
-```gdscript
-# 使用示例
-var error_options = Jlptn5._getErrorWordData()
-print("错误选项: ", error_options)
-```
-
-#### `_getHighestErrorWord()`
-
-获取错误次数最高的错题。
-
-**参数：** 无
-
-**返回值：** `Dictionary` - 错误次数最高的单词数据，如果没有错题则返回null
-
-**功能说明：** 从当前错题本中获取错误次数最高的单词，用于错题复习。
-
-**调用时机：** 错题复习模式时调用。
-
-**注意事项：** 如果错题本为空，返回null。
-
-```gdscript
-# 使用示例
-var highest_error_word = Jlptn5._getHighestErrorWord()
-if highest_error_word != null:
-    print("最需要复习的单词: ", highest_error_word["中文翻译"])
-```
-
-#### `_getWordReorderData(target_word: Dictionary)`
-
-为单词重组模式生成字符数据。
-
-**参数：**
-- `target_word: Dictionary` - 目标单词数据
-
-**返回值：** `Dictionary` - 包含目标字符和干扰字符的数据结构
-
-**功能说明：** 为单词重组模式生成字符数据，包括目标字符和干扰字符。
-
-**调用时机：** 单词重组模式时调用。
-
-**注意事项：** 会添加2-4个干扰字符来自同级别其他词汇。
-
-```gdscript
-# 使用示例
-var reorder_data = Jlptn5._getWordReorderData(target_word)
-print("目标字符: ", reorder_data.characters)
-print("干扰字符: ", reorder_data.interference)
-print("所有选项: ", reorder_data.all_options)
-```
-
-#### `_getMasteredWordForReorder()`
-
-获取一个已掌握的单词用于单词重组模式。
-
-**参数：** 无
-
-**返回值：** `Dictionary` - 已掌握的单词数据，如果没有则返回null
-
-**功能说明：** 从所有当前单词中筛选出已掌握的单词，随机选择一个用于单词重组模式。
-
-**调用时机：** 单词重组模式时调用。
-
-**注意事项：** 如果没有已掌握的单词，返回null。
-
-```gdscript
-# 使用示例
-var mastered_word = Jlptn5._getMasteredWordForReorder()
-if mastered_word != null:
-    print("用于重组的已掌握单词: ", mastered_word["中文翻译"])
-```
-
-### 错题本管理
-
-#### `_addErrorWord(sword: Dictionary)`
-
-将答错的单词添加到错误单词列表。
-
-**参数：**
-- `sword: Dictionary` - 答错的单词数据
-
-**返回值：** 无
-
-**功能说明：** 将答错的单词添加到错误单词列表，初始错误次数为3。
-
-**调用时机：** 玩家答错题目时调用。
-
-**注意事项：** 使用单词的"假名"字段作为键。
-
-```gdscript
-# 使用示例
-var wrong_word = {"假名": "あかい", "中文翻译": "红色的", "日语汉字": "赤い"}
-Jlptn5._addErrorWord(wrong_word)
-```
-
-#### `_addCorrectWord(sword: Dictionary)`
-
-将答对的单词添加到正确单词列表。
-
-**参数：**
-- `sword: Dictionary` - 答对的单词数据
-
-**返回值：** 无
-
-**功能说明：** 将答对的单词添加到正确单词列表。
-
-**调用时机：** 玩家答对题目时调用。
-
-**注意事项：** 使用单词的"假名"字段作为键。
-
-```gdscript
-# 使用示例
-var correct_word = {"假名": "あおい", "中文翻译": "蓝色的", "日语汉字": "青い"}
-Jlptn5._addCorrectWord(correct_word)
-```
-
-#### `_updateErrorWordCount(word: Dictionary, count_change: int)`
+#### `updateWordCount(word: Dictionary, count_change: int)`
 
 更新单词的错误次数。
 
 **参数：**
 - `word: Dictionary` - 要更新的单词数据
-- `count_change: int` - 错误次数变化量（正数增加，负数减少）
+- `count_change: int` - 错误次数变化量（-1为答对，3为答错）
 
 **返回值：** 无
 
-**功能说明：** 更新单词的错误次数，支持增加或减少错误次数。当错误次数降至0时，从错题本中移除。
+**功能说明：** 根据答题结果更新单词的错误次数，支持增加或减少错误次数。当错误次数降至0时，从错题本中移除并添加到已掌握单词列表。
 
 **调用时机：** 答题后更新错误次数时调用。
 
-**注意事项：** 如果单词不在当前错误列表中，会检查已保存的错误列表。
+**注意事项：** 会同时更新当前游戏错误列表和历史错误列表。
 
 ```gdscript
 # 使用示例
 # 答对题目，减少错误次数
 var word_data = {"假名": "あかい", "中文翻译": "红色的", "日语汉字": "赤い"}
-Jlptn5._updateErrorWordCount(word_data, -1)
+Jlptn5.updateWordCount(word_data, -1)
 
 # 答错题目，增加错误次数
-Jlptn5._updateErrorWordCount(word_data, 3)
+Jlptn5.updateWordCount(word_data, 3)
+```
+
+#### `getNextQuestion(type: int = 0)`
+
+获取下一道题目数据。
+
+**参数：**
+- `type: int` - 题目类型（0为普通题目，1为错题插入，2为单词重组）
+
+**返回值：** `Dictionary` - 包含题目数据的字典
+
+**功能说明：** 根据指定类型生成题目数据，包括题目内容、正确选项、错误选项等。
+
+**调用时机：** 需要生成新题目时调用。
+
+**注意事项：** 会根据题目类型自动选择合适的数据源，如果指定类型的数据不可用会自动降级。
+
+```gdscript
+# 使用示例
+# 获取普通题目
+var normal_question = Jlptn5.getNextQuestion(0)
+print("题目类型: ", normal_question.type)
+print("题目内容: ", normal_question.tiltle)
+
+# 获取错题复习题目
+var error_question = Jlptn5.getNextQuestion(1)
+print("错题复习: ", error_question.tiltle)
+
+# 获取单词重组题目
+var reorder_question = Jlptn5.getNextQuestion(2)
+print("重组题目: ", reorder_question.tiltle)
+```
+
+### 错题本管理
+
+#### 错题本管理说明
+
+题库管理系统的错题本管理功能已整合到 `updateWordCount()` 方法中。该方法统一处理答对和答错的情况，自动维护错误单词列表和已掌握单词列表。
+
+**主要变化：**
+- 移除了独立的 `_addErrorWord()` 和 `_addCorrectWord()` 方法
+- 移除了独立的 `_updateErrorWordCount()` 方法
+- 所有错题本管理功能现在通过 `updateWordCount()` 方法统一处理
+
+**使用方式：**
+- 答对题目时调用 `updateWordCount(word, -1)`
+- 答错题目时调用 `updateWordCount(word, 3)`
+
+```gdscript
+# 使用示例
+# 答对题目，减少错误次数
+var word_data = {"假名": "あかい", "中文翻译": "红色的", "日语汉字": "赤い"}
+Jlptn5.updateWordCount(word_data, -1)
+
+# 答错题目，增加错误次数
+Jlptn5.updateWordCount(word_data, 3)
 ```
 
 #### `_clearWord()`
@@ -555,7 +486,7 @@ Jlptn5._clearWord()  # 清理当前游戏数据
 Jlptn5._saveErrorWord()  # 保存错题记录
 ```
 
-### 统计查询方法
+### 游戏状态管理方法
 
 #### `_restartGame()`
 
@@ -595,16 +526,15 @@ func setup_word_books():
 
 # 生成新题目
 func generate_new_question():
-    var word_data = Jlptn5._getNextWordData()
-    if not word_data.is_empty():
-        var word_key = word_data.keys()[0]
-        var word_info = word_data[word_key]
-        
-        # 获取错误选项
-        var error_options = Jlptn5._getErrorWordData()
+    var question_data = Jlptn5.getNextQuestion(0)  # 0为普通题目
+    if not question_data.is_empty():
+        print("题目类型: ", question_data.type)
+        print("题目内容: ", question_data.tiltle)
+        print("正确选项: ", question_data.correctData)
+        print("错误选项: ", question_data.selectErrorWordData)
         
         # 显示题目
-        show_question(word_info, error_options)
+        show_question(question_data)
 ```
 
 #### 错题本管理
@@ -613,17 +543,11 @@ func generate_new_question():
 # 处理答题结果
 func handle_answer(is_correct: bool, word_data: Dictionary):
     if is_correct:
-        # 添加到正确列表
-        Jlptn5._addCorrectWord(word_data)
-        
-        # 减少错误次数
-        Jlptn5._updateErrorWordCount(word_data, -1)
+        # 答对题目，减少错误次数
+        Jlptn5.updateWordCount(word_data, -1)
     else:
-        # 添加到错误列表
-        Jlptn5._addErrorWord(word_data)
-        
-        # 增加错误次数
-        Jlptn5._updateErrorWordCount(word_data, 3)
+        # 答错题目，增加错误次数
+        Jlptn5.updateWordCount(word_data, 3)
 
 # 游戏结束时保存数据
 func on_game_over():
@@ -635,11 +559,11 @@ func on_game_over():
 
 # 错题复习
 func start_error_review():
-    var highest_error_word = Jlptn5._getHighestErrorWord()
-    if highest_error_word != null:
-        print("开始复习最需要掌握的单词: ", highest_error_word["中文翻译"])
+    var error_question = Jlptn5.getNextQuestion(1)  # 1为错题插入
+    if not error_question.is_empty():
+        print("开始错题复习: ", error_question.tiltle["中文翻译"])
         # 显示错题复习界面
-        show_error_review(highest_error_word)
+        show_error_review(error_question)
 ```
 
 #### 单词重组模式
@@ -647,15 +571,15 @@ func start_error_review():
 ```gdscript
 # 单词重组模式
 func start_word_reorder():
-    # 获取已掌握的单词
-    var mastered_word = Jlptn5._getMasteredWordForReorder()
+    var reorder_question = Jlptn5.getNextQuestion(2)  # 2为单词重组
     
-    if mastered_word != null:
-        # 生成重组数据
-        var reorder_data = Jlptn5._getWordReorderData(mastered_word)
+    if not reorder_question.is_empty():
+        print("单词重组题目: ", reorder_question.tiltle["中文翻译"])
+        print("目标字符: ", reorder_question.correctData)
+        print("干扰字符: ", reorder_question.selectErrorWordData)
         
         # 显示重组界面
-        show_word_reorder(reorder_data)
+        show_word_reorder(reorder_question)
     else:
         print("没有已掌握的单词可用于重组模式")
 ```
@@ -681,6 +605,15 @@ func start_word_reorder():
 **调用时机：** 在_ready()函数中自动调用，游戏初始化时执行。
 
 **注意事项：** 使用异步加载，每3个技能后等待一帧以避免卡顿。
+
+**技能路径配置：**
+- `doubleShoot`: 'res://skill/resource/doubleShoot.tres'
+- `cdSub`: 'res://skill/resource/cdSub.tres'
+- `baseDamageUp`: 'res://skill/resource/baseDamageUp.tres'
+- `ricochetShoot`: 'res://skill/resource/ricochetShoot.tres'
+- `BT-7270`: 'res://skill/resource/BT-7270.tres'
+- `fullPower`: 'res://skill/resource/fullPower.tres'
+- `trueDamageUp`: 'res://skill/resource/trueDamageUp.tres'
 
 ```gdscript
 # 内部调用示例
@@ -723,6 +656,15 @@ for skill in random_skills:
 **调用时机：** 玩家购买技能后调用。
 
 **注意事项：** 只有当技能存在于技能箱中时才会执行移除操作。
+
+**技能初始数量配置：**
+- `doubleShoot`: 1
+- `cdSub`: 9
+- `baseDamageUp`: 5
+- `ricochetShoot`: 1
+- `BT-7270`: 1
+- `fullPower`: 1
+- `trueDamageUp`: 5
 
 ```gdscript
 # 使用示例
@@ -884,9 +826,9 @@ func check_skill_availability(skill_name: String):
 
 主游戏控制器是Tankou项目的核心游戏逻辑控制器，负责管理游戏流程、资源系统、连击系统、升级系统等核心功能。
 
-### 资源管理方法 (EP/Bullet/AP)
+### 资源管理方法
 
-#### `_addcorrectcount(iscorrect)`
+#### `_addCorrectCount(iscorrect)`
 
 处理答题结果并更新资源。
 
@@ -904,10 +846,27 @@ func check_skill_availability(skill_name: String):
 ```gdscript
 # 使用示例
 # 玩家答对题目
-_addcorrectcount(true)
+_addCorrectCount(true)
 
 # 玩家答错题目
-_addcorrectcount(false)
+_addCorrectCount(false)
+```
+
+#### `wrongAnswerCount` (属性)
+
+答错题目计数器。
+
+**类型：** int
+
+**功能说明：** 记录玩家答错题目的次数，用于控制正确计数的减少。
+
+**调用时机：** 答错题目时自动增加，达到2次时会减少正确计数并重置。
+
+**注意事项：** 每答错2次题目会减少1次正确计数。
+
+```gdscript
+# 使用示例
+print("当前答错次数: ", wrongAnswerCount)
 ```
 
 #### `upDatascore(_node)`
@@ -1132,7 +1091,7 @@ Eventmanger.wordReorderCompleted.connect(_on_word_reorder_completed)
 # 游戏初始化
 func _ready():
     # 连接信号
-    Eventmanger.answered.connect(_addcorrectcount)
+    Eventmanger.answered.connect(_addCorrectCount)
     Eventmanger.enemydeath.connect(upDatascore)
     Eventmanger.questionSkipped.connect(_on_question_skipped)
     Eventmanger.wordReorderCompleted.connect(_on_word_reorder_completed)
@@ -1147,7 +1106,7 @@ func handle_answer_result(is_correct: bool):
     comboChange(is_correct)
     
     # 更新资源
-    _addcorrectcount(is_correct)
+    _addCorrectCount(is_correct)
     
     # 检查游戏状态
     check_game_status()
@@ -1217,7 +1176,7 @@ func _on_combo_continue():
 
 ---
 
-## 敌人基类API (BaseEnemy)
+## 敌人基类API (baseEnemy)
 
 敌人基类是所有敌人类型的基类，提供敌人的基本行为、状态管理、属性访问和伤害处理等功能。
 
@@ -1258,6 +1217,12 @@ _enter_state(state.death)    # 进入死亡状态
 | `state.hurt` | 受伤状态 |
 | `state.death` | 死亡状态 |
 | `state.nothing` | 无状态 |
+
+**状态切换逻辑：**
+- 只有当新状态与当前状态不同，或者是重复进入受伤状态时才会执行状态切换
+- 受伤状态时不执行物理逻辑
+- 攻击状态会在动画完成后自动返回到上一个状态
+- 死亡状态会隐藏敌人并从场景中移除
 
 #### 状态逻辑方法
 
@@ -1308,6 +1273,16 @@ initData(2.0)
 | `baseScale` | Vector2 | 基础缩放 |
 | `currentFacingDir` | bool | 当前面朝方向 |
 | `baseDir` | bool | 初始面朝方向 |
+| `player` | Node | 玩家节点引用 |
+| `playerbox` | Array | 攻击范围内的玩家列表 |
+| `currentState` | state | 当前状态 |
+
+**属性说明：**
+- `health`: 根据关卡和倍数计算，基础值为 `int(currentLevel/5.0)*2+5`
+- `speed`: 基础速度乘以随机因子(0.8-1.2)，精英敌人速度会根据倍数调整
+- `damage`: 基础伤害，精英敌人和Boss会根据倍数增加
+- `playerbox`: 存储进入攻击检测范围的玩家节点，用于攻击逻辑
+- `currentState`: 敌人当前的状态，影响行为和动画播放
 
 ### 伤害处理
 
@@ -1624,7 +1599,11 @@ for enemy_data in spawn_queue:
 
 **调用时机：** 进入关卡时调用。
 
-**注意事项：** 生成间隔会逐渐减少，最小为0.5秒。
+**注意事项：**
+- 生成间隔会逐渐减少，每次减少0.05秒，最小为1.0秒
+- 使用 `enemysSpanwFinsh` 数组跟踪生成状态
+- 每次生成都会检查main场景是否存在
+- 使用 `call_deferred` 延迟添加敌人到场景
 
 ```gdscript
 # 使用示例
@@ -1829,6 +1808,345 @@ func spawn_single_enemy(enemy_scene, multiplier: float):
     get_tree().get_first_node_in_group("main").add_child(enemy)
 ```
 
+
+## 音频管理器API (AudioManager)
+
+音频管理器负责管理游戏中的音效播放，包括UI音效和空间化音效的播放控制。
+
+### 音频播放控制
+
+#### `play_sfx(sound_name: String)`
+
+播放非空间化音效（如UI音效）。
+
+**参数：**
+- `sound_name: String` - 音效名称，必须在`sfx_library`中预定义
+
+**返回值：** 无
+
+**功能说明：** 创建新的AudioStreamPlayer实例并播放指定音效，播放完成后自动销毁。
+
+**调用时机：** 需要播放UI音效、界面点击音效等非空间化音效时调用。
+
+**注意事项：** 音效名称必须在`sfx_library`中预定义，否则无法播放。
+
+```gdscript
+# 使用示例
+AudioManager.play_sfx("22LRSingleMP3")           # 播放射击音效
+AudioManager.play_sfx("Semi22LRReloadFullMP3")    # 播放换弹音效
+AudioManager.play_sfx("Semi22LRCantReloadMP3")     # 播放换弹失败音效
+```
+
+#### `play_sfx_at_position(sound_name: String, position: Vector2, _DB: float = 1.0)`
+
+播放空间化音效（在指定位置播放）。
+
+**参数：**
+- `sound_name: String` - 音效名称，必须在`sfx_library`中预定义
+- `position: Vector2` - 音效播放的世界坐标位置
+- `_DB: float` - 音量线性值，默认为1.0
+
+**返回值：** 无
+
+**功能说明：** 创建新的AudioStreamPlayer2D实例，在指定世界坐标位置播放音效，播放完成后自动销毁。
+
+**调用时机：** 需要在游戏世界中特定位置播放音效时调用，如敌人死亡、技能释放等。
+
+**注意事项：** 
+- 音效名称必须在`sfx_library`中预定义
+- 位置使用世界坐标系，不是相对坐标
+- 音量值为线性值，范围通常为0.0-1.0
+
+```gdscript
+# 使用示例
+# 在玩家位置播放射击音效
+AudioManager.play_sfx_at_position("22LRSingleMP3", player.global_position)
+
+# 在敌人位置播放死亡音效，音量减半
+AudioManager.play_sfx_at_position("762x54rSprayIsolatedMP3", enemy.global_position, 0.5)
+```
+
+### 音效资源管理
+
+#### `sfx_library` (属性)
+
+音效库字典，预加载所有音效资源。
+
+**类型：** `Dictionary`
+
+**功能说明：** 存储所有预加载的音效资源，键为音效名称，值为AudioStream资源。
+
+**预定义音效：**
+- `"22LRSingleMP3"`: preload('res://sounds/22LRSingleMP3.mp3') - 射击音效
+- `"Semi22LRReloadFullMP3"`: preload('res://sounds/Semi22LRReloadFullMP3.mp3') - 完整换弹音效
+- `"Semi22LRCantReloadMP3"`: preload('res://sounds/Semi22LRCantReloadMP3.mp3') - 换弹失败音效
+- `"762x54rSprayIsolatedMP3"`: preload('uid://bsnnskomqvgqj') - 扫射音效
+
+**调用时机：** 在播放音效时内部自动使用。
+
+**注意事项：** 使用预加载可以显著提高音效播放性能，避免每次播放时重新加载资源。
+
+```gdscript
+# 使用示例
+# 检查音效是否存在
+if AudioManager.sfx_library.has("22LRSingleMP3"):
+    print("射击音效已加载")
+else:
+    print("射击音效未找到")
+```
+
+### 使用示例
+
+#### 基本音效播放
+
+```gdscript
+# UI音效播放
+func play_ui_sounds():
+    AudioManager.play_sfx("22LRSingleMP3")  # UI点击音效
+
+# 游戏世界音效播放
+func play_game_sounds():
+    # 玩家射击
+    var player_pos = get_tree().get_first_node_in_group("player").global_position
+    AudioManager.play_sfx_at_position("22LRSingleMP3", player_pos)
+    
+    # 敌人死亡
+    for enemy in enemies:
+        AudioManager.play_sfx_at_position("762x54rSprayIsolatedMP3", enemy.global_position, 0.8)
+```
+
+#### 音效事件处理
+
+```gdscript
+# 连接游戏事件到音效播放
+func setup_audio_events():
+    # 连接射击事件
+    Eventmanger.playershooting.connect(_on_player_shooting)
+    
+    # 连接换弹事件
+    Eventmanger.reloadAmmo.connect(_on_reload_start)
+    Eventmanger.FinishReloadAmmo.connect(_on_reload_finish)
+
+func _on_player_shooting():
+    # 玩家开始射击时的音效
+    var player = get_tree().get_first_node_in_group("player")
+    AudioManager.play_sfx_at_position("22LRSingleMP3", player.global_position)
+
+func _on_reload_start():
+    # 开始换弹音效
+    AudioManager.play_sfx("Semi22LRReloadFullMP3")
+
+func _on_reload_finish():
+    # 换弹完成音效
+    AudioManager.play_sfx("Semi22LRReloadFullMP3")
+```
+
+---
+
+## 场景加载管理器API (ChangeSceneLoad)
+
+场景加载管理器负责处理游戏场景的异步加载和切换，提供流畅的场景过渡效果和加载状态管理。
+
+### 场景切换控制
+
+#### `changeScence(path: String)`
+
+切换到指定场景。
+
+**参数：**
+- `path: String` - 目标场景文件路径
+
+**返回值：** 无
+
+**功能说明：** 检查场景加载状态，根据状态决定是直接切换还是显示加载动画。
+
+**调用时机：** 需要切换到新场景时调用。
+
+**注意事项：** 
+- 如果场景已加载完成，会直接切换
+- 如果场景正在加载中，会显示加载进度
+- 如果场景加载失败，会输出错误信息
+- 如果场景未开始加载，会启动加载动画
+
+```gdscript
+# 使用示例
+ChangeSceneLoad.changeScence("res://main/main.tscn")        # 切换到主游戏场景
+ChangeSceneLoad.changeScence("res://menu/menu.tscn")        # 切换到菜单场景
+```
+
+#### `loadPath(path: String)`
+
+预加载指定路径的资源。
+
+**参数：**
+- `path: String` - 要预加载的资源路径
+
+**返回值：** 无
+
+**功能说明：** 启动资源的异步加载，将路径添加到预加载列表。
+
+**调用时机：** 提前预加载可能需要的场景资源时调用。
+
+**注意事项：** 使用多线程加载，不会阻塞主线程。
+
+```gdscript
+# 使用示例
+ChangeSceneLoad.loadPath("res://main/main.tscn")    # 预加载主场景
+ChangeSceneLoad.loadPath("res://menu/menu.tscn")    # 预加载菜单场景
+```
+
+### 加载状态管理
+
+#### `iSloadInPro` (属性)
+
+加载进行状态标志。
+
+**类型：** `bool`
+
+**功能说明：** 标识当前是否有场景正在加载过程中。
+
+**调用时机：** 在_process()中用于检查加载状态。
+
+**注意事项：** 当为true时，会更新加载进度显示。
+
+```gdscript
+# 使用示例
+if ChangeSceneLoad.iSloadInPro:
+    print("场景正在加载中...")
+else:
+    print("没有场景在加载")
+```
+
+#### `loadingObjPath` (属性)
+
+当前加载对象路径。
+
+**类型：** `String`
+
+**功能说明：** 存储当前正在加载的场景资源路径。
+
+**调用时机：** 在加载过程中用于跟踪当前加载的资源。
+
+**注意事项：** 加载完成后会清空此路径。
+
+```gdscript
+# 使用示例
+print("当前加载场景: ", ChangeSceneLoad.loadingObjPath)
+```
+
+#### `loadPro` (属性)
+
+加载进度数组。
+
+**类型：** `Array`
+
+**功能说明：** 存储资源加载的进度信息，由ResourceLoader返回。
+
+**调用时机：** 在_process()中用于更新加载进度显示。
+
+**注意事项：** 第一个元素为加载进度（0.0-1.0）。
+
+```gdscript
+# 使用示例
+if not ChangeSceneLoad.loadPro.is_empty():
+    var progress = ChangeSceneLoad.loadPro[0]
+    print("加载进度: ", progress * 100, "%")
+```
+
+#### `scencePath` (属性)
+
+预加载场景路径列表。
+
+**类型：** `Array`
+
+**功能说明：** 存储所有需要预加载的场景路径列表。
+
+**调用时机：** 在loadPath()方法中添加路径，在对象销毁时清理。
+
+**注意事项：** 对象销毁时会尝试完成所有预加载资源的加载。
+
+```gdscript
+# 使用示例
+print("预加载场景列表: ", ChangeSceneLoad.scencePath)
+```
+
+### 过渡效果
+
+#### `_process(_delta: float)`
+
+处理加载进度更新和场景切换。
+
+**参数：**
+- `_delta: float` - 帧时间
+
+**返回值：** 无
+
+**功能说明：** 在加载过程中更新进度显示，加载完成时执行场景切换。
+
+**调用时机：** 每帧自动调用。
+
+**注意事项：** 只有在iSloadInPro为true时才处理加载逻辑。
+
+```gdscript
+# 内部调用示例
+# 每帧自动检查加载状态
+func _process(_delta: float):
+    if iSloadInPro:
+        ResourceLoader.load_threaded_get_status(loadingObjPath, loadPro)
+        var mat = color_rect.material as ShaderMaterial
+        mat.set_shader_parameter("animation_progress", loadPro[0])
+        if loadPro[0] == 1:
+            var temp = ResourceLoader.load_threaded_get(loadingObjPath)
+            get_tree().change_scene_to_packed(temp)
+            loadPro.clear()
+            iSloadInPro = false
+            loadingObjPath = ""
+            var tween = get_tree().create_tween()
+            tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+            tween.tween_property(mat, "animation_progress", 0, 0.3)
+```
+
+### 使用示例
+
+#### 基本场景切换
+
+```gdscript
+# 场景切换函数
+func go_to_main_game():
+    ChangeSceneLoad.changeScence("res://main/main.tscn")
+
+func go_to_menu():
+    ChangeSceneLoad.changeScence("res://menu/menu.tscn")
+```
+
+#### 预加载策略
+
+```gdscript
+# 场景预加载管理
+func preload_scenes():
+    # 预加载常用场景
+    ChangeSceneLoad.loadPath("res://main/main.tscn")
+    ChangeSceneLoad.loadPath("res://menu/menu.tscn")
+
+# 预加载状态检查
+func check_preload_status():
+    print("预加载场景列表: ", ChangeSceneLoad.scencePath)
+```
+
+#### 加载状态监控
+
+```gdscript
+# 加载状态监控
+func _process(_delta):
+    if ChangeSceneLoad.iSloadInPro:
+        var progress = 0.0
+        if not ChangeSceneLoad.loadPro.is_empty():
+            progress = ChangeSceneLoad.loadPro[0]
+        
+        print("加载中: ", ChangeSceneLoad.loadingObjPath)
+        print("进度: ", progress * 100, "%")
+```
+
 ---
 
 ## API使用注意事项
@@ -1871,6 +2189,22 @@ func spawn_single_enemy(enemy_scene, multiplier: float):
 
 ---
 
-*本文档最后更新时间：2025-11-15*
-*文档版本：v1.0*
+## 更新日志
+
+### v1.1 (2025-11-18)
+- 修正事件管理器API文档，添加缺失的方法和修正信号名称
+- 重构题库管理系统API文档，移除不存在的方法，添加新的`getNextQuestion()`和`updateWordCount()`方法
+- 更新技能管理器API文档，添加技能路径配置和初始数量配置
+- 修正主游戏控制器API文档，添加`wrongAnswerCount`属性说明
+- 完善敌人基类API文档，添加状态切换逻辑和新增属性说明
+- 更新关卡管理器API文档，修正敌人生成逻辑说明
+- 所有API文档现在与实际代码实现保持一致
+
+### v1.0 (2025-11-15)
+- 初始版本，包含所有核心系统的API文档
+
+---
+
+*本文档最后更新时间：2025-11-18*
+*文档版本：v1.1*
 *对应游戏版本：当前开发版本*

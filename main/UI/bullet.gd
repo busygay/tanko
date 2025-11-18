@@ -5,7 +5,7 @@ const SMALL_BULLET_3 = preload('res://asset/small_bullet3.png')
 func _ready() -> void:
 	showAllButtel()
 	Eventmanger.setbulletPos(self,false)
-	Eventmanger.buttelCountChange.connect(buttelCountChange)
+	Eventmanger.bulletCountChange.connect(bulletCountChange)
 	#Eventmanger.playershooting.connect(showBulletCount)
 	#Eventmanger.FinishReloadAmmo.connect(showreloadBulletCount)
 
@@ -16,7 +16,7 @@ func showAllButtel():
 		temp.texture = SMALL_BULLET_3
 		v_box_container.add_child(temp)
 
-func buttelCountChange(count:int):
+func bulletCountChange(count:int):
 	for i in v_box_container.get_children():
 		i.hide()
 	for i in range(count):

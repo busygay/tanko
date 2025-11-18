@@ -54,7 +54,7 @@ func _ready() -> void:
 	player = get_tree().get_first_node_in_group(&'player')
 	word_Data = Jlptn5.jlptN5_Data
 	allkeys = word_Data.keys()
-	Eventmanger.answered.connect(_addcorrectcount)
+	Eventmanger.answered.connect(_addCorrectCount)
 	Eventmanger.answered.connect(comboChange)
 	Eventmanger.questionSkipped.connect(_on_question_skipped)  # 连接跳过信号
 	Eventmanger.correctcountchange.connect(func():
@@ -69,7 +69,7 @@ func _ready() -> void:
 	# 连接单词重组完成的信号
 	Eventmanger.wordReorderCompleted.connect(_on_word_reorder_completed)
 		
-func _addcorrectcount(iscorrect):
+func _addCorrectCount(iscorrect):
 	if iscorrect:
 		if Correctcount >=10 :
 			if power <maxpower:

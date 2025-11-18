@@ -115,7 +115,7 @@ func checkAnswer(answer:String):
 		count_change =-1
 	else :
 		count_change = 3
-	Jlptn5.updataWordCount(questionData.get("tiltle"),count_change)
+	Jlptn5.updateWordCount(questionData.get("tiltle"),count_change)
 	Eventmanger.answered.emit(iscorrect)
 	return iscorrect
 

@@ -72,7 +72,7 @@ func _ready() -> void:
 
 
 
-func updataWordCount(word:Dictionary, count_change:int):
+func updateWordCount(word:Dictionary, count_change:int):
 	var word_key = word.get("假名", "")
 	if word_key.is_empty():
 		return

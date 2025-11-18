@@ -46,9 +46,9 @@ func _setSkill():
 		remove_child(currentSkill)
 		tigger._setunequip(currentSkill)
 
-	var unequidSkillBox:Array = tigger._returnUnequid()
-	if unequidSkillBox.size()>0:
-		currentSkill = unequidSkillBox.pop_back()
+	var unequipSkillBox:Array = tigger._returnUnequip()
+	if unequipSkillBox.size()>0:
+		currentSkill = unequipSkillBox.pop_back()
 		
 		currentSkill.hide()
 		self.add_child(currentSkill)
@@ -71,23 +71,23 @@ func _on_button_left_pressed() -> void:
 	tigger._setunequip(currentSkill)
 	
 	# 2. 获取更新后的技能池
-	var unequidSkillBox:Array = tigger._returnUnequid()
+	var unequipSkillBox:Array = tigger._returnUnequip()
 	
 	# 3. 修正“获取上一个”的逻辑
-	if unequidSkillBox.size() < 2:
+	if unequipSkillBox.size() < 2:
 		# 如果池中技能总数少于2个，切换无意义，只需取回唯一的那个技能。
-		if not unequidSkillBox.is_empty():
-			currentSkill = unequidSkillBox.pop_back()
+		if not unequipSkillBox.is_empty():
+			currentSkill = unequipSkillBox.pop_back()
 		else:
 			currentSkill = null
 			return
 	else:
 		# a. 先弹出我们刚刚放回去的、位于数组末尾的技能。
-		var just_returned_skill = unequidSkillBox.pop_back()
+		var just_returned_skill = unequipSkillBox.pop_back()
 		# b. 再次弹出，这次得到的才是我们真正想要的“上一个”技能。
-		currentSkill = unequidSkillBox.pop_back()
+		currentSkill = unequipSkillBox.pop_back()
 		# c. 为了维持循环，把最初的那个技能（just_returned_skill）放回到池子前面。
-		unequidSkillBox.push_front(just_returned_skill)
+		unequipSkillBox.push_front(just_returned_skill)
 
 	# 4. 显示新技能
 	currentSkill.hide()
@@ -109,13 +109,13 @@ func _on_button_right_pressed() -> void:
 	tigger._setunequip(currentSkill)
 	
 	# 2. 获取更新后的技能池
-	var unequidSkillBox:Array = tigger._returnUnequid()
-	if unequidSkillBox.is_empty():
+	var unequipSkillBox:Array = tigger._returnUnequip()
+	if unequipSkillBox.is_empty():
 		currentSkill = null
 		return
 		
 	# 3. 从池子前面取出下一个技能
-	currentSkill = unequidSkillBox.pop_front()
+	currentSkill = unequipSkillBox.pop_front()
 	
 	# 4. 显示新技能
 	currentSkill.hide()
@@ -133,7 +133,7 @@ func checkPoint(_node,pos):
 		if temp.has_point(pos):
 			var ob:PackedScene = load(_node.Data.get("path"))
 			var obins = ob.instantiate()
-			Eventmanger.equidSkill.emit(i,obins)
+			Eventmanger.equipSkill.emit(i,obins)
 			currentSkill=null
 			_node.queue_free()
 			if get_tree().get_first_node_in_group("main").islevelDone==false:
@@ -141,7 +141,7 @@ func checkPoint(_node,pos):
 				#var main = get_tree().get_first_node_in_group("main")
 				Eventmanger.UIShowAll.emit()
 				return
-			if tigger._returnUnequid().size() <= 0:
+			if tigger._returnUnequip().size() <= 0:
 				Eventmanger.NextLevel.emit()
 				get_tree().paused = false
 			break

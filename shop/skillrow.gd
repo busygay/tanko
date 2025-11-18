@@ -58,7 +58,7 @@ func dissolve():
 	tween.finished.connect(func():
 		_SkillAssemblyMod()
 		# get_parent().remove_child(self)
-		Eventmanger.setequidDAta.emit(self)
+		Eventmanger.setequipData.emit(self)
 		Eventmanger.ShowSkillAssembly.emit()
 		temp.set("shader_parameter/dissolve_value",1.0)
 		)

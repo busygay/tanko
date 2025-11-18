@@ -37,7 +37,7 @@ var MaxAmmo = 7
 var currentAmmo:
 	set(new):
 		currentAmmo=new
-		Eventmanger.buttelCountChange.emit(currentAmmo)
+		Eventmanger.bulletCountChange.emit(currentAmmo)
 
 
 var enemy:Array[Node2D]
@@ -58,7 +58,7 @@ var current_state: State =State.NOTHING
 func _ready() -> void:
 	Eventmanger.register_player(self)
 	##skillSingal
-	Eventmanger.playerGlobalDammageBonusChange.connect(func(bonus:int):
+	Eventmanger.playerGlobalDamageBonusChange.connect(func(bonus:int):
 		globalDamageBonus = bonus
 	)
 	Eventmanger.playerCdSub.connect(BaseShootCdSub)
@@ -220,7 +220,7 @@ func reloadFinishfunc():
 	reloading = false
 	currentAmmo = MaxAmmo
 	Eventmanger.FinishReloadAmmo.emit()
-	Eventmanger.actionPoinSub.emit()
+	Eventmanger.actionPointSub.emit()
 	_returnidle()
 
 func _on_baseshoot_c_dtimer_timeout() -> void:

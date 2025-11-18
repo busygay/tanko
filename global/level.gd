@@ -9,7 +9,7 @@ var enemyspath:Array=[
 var enemys:Dictionary
 var memEnemys:Array
 var currentLevel:int =0
-var enemysSpanwFinsh:Array =[]
+var enemysSpanwFinish:Array =[]
 var spawnQueue:Array
 var enemysKeys:Array
 
@@ -51,7 +51,7 @@ func getrandipos():
 	return randipos
 	
 func spawnenemy(_spawnQueue:Array,spawncd:float):
-	enemysSpanwFinsh.append(false)
+	enemysSpanwFinish.append(false)
 	var cd = spawncd
 	if get_tree().get_first_node_in_group("main") == null:
 		print("找不到main场景，游戏可能结束了。by:level.gd")
@@ -69,7 +69,7 @@ func spawnenemy(_spawnQueue:Array,spawncd:float):
 	if cd <= 0.5 :
 		cd =1
 	if _spawnQueue.is_empty():
-		enemysSpanwFinsh.clear()
+		enemysSpanwFinish.clear()
 		return
 	temptimer.timeout.connect(func():
 		spawnenemy(_spawnQueue,cd)

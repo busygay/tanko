@@ -18,7 +18,7 @@ func _ready():
 		if buffnode != null:
 			buffnode.queue_free()
 			buffnode = null
-			Eventmanger.playerGlobalDammageBonusChange.emit(0)
+			Eventmanger.playerGlobalDamageBonusChange.emit(0)
 
 	)
 	add_child(liveTimer)
@@ -38,7 +38,7 @@ func creatBuff():
 		get_tree().get_first_node_in_group(&'main').add_child(buffnode)
 		buffnode.show()
 		buffnode.play("buff")
-		Eventmanger.playerGlobalDammageBonusChange.emit(bonus)
+		Eventmanger.playerGlobalDamageBonusChange.emit(bonus)
 		liveTimer.start()
 	else :
 		var tempBreakBuff = break_buff.duplicate()
@@ -48,7 +48,7 @@ func creatBuff():
 		tempBreakBuff.play("breakBuff")
 		buffnode.offset = Vector2(0,8)
 		buffnode.play("hit")
-		Eventmanger.playerGlobalDammageBonusChange.emit(0)
+		Eventmanger.playerGlobalDmmageBonusChange.emit(0)
 		buffnode.animation_finished.connect(func():
 			buffnode.queue_free()
 			buffnode = null
