@@ -7,6 +7,14 @@ class_name players
 @onready var baseshoot_cdtimer: Timer = $baseshootCDtimer
 @onready var label: Label = $Label
 @onready var gun_shoot_player_2d: AudioStreamPlayer2D = $gunShootPlayer2D
+##用于设置无敌的timer
+@onready var parryInvincibleTimer: Timer = $parryInvincible
+@onready var hurtInvincibleTimer: Timer = $hurtInvincible
+#用于无敌判断的bool
+var is_hurt_invincible := false
+var is_parry_invincible := false
+var breakInvincibleCount :int
+
 
 @export var MaxHealth:int =10
 @export var baseshootCD:float
@@ -20,8 +28,7 @@ var trueDamageRatio:float = 0.0
 var criticalChance:int = 10    #暴击率(百分比，初始10%)
 var criticalRatio:int = 50     #暴击伤害加成(百分比，初始50%)
 
-var is_hurt_invincible := false
-var is_parry_invincible := false
+
 
 var inshootcd:bool = false
 var reloading:bool
@@ -48,8 +55,6 @@ enum State {
 # 用于管理当前状态的变量
 var current_state: State =State.NOTHING
 
-var is_hurt_invincibleTimer:Timer
-var is_parry_invincibleTimer:Timer
 func _ready() -> void:
 	Eventmanger.register_player(self)
 	##skillSingal
@@ -63,25 +68,8 @@ func _ready() -> void:
 	Eventmanger.reloadAmmo.connect(reloadAmmofunc)
 	Eventmanger.playerGotHurt.connect(getHurt)
 	#无敌信号连接
-	Eventmanger.parryInvincible.connect(func():
-		is_parry_invincible = true
-		is_parry_invincibleTimer.start()
-	)
-	is_hurt_invincibleTimer = Timer.new()
-	is_hurt_invincibleTimer.wait_time = 0.5
-	is_hurt_invincibleTimer.one_shot = true
-	is_hurt_invincibleTimer.timeout.connect(func():
-		is_hurt_invincible = false
-	)
-	add_child(is_hurt_invincibleTimer)
-	is_parry_invincibleTimer = Timer.new()
-	is_parry_invincibleTimer.wait_time = 0.2
-	is_parry_invincibleTimer.one_shot = true
-	is_parry_invincibleTimer.timeout.connect(func():
-		is_parry_invincible = false
-	)
-	add_child(is_parry_invincibleTimer)	
-	
+
+
 	# 将动画完成的逻辑连接到一个更具体的处理函数
 	animation_player.animation_finished.connect(_on_animation_finished)
 	_init()
@@ -277,6 +265,15 @@ func _showTips(stext: String):
 
 func getHurt(damage:int):
 	if is_hurt_invincible or is_parry_invincible:
+		
+		if is_hurt_invincible:
+			breakInvincibleCount +=1
+			print("受击无敌中，剩余时间"+str(hurtInvincibleTimer.time_left-breakInvincibleCount))
+			if breakInvincibleCount >int (hurtInvincibleTimer.time_left):
+				is_hurt_invincible =false
+				breakInvincibleCount =0
+				hurtInvincibleTimer.stop()
+				return
 		if is_parry_invincible:
 			return
 			###还未完成
@@ -288,7 +285,16 @@ func getHurt(damage:int):
 	modulate=Color(1.0, 0.0, 0.0)
 	await get_tree().create_timer(0.1).timeout
 	modulate = Color(1.0, 1.0, 1.0)
-	is_hurt_invincibleTimer.start()
+	hurtInvincibleTimer.start()
+	is_hurt_invincible = true
+
+func parryInvinclibleFunc():
+	if is_parry_invincible or is_hurt_invincible:
+		return
+	else:
+		parryInvincibleTimer.start()
+		is_hurt_invincible =true
+
 
 
 
@@ -347,3 +353,15 @@ func calculate_damage(enemy_armor: float = 0.0) -> float:
 	return final_damage
 	# 使用示例:
 	# var damage = calculate_damage(enemy.armor)
+
+
+func _on_parry_invincible_timeout() -> void:
+	is_parry_invincible = false
+	pass # Replace with function body.
+
+
+
+func _on_hurt_invincible_timeout() -> void:
+	is_hurt_invincible = false
+	breakInvincibleCount = 0
+	pass # Replace with function body.
