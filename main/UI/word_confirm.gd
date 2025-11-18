@@ -46,9 +46,15 @@ func showWord(isCorrect:bool):
 			var tempword = correctWord.get(i)
 			var temp =header.duplicate()
 			if temp.get_child_count() ==3:
-				temp.get_child(0).text = tempword.get("假名")
-				temp.get_child(1).text = tempword.get("日语汉字")
-				temp.get_child(2).text = tempword.get("中文翻译")
+				var kana:String =  tempword.get("假名")
+				var kangji:String = tempword.get("日语汉字","--")
+				var chinese:String = tempword.get("中文翻译")
+				if kangji == null :
+					kangji = "--"
+				
+				temp.get_child(0).text =kana
+				temp.get_child(1).text = kangji
+				temp.get_child(2).text = chinese
 				content.add_child(temp)
 			else:
 				push_error("header的节点数量不对。by:WordConfirm.gd")

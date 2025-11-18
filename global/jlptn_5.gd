@@ -88,9 +88,7 @@ func _ready() -> void:
 	# 功能: 将答对的单词添加到正确单词列表
 	#correctWord.set(sword.get("假名"),sword)
 
-func _updataErrorWordCount(word:Dictionary, count_change:int):
-	# 调用方: main/main.gd (第90行, 第101行), main/UI/answerButton.gd (第41行, 第52行)
-	# 功能: 更新单词的错误次数，支持增加或减少错误次数
+func updataWordCount(word:Dictionary, count_change:int):
 	var word_key = word.get("假名", "")
 	if word_key.is_empty():
 		return
@@ -136,7 +134,8 @@ func _clearWord():
 		#如果allErrorWord中有相同错误单词就合并错误次数
 		if allErrorWord.has(word_key):
 			var tempErrorWord = allErrorWord.get(word_key)
-			var tempCount = errorWord.get("error_count")+allcorrectWord.get("error_count")
+
+			var tempCount = errorWord.get(word_key).get("error_count")+allErrorWord.get(word_key).get("error_count")
 			tempErrorWord.set("error_count",tempCount)
 			allErrorWord.set(word_key,tempErrorWord)
 		else :
@@ -262,8 +261,12 @@ func _loadWord():
 				for i in range(headers.size()):
 					var head = headers[i]
 					var temp = line_Data[i]
+					#如果项目是空，不为空项目设置key和值
+					if temp =="":
+						continue
 					row_dir[head] = temp
-				tempWordData[row_dir["中文翻译"]] = row_dir
+				if row_dir.get("假名"):
+					tempWordData[row_dir["假名"]] = row_dir
 			file.close()
 			word_data.set(y,tempWordData)
 			print(y+"单词加载完毕共载入单词",tempWordData.size(),"个。by：jlpt_n5.gd")
@@ -285,34 +288,242 @@ func _setWordBookList(list:Array):
 	# 功能: 设置当前使用的单词本列表
 	wordBookList.clear()
 	wordBookList=list.duplicate()
+
+func getNextQuestion(type:int = 0):
+	var questionData :Dictionary ={}
 	
+	## 0为普通题目,1为错题插入，2为单词重组。
+	#发送题目，正确选项，错误选择
+	var tiltle:Dictionary #用于设置题目
+	var correctData:Array #用于存放正确选项
+	var selectErrorWordData:Array #用于存在错误选项
+	var errorButtonCount:int #需要使用的干扰选项数量
+	var selectErrorKeys:Array
+
+
+	var allErrorWordDataDic:Array = [
+		errorWord,
+		allErrorWord,
+		savedErrorWord,
+	]
+	var uesDic:Dictionary ={}
+	#确认是否有错题可以进行错题插入。若无则则使用普通的题目
+	if type == 1:
+		for i in allErrorWordDataDic:
+			if not i.is_empty():
+				uesDic = i
+				break
+	if type == 1 and uesDic =={}:
+		type =0
+	#确认是否有masteredWord可以进行单词重组，若无则则使用普通的题目
+	if type ==2 and masteredWord.is_empty():
+		type =1
+		for i in allErrorWordDataDic:
+			if not i.is_empty():
+				uesDic = i
+				break
+		if type == 1 and uesDic =={}:
+			type =0
+
+
+		
+
+
+	match type:
+		0:
+			#设置题目，并添加进tilte
+			if allCurrentKeys.size()>= 4:
+				var selectTilteKey = allCurrentKeys.pop_back()
+				tiltle =allCurrentWordData.get(selectTilteKey)
+
+			else:
+				##需要设计题目不足，询问player要重新加载题目还是新增题目。
+				pass
+			
+
+			#将正确选项放入correctData
+			if tiltle.get("日语汉字",null):
+				if randi()%2 >=1:
+					correctData.append(tiltle.get("日语汉字"))
+				else:
+					correctData.append(tiltle.get("假名"))
+			else:
+				correctData.append(tiltle.get("假名"))
+
+
+			#获取干扰选项key，并添加进selectErrorKeys
+			if allCurrentKeys.size() > 3:
+				for i in range(3):
+					var tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
+					while selectErrorKeys.has(tempkey) :
+						tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
+					selectErrorKeys.append(tempkey)
+			elif allCurrentKeys.size() == 3:
+				for i in range(3) :
+					var tempkey = allCurrentKeys.get(i)
+					selectErrorKeys.append(tempkey)
+			else:
+				##需要设计题目不足，询问player要重新加载题目还是新增题目。
+				pass
+			#将干扰选项添加进selectErrorWordData
+			for i in selectErrorKeys:
+				var tempWordData = allCurrentWordData.get(i)
+				var errorWordStr:String
+
+				#true 设置日语汉字，fales 设置假名
+				if tempWordData.get("日语汉字",null):
+					if randi()%2 >=1:
+						errorWordStr=tempWordData.get("日语汉字")
+					else:
+						errorWordStr=tempWordData.get("假名")
+				else:
+					errorWordStr=tempWordData.get("假名")
+
+				selectErrorWordData.append(errorWordStr)
+			#检测是否有错误单词，如果有就加入干扰项
+			var temp = tiltle.get("容易混淆的单词",null)
+			if temp :
+				selectErrorWordData.append(temp)
+				pass
+			errorButtonCount = 3
+		
+		1:
+			#设置题目，并添加进tilte
+			var tempKeys = uesDic.keys()
+			var tempTiltle :Dictionary= uesDic.get(tempKeys.get(randi()%tempKeys.size()),null)
+			if tempTiltle:
+				tempTiltle.erase("error_count")
+				tiltle = tempTiltle
+			else:
+				print("无法设置题目")
+			
+			#将正确选项放入correctData
+			if tiltle.get("日语汉字",null):
+				if randi()%2 >=1:
+					correctData.append(tiltle.get("日语汉字"))
+				else:
+					correctData.append(tiltle.get("假名"))
+			else:
+				correctData.append(tiltle.get("假名"))
+			
+			#获取干扰选项key，并添加进selectErrorKeys
+			if allCurrentKeys.size() > 3:
+				for i in range(3):
+					var tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
+					while selectErrorKeys.has(tempkey) :
+						tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
+					selectErrorKeys.append(tempkey)
+			elif allCurrentKeys.size() == 3:
+				for i in range(3) :
+					var tempkey = allCurrentKeys.get(i)
+					selectErrorKeys.append(tempkey)
+			else:
+				##需要设计题目不足，询问player要重新加载题目还是新增题目。
+				pass
+			#将干扰选项添加进selectErrorWordData
+			for i in selectErrorKeys:
+				var tempWordData = allCurrentWordData.get(i)
+				var tempErrorWord:String
+
+				#true 设置日语汉字，fales 设置假名
+				if tempWordData.get("日语汉字",null):
+					if randi()%2 >=1:
+						tempErrorWord=tempWordData.get("日语汉字")
+					else:
+						tempErrorWord=tempWordData.get("日语汉字")
+				else:
+					tempErrorWord=tempWordData.get("日语汉字")
+
+				selectErrorWordData.append(tempErrorWord)
+
+			#检测是否有错误单词，如果有就加入干扰项
+			var temp = tiltle.get("容易混淆的单词",null)
+			if temp :
+				selectErrorWordData.append(temp)
+			errorButtonCount = 3
+			
+		2:
+			#设置题目，并添加进tilte
+			var tempKeys = masteredWord.keys()
+			var tempTiltle :Dictionary= masteredWord.get(tempKeys.get(randi()%tempKeys.size()),null)
+			if tempTiltle:
+				tiltle = tempTiltle
+			else:
+				print("无法设置题目")
+
+			#将正确选项放入correctData,先选择要使用汉字还是假名，目标单词拆分存放。
+			var targetWord :String
+			if tiltle.get("日语汉字",null):
+				if randi()%2:
+					targetWord = tiltle.get("日语汉字")
+				else:
+					targetWord = tiltle.get("假名")
+			else :
+				targetWord = tiltle.get("假名")
+			for i in range(targetWord.length()):
+				correctData.append(targetWord.substr(i,1))
+
+			#将错误选项放入selectErrorWordData
+			#先获取3个错误单词。
+			if allCurrentWordData.size()<3:
+				##需要设计题目不足，询问player要重新加载题目还是新增题目。
+				pass
+			for i in range(3):
+				var tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
+				while  selectErrorKeys.has(tempkey):
+					tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
+			
+			var tempWordArray:Array 
+			for i in selectErrorKeys:
+				var tempWordData = allCurrentWordData.get(i)
+				var tempErrorWord:String
+				#true 设置日语汉字，fales 设置假名
+				if tempWordData.get("日语汉字",null):
+					if randi()%2 >=1:
+						tempErrorWord=tempWordData.get("日语汉字")
+					else:
+						tempErrorWord=tempWordData.get("假名")
+				else:
+					tempErrorWord=tempWordData.get("假名")
+				tempWordArray.append(tempErrorWord)
+			#将所有汉字或者假名拆分后放入selectErrorWordData
+			for i in tempWordArray:
+				for y in range(i.length()):
+					var tempStr =i.substr(y,1)
+					selectErrorWordData.append(tempStr)
+			#移除与正确选项相同的字符，避免同一个字符出项多次，且正确与错误不统一。
+			for i in correctData:	
+				selectErrorWordData.erase(i)
+			errorButtonCount = int (selectErrorWordData.size()*0.8)
+
+
+
+
+
+			
+
+
+			
+
+	questionData = {
+		"type":type,
+		"tiltle":tiltle,
+		"correctData":correctData,
+		"selectErrorWordData":selectErrorWordData,
+		"errorButtonCount":errorButtonCount,
+	}
+	return questionData
+
+
 func _getNextWordData():
 	# 调用方: _getCurrentTitleWord()函数 (第81行), main/UI/answering.gd (第54行)
 	# 逻辑问题: 此函数会从allCurrentKeys中移除一个元素，可能导致题目数量减少
 	var tiltle:Dictionary
 	if allCurrentKeys.size() >=4:
-		var temp = allCurrentKeys.pop_back()
-		tiltle[temp] = allCurrentWordData.get(temp)
+		pass
 	return tiltle
 	
-func _getErrorWordData():
-	# 调用方: main/UI/answering.gd (第58行, 第133行)
-	# 功能: 随机获取2个错误选项，用于选择题
-	# 逻辑问题: 可能会返回重复的选项，因为随机数可能相同
-	var ran:Array
-	var selectErrorWord:Array
-	ran.resize(2)
-	for i in range(2):
-		ran[i] = randi()%allCurrentKeys.size()
-		var temp = allCurrentWordData.get(allCurrentKeys[ran[i]])
-		if not temp.get("日语汉字").is_empty():
-			if randi()%10 < 8:
-				selectErrorWord.append(temp.get("日语汉字"))
-			else :
-				selectErrorWord.append(temp.get("假名"))
-		else :
-			selectErrorWord.append(temp.get("假名"))
-	return selectErrorWord
+
 func _gameStart():
 	# 调用方: main/UI/answering.gd (第21行)
 	# 功能: 游戏开始时初始化单词数据
@@ -321,106 +532,3 @@ func _gameStart():
 		allCurrentWordData = sendWordData()
 		allCurrentKeys = allCurrentWordData.keys()
 		allCurrentKeys.shuffle()
-
-# 获取错误次数最高的错题
-func _getHighestErrorWord():
-	# 调用方: main/UI/answering.gd (第114行)
-	# 功能: 获取错误次数最高的单词，用于错题复习
-	if errorWord.is_empty():
-		return null
-	
-	var highest_error_word :Dictionary
-	var highest_error_count = 0
-	
-	for word_key in errorWord.keys():
-		var error_word_data = errorWord.get(word_key)
-		if error_word_data.error_count > highest_error_count:
-			highest_error_count = error_word_data.error_count
-			highest_error_word =  error_word_data
-	
-	return highest_error_word
-
-# 获取单词重组模式的字符数据
-func _getWordReorderData(target_word: Dictionary):
-	# 调用方: main/UI/answering.gd (第204行)
-	# 功能: 为单词重组模式生成字符数据，包括目标字符和干扰字符
-	var result = {
-		"target_word": target_word,
-		"characters": [],
-		"interference": []
-	}
-	
-	# 提取目标词汇的假名和汉字部分
-	var kana = target_word.get("假名", "")
-	var kanji = target_word.get("日语汉字", "")
-	
-	# 将假名按字符拆分
-	for i in range(kana.length()):
-		result.characters.append(kana.substr(i, 1))
-	
-	# 汉字保持整体
-	if not kanji.is_empty():
-		result.characters.append(kanji)
-	
-	# 添加2-3个干扰字符（来自同级别其他词汇）
-	var interference_count = randi_range(2, 4)
-	var available_words = allCurrentWordData.values()
-	available_words.shuffle()
-	
-	for word in available_words:
-		if interference_count <= 0:
-			break
-		
-		# 避免使用目标词汇的字符
-		var source_kana = word.get("假名", "")
-		var source_kanji = word.get("日语汉字", "")
-		
-		# 优先使用假名作为干扰字符
-		if not source_kana.is_empty():
-			var random_char = source_kana.substr(randi() % source_kana.length(), 1)
-			if not result.characters.has(random_char):
-				result.interference.append(random_char)
-				interference_count -= 1
-				print("添加假名干扰字符: ", random_char, " 来自单词: ", word.get("中文翻译", ""))
-		# 如果假名为空，尝试使用汉字作为干扰字符
-		elif not source_kanji.is_empty():
-			var random_char = source_kanji.substr(randi() % source_kanji.length(), 1)
-			if not result.characters.has(random_char):
-				result.interference.append(random_char)
-				interference_count -= 1
-				print("添加汉字干扰字符: ", random_char, " 来自单词: ", word.get("中文翻译", ""))
-	
-	# 合并所有选项并随机排序
-	var all_options = []
-	all_options.append_array(result.characters)
-	all_options.append_array(result.interference)
-	all_options.shuffle()
-	
-	result.all_options = all_options
-	return result
-
-# 获取已掌握的单词（错误次数为0或不在错题本中）用于单词重组模式
-func _getMasteredWordForReorder():
-	# 调用方: main/UI/answering.gd (第188行)
-	# 功能: 获取一个已掌握的单词用于单词重组模式
-	# 逻辑问题: 此函数可能返回null，调用方需要处理这种情况
-	var mastered_words = []
-	
-	# 从所有当前单词中筛选出已掌握的单词
-	for current_key in allCurrentKeys:
-		var current_word_data = allCurrentWordData.get(current_key)
-		
-		# 检查单词是否在错题本中
-		var is_in_error_book = errorWord.has(current_word_data.get("假名", ""))
-		
-		# 如果不在错题本中，则认为是已掌握的
-		if not is_in_error_book:
-			mastered_words.append(current_word_data)
-	
-	# 如果没有已掌握的单词，返回null
-	if mastered_words.is_empty():
-		return null
-	
-	# 随机选择一个已掌握的单词
-	mastered_words.shuffle()
-	return mastered_words[0]

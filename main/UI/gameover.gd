@@ -125,10 +125,11 @@ func _load_word_batch() -> void:
 		var label2 = temp.get_child(1) as Label #中文/翻译
 		var label3 = temp.get_child(2) as Label #错误次数
 		var temp_word:Dictionary = sourceData.get(current_keys.get(current_index))
+		var japanese =temp_word.get("日语汉字",null)
+		if japanese == null:
+			japanese = temp_word.get("假名",null)
 		
-		label1.text = temp_word.get("日语汉字",null)
-		if label1.text == null:
-			label1.text =temp_word.get("假名",null)
+		label1.text = japanese
 		label2.text = temp_word.get("中文翻译")
 		if current_mode == DisplayMode.ERROR:
 			label3.text = str(temp_word.get("error_count"))

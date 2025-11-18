@@ -2,24 +2,17 @@ extends Control
 @onready var button: TextureButton = $TextureButton
 @onready var label: Label = $TextureButton/MarginContainer/Label
 
+var answerpanel
+var wordStr:String
 
-var isanswer:bool
-var word
+
 func _ready() -> void:
-	self.size = button.size
+	label.text = wordStr
 	
 
-func _setData(isans,sword):
-	if sword =="":
-		push_error("单词有问题")
-	label.text=sword
-	isanswer=isans
-	if isanswer :
-		self.add_to_group("isanswer")
-
-func _setTiltleData(sword:Dictionary):
-	word =sword
-	pass
+func setData(WordStr:String,ansPanel:Node):
+	wordStr = WordStr
+	answerpanel = ansPanel
 
 
 
@@ -28,23 +21,12 @@ func _setcolor():
 
 
 func _on_texture_button_pressed() -> void:
-	if isanswer:
+	var iscorrect = answerpanel.checkAnswer(wordStr)
+	if iscorrect:
 		self.modulate = Color(0.0, 1.0, 0.231)
-		Eventmanger.answered.emit(true)
-		# 回答正确，减少错误次数，并发送完整题目
-		var answering_node = get_tree().get_first_node_in_group("answering")
-		if answering_node:
-			var current_word = answering_node._getCurrentTitleWord()
-			if current_word:
-				Jlptn5._updataErrorWordCount(current_word, -1)
+		#
 	else :
 		self.modulate = Color(1.0, 0.0, 0.0)
-		Eventmanger.answered.emit(false)
-		# 回答错误，增加错误次数，并发送完整题目
-		var answering_node = get_tree().get_first_node_in_group("answering")
-		if answering_node:
-			var current_word = answering_node._getCurrentTitleWord()
-			if current_word:
-				Jlptn5._updataErrorWordCount(current_word, 3)
-	Eventmanger.answerFinsh.emit()
+		
+
 	pass # Replace with function body.

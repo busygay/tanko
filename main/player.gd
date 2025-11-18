@@ -280,9 +280,11 @@ func getHurt(damage:int):
 	health -= damage
 	if health <= 0:
 		Eventmanger.gameover.emit()
+		return
 	modulate=Color(1.0, 0.0, 0.0)
 	await get_tree().create_timer(0.1).timeout
 	modulate = Color(1.0, 1.0, 1.0)
+	is_hurt_invincibleTimer.start()
 
 
 
