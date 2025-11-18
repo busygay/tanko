@@ -61,6 +61,8 @@ signal actionPointUp
 signal actionPoinSub
 
 @warning_ignore('unused_signal')
+signal buttelCountChange(count:int)
+@warning_ignore('unused_signal')
 signal playershooting
 @warning_ignore('unused_signal')
 signal playerShooted

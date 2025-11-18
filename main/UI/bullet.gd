@@ -3,9 +3,26 @@ extends Control
 @onready var h_box_container: HBoxContainer = $HBoxContainer
 const SMALL_BULLET_3 = preload('res://asset/small_bullet3.png')
 func _ready() -> void:
+	showAllButtel()
 	Eventmanger.setbulletPos(self,false)
-	Eventmanger.playershooting.connect(showBulletCount)
-	Eventmanger.FinishReloadAmmo.connect(showreloadBulletCount)
+	Eventmanger.buttelCountChange.connect(buttelCountChange)
+	#Eventmanger.playershooting.connect(showBulletCount)
+	#Eventmanger.FinishReloadAmmo.connect(showreloadBulletCount)
+
+
+func showAllButtel():
+	for i in range(7):
+		var temp = TextureRect.new()
+		temp.texture = SMALL_BULLET_3
+		v_box_container.add_child(temp)
+
+func buttelCountChange(count:int):
+	for i in v_box_container.get_children():
+		i.hide()
+	for i in range(count):
+		v_box_container.get_child(i).show()
+
+
 
 func showreloadBulletCount():
 	for i in v_box_container.get_children():

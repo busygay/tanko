@@ -27,7 +27,11 @@ var inshootcd:bool = false
 var reloading:bool
 #子弹数量和最大子弹数
 var MaxAmmo = 7
-var currentAmmo =0
+var currentAmmo:
+	set(new):
+		currentAmmo=new
+		Eventmanger.buttelCountChange.emit(currentAmmo)
+
 
 var enemy:Array[Node2D]
 
@@ -189,7 +193,7 @@ func baseshootingline():
 		Eventmanger.playerShooted.emit(enemy[i],ends,baseDamage)
 		
 	bulletCount = max(bulletCount,1)
-	currentAmmo -= 1
+	#currentAmmo -= 1 ,用播放音效修改子弹数量
 	Eventmanger.playershooting.emit(currentAmmo)
 
 
@@ -291,8 +295,9 @@ func getHurt(damage:int):
 
 func gunshootingsounds():
 	## 由于声音播放在子弹数量减一后调用，所以这里子弹=0也有射击声音
-	if currentAmmo >=0 :
+	if currentAmmo >0 :
 		AudioManager.play_sfx_at_position("22LRSingleMP3", shoot_point_mark.global_position)
+		currentAmmo -=1
 	elif  get_tree().get_first_node_in_group(&'main').power <=0:
 		AudioManager.play_sfx_at_position("Semi22LRCantReloadMP3",shoot_point_mark.global_position)
 		

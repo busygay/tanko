@@ -142,7 +142,7 @@ func _loadErrorWordData(display_mode: String) -> void:
 	
 	# 从Jlptn5获取保存的错题数据
 	var saved_error_words = Jlptn5.savedErrorWord
-	
+	var masetredWord = Jlptn5.masteredWord
 	print("menu _loadErrorWordData: 从 Jlptn5 获取到 %d 个单词数据" % saved_error_words.size())
 	
 	# 根据显示模式筛选数据
@@ -155,7 +155,8 @@ func _loadErrorWordData(display_mode: String) -> void:
 		print("menu _loadErrorWordData: 错题本模式，筛选出 %d 个错题" % display_data.size())
 	elif display_mode == "rebuild_book":
 		# 单词重组词库模式：显示所有单词（包括已掌握的）
-		display_data = Jlptn5.masteredWord
+		for wordkey in masetredWord:
+			display_data.append(masetredWord.get(wordkey))
 		print("menu _loadErrorWordData: 单词重组词库模式，共 %d 个单词" % display_data.size())
 	
 	if display_data.is_empty():
@@ -173,15 +174,17 @@ func _loadErrorWordData(display_mode: String) -> void:
 	#无需创建头部，头部不会被删除。
 	#var header = _createWordHeader()
 	#error_word_vbox.add_child(header)
-	
+
 	# 按错误次数排序（从高到低），对于单词重组词库模式，已掌握的（error_count=0）排在后面
-	display_data.sort_custom(func(a, b):
-		if a.error_count == 0 and b.error_count > 0:
-			return false
-		elif a.error_count > 0 and b.error_count == 0:
-			return true
-		else:
-			return a.error_count > b.error_count
+	if display_mode == "error_book":
+
+		display_data.sort_custom(func(a, b):
+			if a.error_count == 0 and b.error_count > 0:
+				return false
+			elif a.error_count > 0 and b.error_count == 0:
+				return true
+			else:
+				return a.error_count > b.error_count
 	)
 	
 	print("menu _loadErrorWordData: 开始创建 %d 个单词条目" % display_data.size())
@@ -189,14 +192,14 @@ func _loadErrorWordData(display_mode: String) -> void:
 	# 创建单词条目
 	for word_entry in display_data:
 		var word_data = word_entry
-		var error_count = word_entry.error_count
+		var error_count = word_entry.get("error_count","--")
 		var word_item = _createWordItem(word_data, error_count, display_mode,)
 		error_word_vbox.add_child(word_item)
 	
 	print("menu _loadErrorWordData: 单词条目创建完成")
 
 
-func _createWordItem(word_data: Dictionary, error_count: int, display_mode: String) -> HBoxContainer:
+func _createWordItem(word_data: Dictionary, error_count, display_mode: String) -> HBoxContainer:
 	var tempWordHbox:HBoxContainer = header.duplicate()
 
 	var tempJapaneseLabel:Label = tempWordHbox.get_child(0) as Label
@@ -211,6 +214,7 @@ func _createWordItem(word_data: Dictionary, error_count: int, display_mode: Stri
 		tempCountLabel.text = "错误: %d次" % error_count
 		tempCountLabel.add_theme_color_override("font_color", Color(1, 0.2, 0.2))
 	else:
+		tempCountLabel.text = "--" 
 		# 单词重组词库模式：用"-"代替次数
 		pass
 	return tempWordHbox

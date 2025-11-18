@@ -70,23 +70,7 @@ func _ready() -> void:
 	Eventmanger.gameover.connect(_clearWord)
 
 
-##合并进_updateErrorWord函数中
-#func _addErrorWord(sword:Dictionary):
-	# 调用方: main/UI/answerButton.gd (第45行)
-	# 功能: 将答错的单词添加到错误单词列表，初始错误次数为3
-	# 创建包含错误次数的数据结构
-	#var error_word_data = {
-	#	"word_data": sword,
-	#	"error_count": 3  # 新加入的错误单词初始错误次数为3
-	#}
-	#errorWord.set(sword.get("假名"), error_word_data)
-	
 
-##合并进_updateErrorWord函数中
-#func _addCorrectWord(sword:Dictionary):
-	# 调用方: main/UI/answerButton.gd (第34行)
-	# 功能: 将答对的单词添加到正确单词列表
-	#correctWord.set(sword.get("假名"),sword)
 
 func updataWordCount(word:Dictionary, count_change:int):
 	var word_key = word.get("假名", "")
@@ -104,12 +88,13 @@ func updataWordCount(word:Dictionary, count_change:int):
 			for error_list in error_lists:
 				if error_list.has(word_key):
 					var error_word_data = error_list.get(word_key)
-					error_word_data.error_count += count_change
-					# 如果错误次数小于等于0，从错误列表中移除
-					if error_word_data.error_count <= 0:
+					var tempCount =error_word_data.get("error_count",1) 
+					tempCount += count_change
+					if tempCount <= 0:
 						error_list.erase(word_key)
 						masteredWord.set(word_key, word) # 添加到已掌握单词列表
-					return #处理后即可退出函数
+					else:
+						error_word_data.set("error_count",tempCount)# 如果错误次数小于等于0，从错误列表中移除
 		3:		
 			#增加错误次数
 			#直接添加到当前游戏的错误列表里
@@ -147,14 +132,7 @@ func _clearWord():
 	errorWord.clear()
 	correctWord.clear()
 
-func _getCurrentTitleWord():  # 获取当前题目单词，用于更新错误次数
-	# 调用方: main/main.gd (第74行), main/UI/answerButton.gd (第39行, 第50行)
-	# 逻辑问题: 此函数会调用_getNextWordData()并从allCurrentKeys中移除一个元素，可能导致题目顺序混乱
-	var temp_Tiltle:Dictionary = _getNextWordData()
-	if temp_Tiltle.is_empty():
-		return null
-	var temp_key = temp_Tiltle.keys()[0]
-	return temp_Tiltle.get(temp_key)
+
 
 func _restartGame():
 	# 调用方: Eventmanger.restartGame信号触发 (第24行)
@@ -430,9 +408,9 @@ func getNextQuestion(type:int = 0):
 					if randi()%2 >=1:
 						tempErrorWord=tempWordData.get("日语汉字")
 					else:
-						tempErrorWord=tempWordData.get("日语汉字")
+						tempErrorWord=tempWordData.get("假名")
 				else:
-					tempErrorWord=tempWordData.get("日语汉字")
+					tempErrorWord=tempWordData.get("假名")
 
 				selectErrorWordData.append(tempErrorWord)
 
@@ -515,13 +493,6 @@ func getNextQuestion(type:int = 0):
 	return questionData
 
 
-func _getNextWordData():
-	# 调用方: _getCurrentTitleWord()函数 (第81行), main/UI/answering.gd (第54行)
-	# 逻辑问题: 此函数会从allCurrentKeys中移除一个元素，可能导致题目数量减少
-	var tiltle:Dictionary
-	if allCurrentKeys.size() >=4:
-		pass
-	return tiltle
 	
 
 func _gameStart():
