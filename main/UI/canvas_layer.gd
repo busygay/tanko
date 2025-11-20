@@ -14,7 +14,7 @@ var main
 func _ready() -> void:
 	main = get_tree().get_first_node_in_group(&'main') 
 	Eventmanger.actionPointUp.connect(actionPointUpfunc)
-	Eventmanger.actionPoinSub.connect(actionPointSubfunc)
+	Eventmanger.actionPointSub.connect(actionPointSubfunc)
 	Eventmanger.UIHideAll.connect(hideAll)
 	Eventmanger.NextLevel.connect(ShowAll)
 	Eventmanger.UIShowAll.connect(ShowAll)

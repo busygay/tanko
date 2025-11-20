@@ -178,6 +178,6 @@ func enterTreeEnemyfunc():
 	allInTreeEnemyCount+=1
 func exitTreeEnemyfunc():
 	allInTreeEnemyCount-=1
-	if allInTreeEnemyCount<=0 and Level.enemysSpanwFinsh.size()==0:
+	if allInTreeEnemyCount<=0 and Level.enemysSpanwFinish.size()==0:
 		stopgamefunc()
 		Eventmanger.levelOver.emit()

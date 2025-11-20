@@ -58,6 +58,18 @@ var savedErrorWord:Dictionary  # 存储从文件加载的错误单词，包含�
 # 已掌握的单词字典，键为单词假名，值为单词数据（错误次数为0且从错题本移除的单词）
 var masteredWord:Dictionary  # 存储已掌握的单词（错误次数为0且从错题本移除）
 
+# 【新增】假名备份字符常量，用于单词重组时的干扰项
+const BACKUP_KANA_CHARS = [
+	"あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ",
+	"さ", "し", "す", "せ", "そ", "た", "ち", "つ", "て", "と",
+	"な", "に", "ぬ", "ね", "の", "は", "ひ", "ふ", "へ", "ほ",
+	"ま", "み", "む", "め", "も", "や", "ゆ", "よ", "ら", "り",
+	"る", "れ", "ろ", "わ", "を", "ん", "が", "ぎ", "ぐ", "げ",
+	"ご", "ざ", "じ", "ず", "ぜ", "ぞ", "だ", "ぢ", "づ", "で",
+	"ど", "ば", "び", "ぶ", "べ", "ぼ", "ぱ", "ぴ", "ぷ", "ぺ", "ぽ"
+]
+const MIN_DISTRACTORS = 5
+
 var needSave:bool = false
 func _ready() -> void:
 	# 调用方: Godot引擎自动调用
@@ -267,231 +279,479 @@ func _setWordBookList(list:Array):
 	wordBookList.clear()
 	wordBookList=list.duplicate()
 
-func getNextQuestion(type:int = 0):
-	var questionData :Dictionary ={}
+
+
+func getNextQuestion(type: int = 0) -> Dictionary:
+	var questionData: Dictionary = {}
 	
-	## 0为普通题目,1为错题插入，2为单词重组。
-	#发送题目，正确选项，错误选择
-	var tiltle:Dictionary #用于设置题目
-	var correctData:Array #用于存放正确选项
-	var selectErrorWordData:Array #用于存在错误选项
-	var errorButtonCount:int #需要使用的干扰选项数量
-	var selectErrorKeys:Array
-
-
-	var allErrorWordDataDic:Array = [
+	# 【修复】初始化变量，防止 null 引用崩溃
+	var tiltle: Dictionary = {} 
+	var correctData: Array = []
+	var selectErrorWordData: Array = []
+	var errorButtonCount: int = 0
+	var selectErrorKeys: Array = []
+	# 错误单词库集合
+	var allErrorWordDataDic: Array = [
 		errorWord,
 		allErrorWord,
 		savedErrorWord,
 	]
-	var uesDic:Dictionary ={}
-	#确认是否有错题可以进行错题插入。若无则则使用普通的题目
+	var uesDic: Dictionary = {}
+
+	# --- 逻辑检查与类型回退 (保持原有逻辑并增强) ---
 	if type == 1:
 		for i in allErrorWordDataDic:
 			if not i.is_empty():
 				uesDic = i
 				break
-	if type == 1 and uesDic =={}:
-		type =0
-	#确认是否有masteredWord可以进行单词重组，若无则则使用普通的题目
-	if type ==2 and masteredWord.is_empty():
-		type =1
-		for i in allErrorWordDataDic:
-			if not i.is_empty():
-				uesDic = i
-				break
-		if type == 1 and uesDic =={}:
-			type =0
-
-
-		
-
+		if uesDic.is_empty():
+			type = 0
+	
+	# 检查 Type 2 的前置条件
+	if type == 2:
+		if masteredWord.is_empty():
+			type = 1
+			for i in allErrorWordDataDic:
+				if not i.is_empty():
+					uesDic = i
+					break
+			if uesDic.is_empty():
+				type = 0
 
 	match type:
 		0:
-			#设置题目，并添加进tilte
-			if allCurrentKeys.size()>= 4:
+			# 设置题目
+			# 【修复】防止数组越界和 pop_back 导致的崩溃
+			if allCurrentKeys.size()  >= 4:
+				# 注意：pop_back 会永久删除数据，请确保这是你想要的效果（即出过题就不再出）
+				# 如果 allCurrentKeys 数量很少，这里需要处理逻辑，而不是 pass
 				var selectTilteKey = allCurrentKeys.pop_back()
-				tiltle =allCurrentWordData.get(selectTilteKey)
-
+				tiltle = allCurrentWordData.get(selectTilteKey, {})
 			else:
-				##需要设计题目不足，询问player要重新加载题目还是新增题目。
-				pass
-			
+				print("题目不足，需重新加载")
+				questionData.set("isNotEnoughWord",true)
+				return questionData 
 
-			#将正确选项放入correctData
-			if tiltle.get("日语汉字",null):
-				if randi()%2 >=1:
+			# 【修复】增加判空，防止 tiltle 为空时崩溃
+			if tiltle.is_empty():
+				return {}
+
+			# 将正确选项放入 correctData
+			if tiltle.get("日语汉字", null):
+				if randi() % 2 >= 1:
 					correctData.append(tiltle.get("日语汉字"))
 				else:
 					correctData.append(tiltle.get("假名"))
 			else:
 				correctData.append(tiltle.get("假名"))
 
+			# 获取干扰选项
+			for i in range(3):
+				
+				var tempkey = allCurrentKeys[randi() % allCurrentKeys.size()]
+				
+				# 【修复】死循环保护：增加最大尝试次数
+				var max_attempts = 30
+				while (selectErrorKeys.has(tempkey) or tempkey == selectTilteKey) and max_attempts > 0:
+					tempkey = allCurrentKeys[randi() % allCurrentKeys.size()]
+					max_attempts -= 1
+				# 只有不重复才添加
+				if not selectErrorKeys.has(tempkey):
+					selectErrorKeys.append(tempkey)
 
-			#获取干扰选项key，并添加进selectErrorKeys
-			if allCurrentKeys.size() > 3:
-				for i in range(3):
-					var tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
-					while selectErrorKeys.has(tempkey) :
-						tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
-					selectErrorKeys.append(tempkey)
-			elif allCurrentKeys.size() == 3:
-				for i in range(3) :
-					var tempkey = allCurrentKeys.get(i)
-					selectErrorKeys.append(tempkey)
-			else:
-				##需要设计题目不足，询问player要重新加载题目还是新增题目。
-				pass
-			#将干扰选项添加进selectErrorWordData
+			# 填充干扰内容
 			for i in selectErrorKeys:
-				var tempWordData = allCurrentWordData.get(i)
-				var errorWordStr:String
-
-				#true 设置日语汉字，fales 设置假名
-				if tempWordData.get("日语汉字",null):
-					if randi()%2 >=1:
-						errorWordStr=tempWordData.get("日语汉字")
+				var tempWordData = allCurrentWordData.get(i, {})
+				var errorWordStr: String
+				
+				if tempWordData.get("日语汉字", null):
+					if randi() % 2 >= 1:
+						errorWordStr = tempWordData.get("日语汉字")
 					else:
-						errorWordStr=tempWordData.get("假名")
+						errorWordStr = tempWordData.get("假名")
 				else:
-					errorWordStr=tempWordData.get("假名")
+					errorWordStr = tempWordData.get("假名", "")
 
 				selectErrorWordData.append(errorWordStr)
-			#检测是否有错误单词，如果有就加入干扰项
-			var temp = tiltle.get("容易混淆的单词",null)
-			if temp :
+
+			var temp = tiltle.get("容易混淆的单词", null)
+			if temp:
 				selectErrorWordData.append(temp)
-				pass
 			errorButtonCount = 3
 		
 		1:
-			#设置题目，并添加进tilte
+			# 设置错题题目
 			var tempKeys = uesDic.keys()
-			var tempTiltle :Dictionary= uesDic.get(tempKeys.get(randi()%tempKeys.size()),null)
+			# 【修复】除以零保护
+			if tempKeys.size() == 0:  
+				questionData.set("isNotEnoughWord",true)
+				return questionData 
+
+			var random_key = tempKeys[randi() % tempKeys.size()]
+			var tempTiltle = uesDic.get(random_key, null)
+			
 			if tempTiltle:
-				tempTiltle.erase("error_count")
-				tiltle = tempTiltle
+				# 使用 duplicate 避免修改原始数据中的 error_count
+				tiltle = tempTiltle.duplicate()
+				tiltle.erase("error_count")
 			else:
 				print("无法设置题目")
+				questionData.set("isNotEnoughWord",true)
+				return questionData 
 			
-			#将正确选项放入correctData
-			if tiltle.get("日语汉字",null):
-				if randi()%2 >=1:
+			# 正确选项逻辑 (同上)
+			if tiltle.get("日语汉字", null):
+				if randi() % 2 >= 1:
 					correctData.append(tiltle.get("日语汉字"))
 				else:
 					correctData.append(tiltle.get("假名"))
 			else:
 				correctData.append(tiltle.get("假名"))
 			
-			#获取干扰选项key，并添加进selectErrorKeys
-			if allCurrentKeys.size() > 3:
-				for i in range(3):
-					var tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
-					while selectErrorKeys.has(tempkey) :
-						tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
-					selectErrorKeys.append(tempkey)
-			elif allCurrentKeys.size() == 3:
-				for i in range(3) :
-					var tempkey = allCurrentKeys.get(i)
-					selectErrorKeys.append(tempkey)
-			else:
-				##需要设计题目不足，询问player要重新加载题目还是新增题目。
-				pass
-			#将干扰选项添加进selectErrorWordData
+			# 干扰选项逻辑 (同 type 0，增加安全检查)
+
+			# 当前题库小于 4题时，提示题目不足
+			if allCurrentKeys.size() <4:
+				questionData.set("isNotEnoughWord",true)
+				return questionData 
+
+			for i in range(3):
+				var tempkey = allCurrentKeys[randi() % allCurrentKeys.size()]
+				var max_attempts = 30
+				while (selectErrorKeys.has(tempkey) or tempkey == random_key) and max_attempts > 0:
+					tempkey = allCurrentKeys[randi() % allCurrentKeys.size()]
+					max_attempts -= 1
+					
+				if not selectErrorKeys.has(tempkey):
+						selectErrorKeys.append(tempkey)
+
 			for i in selectErrorKeys:
-				var tempWordData = allCurrentWordData.get(i)
-				var tempErrorWord:String
-
-				#true 设置日语汉字，fales 设置假名
-				if tempWordData.get("日语汉字",null):
-					if randi()%2 >=1:
-						tempErrorWord=tempWordData.get("日语汉字")
+				var tempWordData = allCurrentWordData.get(i, {})
+				var tempErrorWord: String
+				if tempWordData.get("日语汉字", null):
+					if randi() % 2 >= 1:
+						tempErrorWord = tempWordData.get("日语汉字")
 					else:
-						tempErrorWord=tempWordData.get("假名")
+						tempErrorWord = tempWordData.get("假名")
 				else:
-					tempErrorWord=tempWordData.get("假名")
-
+					tempErrorWord = tempWordData.get("假名", "")
 				selectErrorWordData.append(tempErrorWord)
 
-			#检测是否有错误单词，如果有就加入干扰项
-			var temp = tiltle.get("容易混淆的单词",null)
-			if temp :
+			var temp = tiltle.get("容易混淆的单词", null)
+			if temp:
 				selectErrorWordData.append(temp)
 			errorButtonCount = 3
 			
 		2:
-			#设置题目，并添加进tilte
+			# 单词重组
 			var tempKeys = masteredWord.keys()
-			var tempTiltle :Dictionary= masteredWord.get(tempKeys.get(randi()%tempKeys.size()),null)
+			if tempKeys.size() == 0: 
+				questionData.set("isNotEnoughWord",true)
+				return questionData   # 安全检查
+
+			var tempTiltle = masteredWord.get(tempKeys[randi() % tempKeys.size()], null)
 			if tempTiltle:
 				tiltle = tempTiltle
 			else:
-				print("无法设置题目")
+				questionData.set("isNotEnoughWord",true)
+				return questionData 
 
-			#将正确选项放入correctData,先选择要使用汉字还是假名，目标单词拆分存放。
-			var targetWord :String
-			if tiltle.get("日语汉字",null):
-				if randi()%2:
+			var targetWord: String
+			if tiltle.get("日语汉字", null):
+				if randi() % 2 != 0: # 修正写法
 					targetWord = tiltle.get("日语汉字")
 				else:
 					targetWord = tiltle.get("假名")
-			else :
-				targetWord = tiltle.get("假名")
-			for i in range(targetWord.length()):
-				correctData.append(targetWord.substr(i,1))
-
-			#将错误选项放入selectErrorWordData
-			#先获取3个错误单词。
-			if allCurrentWordData.size()<3:
-				##需要设计题目不足，询问player要重新加载题目还是新增题目。
-				pass
-			for i in range(3):
-				var tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
-				while  selectErrorKeys.has(tempkey):
-					tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
+			else:
+				targetWord = tiltle.get("假名", "")
 			
-			var tempWordArray:Array 
+			# 拆分正确答案
+			for i in range(targetWord.length()):
+				correctData.append(targetWord.substr(i, 1))
+
+			# 获取干扰项
+			#题库小于4时提示题目不足
+			if allCurrentKeys.size() <4:
+				questionData.set("isNotEnoughWord",true)
+				return questionData 
+			
+			# 修正循环逻辑
+			var available_distractors = allCurrentKeys.size()
+			if available_distractors > 0:
+				for i in range(min(3, available_distractors)):
+					var tempkey = allCurrentKeys[randi() % allCurrentKeys.size()]
+					var max_attempts = 10
+					while selectErrorKeys.has(tempkey) and max_attempts > 0:
+						tempkey = allCurrentKeys[randi() % allCurrentKeys.size()]
+						max_attempts -= 1
+					
+					# 【重要修复】之前这里漏掉了 append，导致干扰项永远为空
+					if not selectErrorKeys.has(tempkey):
+						selectErrorKeys.append(tempkey)
+			
+			# 【修复】显式初始化数组
+			var tempWordArray: Array = [] 
 			for i in selectErrorKeys:
-				var tempWordData = allCurrentWordData.get(i)
-				var tempErrorWord:String
-				#true 设置日语汉字，fales 设置假名
-				if tempWordData.get("日语汉字",null):
-					if randi()%2 >=1:
-						tempErrorWord=tempWordData.get("日语汉字")
+				var tempWordData = allCurrentWordData.get(i, {})
+				var tempErrorWord: String
+				if tempWordData.get("日语汉字", null):
+					if randi() % 2 >= 1:
+						tempErrorWord = tempWordData.get("日语汉字")
 					else:
-						tempErrorWord=tempWordData.get("假名")
+						tempErrorWord = tempWordData.get("假名")
 				else:
-					tempErrorWord=tempWordData.get("假名")
+					tempErrorWord = tempWordData.get("假名", "")
 				tempWordArray.append(tempErrorWord)
-			#将所有汉字或者假名拆分后放入selectErrorWordData
+			
+			# 拆分干扰字符
 			for i in tempWordArray:
 				for y in range(i.length()):
-					var tempStr =i.substr(y,1)
+					var tempStr = i.substr(y, 1)
 					selectErrorWordData.append(tempStr)
-			#移除与正确选项相同的字符，避免同一个字符出项多次，且正确与错误不统一。
-			for i in correctData:	
-				selectErrorWordData.erase(i)
-			errorButtonCount = int (selectErrorWordData.size()*0.8)
-
-
-
-
-
 			
+			# 移除与正确答案重复的字符
+			for i in correctData:
+				while selectErrorWordData.has(i):
+					selectErrorWordData.erase(i)
 
-
-			
+			#如果生成的错误选项不够，就听见假名库内的单词。
+			if selectErrorWordData.size()<MIN_DISTRACTORS:
+				# 【新增】使用假名备份字符确保足够的干扰项
+				var backup_chars = BACKUP_KANA_CHARS.duplicate()
+				# 也排除目标单词中的字符
+				for i in correctData:
+					while backup_chars.has(i):
+						backup_chars.erase(i)
+				backup_chars.shuffle()
+				while selectErrorWordData.size() < MIN_DISTRACTORS and not backup_chars.is_empty():
+					selectErrorWordData.append(backup_chars.pop_front())
+			errorButtonCount = max(1, int(selectErrorWordData.size() * 0.8))
 
 	questionData = {
-		"type":type,
-		"tiltle":tiltle,
-		"correctData":correctData,
-		"selectErrorWordData":selectErrorWordData,
-		"errorButtonCount":errorButtonCount,
+		"type": type,
+		"tiltle": tiltle,
+		"correctData": correctData,
+		"selectErrorWordData": selectErrorWordData,
+		"errorButtonCount": errorButtonCount,
+
 	}
 	return questionData
 
+
+'''
+func getNextQuestion(type:int = 0):
+		var questionData :Dictionary ={}
+		
+		## 0为普通题目,1为错题插入，2为单词重组。
+		#发送题目，正确选项，错误选择
+		var tiltle:Dictionary #用于设置题目
+		var correctData:Array #用于存放正确选项
+		var selectErrorWordData:Array #用于存在错误选项
+		var errorButtonCount:int #需要使用的干扰选项数量
+		var selectErrorKeys:Array
+
+
+		var allErrorWordDataDic:Array = [
+			errorWord,
+			allErrorWord,
+			savedErrorWord,
+		]
+		var uesDic:Dictionary ={}
+		#确认是否有错题可以进行错题插入。若无则则使用普通的题目
+		if type == 1:
+			for i in allErrorWordDataDic:
+				if not i.is_empty():
+					uesDic = i
+					break
+		if type == 1 and uesDic =={}:
+			type =0
+		#确认是否有masteredWord可以进行单词重组，若无则则使用普通的题目
+		if type ==2 and masteredWord.is_empty():
+			type =1
+			for i in allErrorWordDataDic:
+				if not i.is_empty():
+					uesDic = i
+					break
+			if type == 1 and uesDic =={}:
+				type =0
+
+		match type:
+			0:
+				#设置题目，并添加进tilte
+				if allCurrentKeys.size()>= 4:
+					var selectTilteKey = allCurrentKeys.pop_back()
+					tiltle =allCurrentWordData.get(selectTilteKey)
+
+				else:
+					##需要设计题目不足，询问player要重新加载题目还是新增题目。
+					pass
+				
+
+				#将正确选项放入correctData
+				if tiltle.get("日语汉字",null):
+					if randi()%2 >=1:
+						correctData.append(tiltle.get("日语汉字"))
+					else:
+						correctData.append(tiltle.get("假名"))
+				else:
+					correctData.append(tiltle.get("假名"))
+
+
+				#获取干扰选项key，并添加进selectErrorKeys
+				if allCurrentKeys.size() > 3:
+					for i in range(3):
+						var tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
+						while selectErrorKeys.has(tempkey) :
+							tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
+						selectErrorKeys.append(tempkey)
+				elif allCurrentKeys.size() == 3:
+					for i in range(3) :
+						var tempkey = allCurrentKeys.get(i)
+						selectErrorKeys.append(tempkey)
+				else:
+					##需要设计题目不足，询问player要重新加载题目还是新增题目。
+					pass
+				#将干扰选项添加进selectErrorWordData
+				for i in selectErrorKeys:
+					var tempWordData = allCurrentWordData.get(i)
+					var errorWordStr:String
+
+					#true 设置日语汉字，fales 设置假名
+					if tempWordData.get("日语汉字",null):
+						if randi()%2 >=1:
+							errorWordStr=tempWordData.get("日语汉字")
+						else:
+							errorWordStr=tempWordData.get("假名")
+					else:
+						errorWordStr=tempWordData.get("假名")
+
+					selectErrorWordData.append(errorWordStr)
+				#检测是否有错误单词，如果有就加入干扰项
+				var temp = tiltle.get("容易混淆的单词",null)
+				if temp :
+					selectErrorWordData.append(temp)
+					pass
+				errorButtonCount = 3
+			
+			1:
+				#设置题目，并添加进tilte
+				var tempKeys = uesDic.keys()
+				var tempTiltle :Dictionary= uesDic.get(tempKeys.get(randi()%tempKeys.size()),null)
+				if tempTiltle:
+					tempTiltle.erase("error_count")
+					tiltle = tempTiltle
+				else:
+					print("无法设置题目")
+				
+				#将正确选项放入correctData
+				if tiltle.get("日语汉字",null):
+					if randi()%2 >=1:
+						correctData.append(tiltle.get("日语汉字"))
+					else:
+						correctData.append(tiltle.get("假名"))
+				else:
+					correctData.append(tiltle.get("假名"))
+				
+				#获取干扰选项key，并添加进selectErrorKeys
+				if allCurrentKeys.size() > 3:
+					for i in range(3):
+						var tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
+						while selectErrorKeys.has(tempkey) :
+							tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
+						selectErrorKeys.append(tempkey)
+				elif allCurrentKeys.size() == 3:
+					for i in range(3) :
+						var tempkey = allCurrentKeys.get(i)
+						selectErrorKeys.append(tempkey)
+				else:
+					##需要设计题目不足，询问player要重新加载题目还是新增题目。
+					pass
+				#将干扰选项添加进selectErrorWordData
+				for i in selectErrorKeys:
+					var tempWordData = allCurrentWordData.get(i)
+					var tempErrorWord:String
+
+					#true 设置日语汉字，fales 设置假名
+					if tempWordData.get("日语汉字",null):
+						if randi()%2 >=1:
+							tempErrorWord=tempWordData.get("日语汉字")
+						else:
+							tempErrorWord=tempWordData.get("假名")
+					else:
+						tempErrorWord=tempWordData.get("假名")
+
+					selectErrorWordData.append(tempErrorWord)
+
+				#检测是否有错误单词，如果有就加入干扰项
+				var temp = tiltle.get("容易混淆的单词",null)
+				if temp :
+					selectErrorWordData.append(temp)
+				errorButtonCount = 3
+				
+			2:
+				#设置题目，并添加进tilte
+				var tempKeys = masteredWord.keys()
+				var tempTiltle :Dictionary= masteredWord.get(tempKeys.get(randi()%tempKeys.size()),null)
+				if tempTiltle:
+					tiltle = tempTiltle
+				else:
+					print("无法设置题目")
+
+				#将正确选项放入correctData,先选择要使用汉字还是假名，目标单词拆分存放。
+				var targetWord :String
+				if tiltle.get("日语汉字",null):
+					if randi()%2:
+						targetWord = tiltle.get("日语汉字")
+					else:
+						targetWord = tiltle.get("假名")
+				else :
+					targetWord = tiltle.get("假名")
+				for i in range(targetWord.length()):
+					correctData.append(targetWord.substr(i,1))
+
+				#将错误选项放入selectErrorWordData
+				#先获取3个错误单词。
+				if allCurrentWordData.size()<3:
+					##需要设计题目不足，询问player要重新加载题目还是新增题目。
+					pass
+				for i in range(3):
+					var tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
+					while  selectErrorKeys.has(tempkey):
+						tempkey = allCurrentKeys.get(randi()%allCurrentKeys.size())
+				
+				var tempWordArray:Array 
+				for i in selectErrorKeys:
+					var tempWordData = allCurrentWordData.get(i)
+					var tempErrorWord:String
+					#true 设置日语汉字，fales 设置假名
+					if tempWordData.get("日语汉字",null):
+						if randi()%2 >=1:
+							tempErrorWord=tempWordData.get("日语汉字")
+						else:
+							tempErrorWord=tempWordData.get("假名")
+					else:
+						tempErrorWord=tempWordData.get("假名")
+					tempWordArray.append(tempErrorWord)
+				#将所有汉字或者假名拆分后放入selectErrorWordData
+				for i in tempWordArray:
+					for y in range(i.length()):
+						var tempStr =i.substr(y,1)
+						selectErrorWordData.append(tempStr)
+				#移除与正确选项相同的字符，避免同一个字符出项多次，且正确与错误不统一。
+				for i in correctData:	
+					selectErrorWordData.erase(i)
+				errorButtonCount = int (selectErrorWordData.size()*0.8)
+
+
+		questionData = {
+			"type":type,
+			"tiltle":tiltle,
+			"correctData":correctData,
+			"selectErrorWordData":selectErrorWordData,
+			"errorButtonCount":errorButtonCount,
+		}
+		return questionData
+'''
 
 	
 

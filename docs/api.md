@@ -63,6 +63,7 @@
 | `reloadAmmo` | 无 | 开始换弹时 | 玩家开始换弹动作时触发 |
 | `FinishReloadAmmo` | 无 | 换弹完成时 | 玩家完成换弹动作时触发 |
 | `bulletCountChange` | `count: int` | 弹药数量变化时 | 玩家弹药数量变化时触发，传递当前弹药数 |
+| `playerbulletCount` | `count: int` | 增加单次射击子弹数 | 用于双重射击等技能，增加单次射击发射的子弹数量 |
 | `parryInvincible` | 无 | 无敌状态时 | 玩家进入无敌状态时触发 |
 | `playerCdSub` | 无 | 冷却减少时 | 玩家技能冷却时间减少时触发 |
 | `playerBaseDamageUp` | 无 | 基础伤害提升时 | 玩家基础伤害值提升时触发 |
