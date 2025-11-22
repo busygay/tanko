@@ -3,12 +3,12 @@ extends Control
 @onready var set_panel: Panel = $setPanel
 @onready var error_word_panel: Panel = $ErrorWordPanel
 @onready var error_word_vbox: VBoxContainer = %ErrorWordVBox
-@onready var button_v_box_container: VBoxContainer = $setPanel/MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/Panel/MarginContainer/HBoxContainer/MarginContainer/ColorRect/buttonVBoxContainer
+
 @onready var error_word_data_button: Button = $ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/errorWordData
 @onready var rebuild_error_word_data_button: Button = $ErrorWordPanel/MarginContainer/NinePatchRect/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/reBuildErrorWordData
 @onready var header: HBoxContainer = error_word_vbox.get_node("header")
 @onready var testmodeButton: CheckButton= $setPanel/MarginContainer/NinePatchRect/VBoxContainer/testmode/CheckButton
-
+@onready var wordListVbox :VBoxContainer =$setPanel/MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/Panel/MarginContainer/HBoxContainer/MarginContainer/ColorRect/wordListVbox
 
 ###控制背景用
 @onready var bg_player: Node2D = $BG/bgPlayer
@@ -37,15 +37,28 @@ func _ready() -> void:
 	# 连接错题本相关按钮信号
 	error_word_data_button.pressed.connect(_on_error_word_data_button_pressed)
 	rebuild_error_word_data_button.pressed.connect(_on_rebuild_error_word_data_button_pressed)
+	#	添加单词库列表
+	_addWordBookCheckBox()
 	_readSvaeData()
 
+
+
+func _addWordBookCheckBox():
+	var wordBookPathKeys =Jlptn5.wordBookPath.keys()
+	for i in wordBookPathKeys:
+		var tempCheckBtton =CheckBox.new()
+		tempCheckBtton.name = i
+		tempCheckBtton.text = i
+		tempCheckBtton.add_theme_font_size_override("font_size",28)
+		wordListVbox.add_child(tempCheckBtton)
+	
 
 func _readSvaeData() -> void:
 	isTestMode = globalSet.isTestMode
 	wordBook = globalSet.wordBookList.duplicate()
 	Jlptn5._setWordBookList(wordBook)
 	##设置单词本选择按钮状态
-	for i in button_v_box_container.get_children():
+	for i in wordListVbox.get_children():
 		if wordBook.has(i.text):
 			i.button_pressed = true
 		else:
@@ -85,7 +98,7 @@ func _on_error_word_back_pressed() -> void:
 
 func connectWordSelectButton():
 	wordBook.clear()
-	for i in button_v_box_container.get_children():
+	for i in wordListVbox.get_children():
 		if i.button_pressed == true:
 			wordBook.append(i.text)
 	if wordBook.is_empty():
