@@ -144,6 +144,7 @@ func _enter_state(new_state:state,):
 			state.death:
 				animation_player.play("death")
 				animation_player.animation_finished.connect(func(_animeName):
+					
 					die()
 					,CONNECT_ONE_SHOT)
 			
@@ -186,6 +187,7 @@ func getHurt(_damage):
 		_enter_state(state.hurt)
 
 func die():
+	animated_sprite_2d.hide()
 	self.hide()
 	queue_free()
 	
