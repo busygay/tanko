@@ -54,7 +54,7 @@ tracks/2/keys = {
 }
 
 [sub_resource type="Animation" id="Animation_ncgoc"]
-length = 0.30001
+length = 0.60001004
 step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
