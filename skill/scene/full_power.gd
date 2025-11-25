@@ -3,6 +3,8 @@ extends "res://skill/scene/skill.gd"
 @onready var buff: AnimatedSprite2D = $Buff
 
 
+var BuffPackScene:PackedScene = load("res://main/buff.tscn")
+var addBuff:Node
 var bonus
 var buffnode :AnimatedSprite2D = null
 var liveTimer:Timer
@@ -19,7 +21,9 @@ func _ready():
 			buffnode.queue_free()
 			buffnode = null
 			Eventmanger.playerGlobalDamageBonusChange.emit(0)
-
+			if addBuff!= null:
+				if is_instance_valid(addBuff):
+					addBuff.queue_free()
 	)
 	add_child(liveTimer)
 func _skillEmit(_dic:Dictionary={}):
@@ -40,6 +44,11 @@ func creatBuff():
 		buffnode.play("buff")
 		Eventmanger.playerGlobalDamageBonusChange.emit(bonus)
 		liveTimer.start()
+		addBuff = BuffPackScene.instantiate()
+		get_tree().get_first_node_in_group(&"player").add_child(addBuff)
+		addBuff.SetColor(Color(1.0, 0.0, 0.0, 0.408))
+		
+
 	else :
 		var tempBreakBuff = break_buff.duplicate()
 		tempBreakBuff.global_position = buffnode.get_child(0).global_position
@@ -57,5 +66,7 @@ func creatBuff():
 			tempBreakBuff.queue_free()
 		,CONNECT_ONE_SHOT)
 		liveTimer.stop()
-		
+		if addBuff != null:
+			if is_instance_valid(addBuff):
+				addBuff.queue_free()
 		
