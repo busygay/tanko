@@ -18,7 +18,7 @@ var breakInvincibleCount :int
 # drain debuff
 var drainDebuffLayers:int:
 	set(new):
-		if drainDebuffLayers >=20:
+		if drainDebuffLayers >=10:
 			return
 		if new >drainDebuffLayers:
 			get_tree().create_timer(1).timeout.connect(func():
