@@ -4,6 +4,9 @@ var enemyspath:Array=[
 	'res://enemy/zomble.tscn',
 	'res://enemy/flyDemon.tscn',
 	'res://enemy/slime.tscn',
+	'res://enemy/drain.tscn',
+	'res://enemy/goblin_pioneer.tscn',
+
 	
 ]
 var enemys:Dictionary
