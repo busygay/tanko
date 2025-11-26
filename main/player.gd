@@ -15,6 +15,16 @@ var is_hurt_invincible := false
 var is_parry_invincible := false
 var breakInvincibleCount :int
 
+# drain debuff
+var drainDebuffLayers:int:
+	set(new):
+		if drainDebuffLayers >=20:
+			return
+		if new >drainDebuffLayers:
+			get_tree().create_timer(1).timeout.connect(func():
+				drainDebuffLayers -=1
+				)
+		drainDebuffLayers= new
 
 @export var MaxHealth:int =10
 @export var baseshootCD:float
@@ -67,6 +77,10 @@ func _ready() -> void:
 	Eventmanger.playerTrueDamageUp.connect(TrueDamageUp)
 	Eventmanger.reloadAmmo.connect(reloadAmmofunc)
 	Eventmanger.playerGotHurt.connect(getHurt)
+	
+	#	Drainbuff
+	Eventmanger.getCorrectCount.connect(_DrainDebuff)
+	
 	#无敌信号连接
 
 
@@ -365,3 +379,12 @@ func _on_hurt_invincible_timeout() -> void:
 	is_hurt_invincible = false
 	breakInvincibleCount = 0
 	pass # Replace with function body.
+
+
+
+
+func _DrainDebuff():
+	if drainDebuffLayers >0:
+		if randi()%100 <(drainDebuffLayers*5 ):
+			get_tree().get_first_node_in_group(&"main").Correctcount -=1
+			drainDebuffLayers = int(drainDebuffLayers/2.0)

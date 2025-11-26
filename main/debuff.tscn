@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://die8gos3wox1c"]
+
+[ext_resource type="Script" uid="uid://hm520chej1if" path="res://main/debuff.gd" id="1_nwryk"]
+
+[sub_resource type="Gradient" id="Gradient_i2iv3"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_nwryk"]
+gradient = SubResource("Gradient_i2iv3")
+width = 30
+height = 40
+
+[node name="debuff" type="Sprite2D"]
+clip_children = 1
+texture = SubResource("GradientTexture2D_nwryk")
+offset = Vector2(0, -20)
+script = ExtResource("1_nwryk")
+
+[node name="debuffExa" type="Node2D" parent="."]
+
+[node name="Line2D" type="Line2D" parent="debuffExa"]
+position = Vector2(0, -10)
+points = PackedVector2Array(3, 0, -3, 0)
+width = 2.0
+
+[node name="spawnTimer" type="Timer" parent="."]

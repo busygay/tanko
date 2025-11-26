@@ -3,6 +3,8 @@ extends "res://enemy/base_enemy.gd"
 # 可以添加drain特有的变量
 @onready var drain_effect: Node2D = $drain_effect if has_node("drain_effect") else null
 
+var debuffPackscene : PackedScene = load("res://main/debuff.tscn")
+var debuff:Node
 func _ready() -> void:
 	baseDir = false  # 设置初始朝向
 	super()
@@ -50,5 +52,10 @@ func att():
 			return
 		temp = playerbox[i]
 	temp.getHurt(damage)
+	debuff = debuffPackscene.instantiate()
+	temp.add_child(debuff)
+	debuff.SetColor( Color(1,1,1,1))
+	debuff.SetLiveTime(3)
+
 	# 可以在这里添加吸取生命值的逻辑
 	# 例如：health += damage * 0.5  # 吸取50%伤害值作为生命值

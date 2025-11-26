@@ -4,7 +4,7 @@ extends Sprite2D
 @onready var spawn_timer: Timer = $spawnTimer
 
 var spawnWith :int = 15
-var speed: int = 10
+var speed: int = 20
 var buffArray :Array = []
 signal buffDie
 

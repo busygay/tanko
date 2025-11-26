@@ -80,6 +80,7 @@ func _addCorrectCount(iscorrect):
 				Correctcount = 10
 		else:
 			Correctcount +=1
+			
 		Eventmanger.correctcountchange.emit()
 	else:
 		wrongAnswerCount += 1
@@ -88,6 +89,8 @@ func _addCorrectCount(iscorrect):
 				Correctcount -= 1
 			wrongAnswerCount = 0
 		Eventmanger.correctcountchange.emit()
+
+
 func _on_word_reorder_completed():
 	# 单词重组完成，额外奖励1AP
 	print("单词重组完成，额外奖励1AP")
