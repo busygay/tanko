@@ -2,7 +2,7 @@ extends Control
 @onready var header: HBoxContainer =$MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer/headerVbox/header
 @onready var content: VBoxContainer = $MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/VBoxContainer/Panel/HBoxContainer/ScrollContainer/content
 @onready var accuracy_label: Label = $MarginContainer/NinePatchRect/VBoxContainer/AccuracyLabel
-@onready var next: TextureButton =$MarginContainer/NinePatchRect/VBoxContainer/NEXT
+@onready var next: TextureButton =$MarginContainer/NinePatchRect/VBoxContainer/MarginContainer2/NEXT
 
 
 var errorWord:Dictionary

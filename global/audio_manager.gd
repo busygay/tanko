@@ -10,7 +10,7 @@ var sfx_library = {
 	"Semi22LRReloadFullMP3":preload('res://sounds/Semi22LRReloadFullMP3.mp3'),
 	"Semi22LRCantReloadMP3":preload('res://sounds/Semi22LRCantReloadMP3.mp3'),
 	"762x54rSprayIsolatedMP3":preload('uid://bsnnskomqvgqj')
-	
+	# "explosion": preload('res://sounds/explosion.mp3')  # 文件不存在，暂时注释掉
 }
 
 # 播放非空间化音效（如UI）

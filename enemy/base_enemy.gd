@@ -31,7 +31,10 @@ func _ready() -> void:
 	print("base_enemy _ready() 开始")
 	Eventmanger.enterTreeEnemy.emit()
 	# 获取玩家引用
-	baseScale = self.scale
+	if self.scale != null:
+		baseScale = self.scale
+	else:
+		baseScale = Vector2(1, 1)
 	print("设置 baseScale: ", baseScale)
 	player = get_tree().get_first_node_in_group("player")
 	if not is_instance_valid(player):

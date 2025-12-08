@@ -5,16 +5,16 @@ var enemyspath:Array=[
 	'res://enemy/flyDemon.tscn',
 	'res://enemy/slime.tscn',
 	'res://enemy/drain.tscn',
+	'res://enemy/glutton.tscn',
 	'res://enemy/goblin_pioneer.tscn',
-
 	
 ]
-var enemys:Dictionary
+var enemys:Dictionary = {}
+var enemysKeys:Array = []
 var memEnemys:Array
 var currentLevel:int =0
 var enemysSpanwFinish:Array =[]
 var spawnQueue:Array
-var enemysKeys:Array
 
 
 func _ready() -> void:
@@ -31,16 +31,14 @@ func _physics_process(delta: float) -> void:
 	
 
 func loadAllenemy():
-	for i in enemyspath.size():
+	var temppathSzie = enemyspath.size()
+	for i in range(temppathSzie):
+		print(i)
 		var path:String = enemyspath[i]
 		var sname = path.get_file().get_basename()
-		enemys.set(sname,load(path))
-		if i%3 :
-			await get_tree().process_frame
-	
-	# 获取并随机打乱敌人顺序
-	enemysKeys = enemys.keys()
-	enemysKeys.shuffle()
+		var temppacksence = load (path)
+		enemys.set(sname,temppacksence)
+
 	
 func getrandipos():
 	var randipos:Vector2

@@ -483,13 +483,12 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_b45vm"]
-radius = 22.000908
+radius = 103.52082
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_775g5"]
-radius = 6.053098
+radius = 31.005806
 
 [node name="Slime" type="CharacterBody2D" groups=["enemy"]]
-scale = Vector2(5, 5)
 collision_layer = 2
 script = ExtResource("1_beddv")
 
@@ -500,6 +499,7 @@ libraries = {
 }
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(5, 5)
 sprite_frames = SubResource("SpriteFrames_3agur")
 animation = &"att"
 frame = 9
