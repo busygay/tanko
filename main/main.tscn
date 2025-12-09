@@ -251,6 +251,10 @@ layout_mode = 2
 text = "GetSkill
 "
 
+[node name="AddLevels" type="Button" parent="CanvasLayer/test"]
+layout_mode = 2
+text = "AddLevel"
+
 [node name="shoping" parent="CanvasLayer" groups=["popup"] instance=ExtResource("3_fwcvl")]
 visible = false
 
@@ -440,4 +444,5 @@ position = Vector2(342, 1049)
 [connection signal="pressed" from="CanvasLayer/test/Invincible ModeButton" to="CanvasLayer/test" method="_on_invincible_mode_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/test/AddEnemyButton" to="CanvasLayer/test" method="_on_add_enemy_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/test/GetSkillButton" to="CanvasLayer/test" method="_on_get_skill_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/test/AddLevels" to="CanvasLayer/test" method="_on_add_levels_pressed"]
 [connection signal="timeout" from="onComboTimer" to="." method="_on_on_combo_timer_timeout"]

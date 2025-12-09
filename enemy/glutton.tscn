@@ -374,9 +374,10 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_b45vm"]
-radius = 37.01351
+radius = 68.0294
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_775g5"]
+radius = 24.0
 
 [node name="glutton" type="CharacterBody2D" groups=["enemy"]]
 collision_layer = 2
@@ -389,6 +390,7 @@ libraries = {
 }
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_3agur")
 animation = &"hurt"
 offset = Vector2(0, -23)
@@ -396,6 +398,7 @@ offset = Vector2(0, -23)
 [node name="eye" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="eye"]
+position = Vector2(-3, -38)
 shape = SubResource("CircleShape2D_b45vm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

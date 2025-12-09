@@ -1,0 +1,47 @@
+[gd_scene load_steps=4 format=3 uid="uid://pubhmh55fogv"]
+
+[ext_resource type="Script" uid="uid://b8umoatbehyh3" path="res://main/buff.gd" id="1_speed"]
+
+[sub_resource type="Gradient" id="Gradient_speed"]
+colors = PackedColorArray(0.2, 1, 0.2, 1, 0.2, 1, 0.2, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_speed"]
+gradient = SubResource("Gradient_speed")
+width = 30
+height = 40
+fill = 1
+fill_from = Vector2(0.5, 1)
+fill_to = Vector2(0.5, 0)
+
+[node name="speedBuff" type="Sprite2D"]
+clip_children = 1
+z_index = 98
+texture = SubResource("GradientTexture2D_speed")
+offset = Vector2(0, -20.03)
+script = ExtResource("1_speed")
+
+[node name="buffExa" type="Node2D" parent="."]
+position = Vector2(0, 8)
+
+[node name="ArrowUp" type="Line2D" parent="buffExa"]
+points = PackedVector2Array(0, 3, 0, -6)
+width = 2.0
+default_color = Color(0.2, 1, 0.2, 1)
+
+[node name="ArrowLeft" type="Line2D" parent="buffExa"]
+points = PackedVector2Array(-2, -3, 0, -6, 2, -3)
+width = 2.0
+default_color = Color(0.2, 1, 0.2, 1)
+
+[node name="ArrowRight" type="Line2D" parent="buffExa"]
+points = PackedVector2Array(-2, -1, 0, -4, 2, -1)
+width = 2.0
+default_color = Color(0.2, 1, 0.2, 1)
+
+[node name="spawnTimer" type="Timer" parent="."]
+autostart = true
+
+[node name="lifetimeTimer" type="Timer" parent="."]
+wait_time = 5.0
+
+[node name="Camera2D" type="Camera2D" parent="."]

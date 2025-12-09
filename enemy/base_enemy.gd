@@ -5,6 +5,9 @@ class_name baseEnemy extends CharacterBody2D
 @onready var area_2d: Area2D = $eye
 @onready var timer: Timer = $Timer
 
+# Buff系统相关
+var activeBuffs: Array = []  # 存储当前活跃的buff
+var baseSpeed: int = 50  # 基础速度，用于buff计算
 
 var armor:float = 0.0
 var speed:int = 50
@@ -64,6 +67,9 @@ func _ready() -> void:
 			scale.x = -baseScale.x
 	print("朝向设置完成 - currentFacingDir: ", currentFacingDir, " 最终scale: ", scale)
 	_enter_state(state.walk)
+	# 保存基础速度
+	baseSpeed = speed
+
 
 func initData(Mul:float):
 	var temp = Level.currentLevel
@@ -86,6 +92,14 @@ func initData(Mul:float):
 	if speed < 25:
 		speed = 25
 	
+	# 更新基础速度
+	baseSpeed = speed
+
+	
+func _process(delta: float) -> void:
+	# 更新buff持续时间
+	_update_buff_timers(delta)
+	
 func _physics_process(_delta: float) -> void:
 	match currentState:
 		state.idle:
@@ -99,7 +113,9 @@ func _physics_process(_delta: float) -> void:
 			
 func _state_logic_walk():
 	var direction = global_position.direction_to(player.global_position)
-	velocity = direction * speed
+	# 使用buff修正后的速度
+	var finalSpeed = _calculate_buffed_speed()
+	velocity = direction * finalSpeed
 	move_and_slide()
 	#确保 图像纹理朝向已经被设置
 	if baseDir == null :
@@ -207,3 +223,73 @@ func _on_eye_body_exited(body: Node2D) -> void:
 func _exit_tree() -> void:
 	Eventmanger.exitTreeEnemy.emit()
 	Eventmanger.enemydeath.emit(self)
+
+# Buff系统相关方法
+func apply_buff(buff) -> bool:
+	if not buff or not buff.has("type"):
+		return false
+	
+	# 检查是否已存在相同类型的buff
+	for existingBuff in activeBuffs:
+		if existingBuff.type == buff.type:
+			# 刷新持续时间
+			if existingBuff.has("duration"):
+				existingBuff.duration = buff.duration
+			return true
+	
+	# 添加新buff
+	activeBuffs.append(buff)
+	_apply_buff_effects(buff)
+	return true
+
+func remove_buff(buff) -> bool:
+	if not buff or not activeBuffs.has(buff):
+		return false
+	
+	activeBuffs.erase(buff)
+	_remove_buff_effects(buff)
+	return true
+
+func _apply_buff_effects(buff):
+	match buff.type:
+		"speed":
+			if buff.has("multiplier"):
+				# 速度buff效果在移动时实时计算
+				pass
+
+func _remove_buff_effects(buff):
+	match buff.type:
+		"speed":
+			# 速度buff效果在移动时实时计算，无需特殊处理
+			pass
+
+func _calculate_buffed_speed() -> int:
+	var finalSpeed = baseSpeed
+	var speedMultiplier = 1.0
+	
+	# 计算所有速度buff的累积效果
+	for buff in activeBuffs:
+		if buff.type == "speed" and buff.has("multiplier"):
+			speedMultiplier *= buff.multiplier
+	
+	finalSpeed = int(baseSpeed * speedMultiplier)
+	
+	# 确保速度不低于最小值
+	if finalSpeed < 25:
+		finalSpeed = 25
+	
+	return finalSpeed
+
+func _update_buff_timers(delta: float):
+	# 更新所有buff的持续时间
+	var buffsToRemove = []
+	
+	for buff in activeBuffs:
+		if buff.has("duration"):
+			buff.duration -= delta
+			if buff.duration <= 0:
+				buffsToRemove.append(buff)
+	
+	# 移除过期的buff
+	for buff in buffsToRemove:
+		remove_buff(buff)

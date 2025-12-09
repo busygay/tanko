@@ -38,7 +38,7 @@ func loadAllenemy():
 		var sname = path.get_file().get_basename()
 		var temppacksence = load (path)
 		enemys.set(sname,temppacksence)
-
+	enemysKeys = enemys.keys()
 	
 func getrandipos():
 	var randipos:Vector2

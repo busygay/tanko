@@ -1,7 +1,20 @@
 extends "res://enemy/base_enemy.gd"
 
+# 哥布林工兵特有的状态
+enum pioneer_state {
+	build,
+}
+
 # 哥布林工兵特有的变量
 @onready var pioneer_effect: Node2D = $pioneer_effect if has_node("pioneer_effect") else null
+
+# Build（献祭）相关变量
+var is_building: bool = false  # 是否正在build（献祭）
+var build_timer: Timer = null  # build计时器
+var build_duration: float = 3.0  # build持续时间（默认3秒）
+var totem_scene: PackedScene = null  # 图腾场景引用
+var build_trigger_chance: float = 0.3  # build触发概率（默认30%）
+var min_level_for_build: int = 5  # 可触发build的最低等级（默认5级）
 
 func _ready() -> void:
 	baseDir = true  # 设置初始朝向为右
@@ -10,6 +23,9 @@ func _ready() -> void:
 	speed = 65  # 中等速度，比基础敌人快一些
 	attCd = 3   # 攻击冷却时间，平衡的攻击频率
 	damage = 2  # 中等攻击力
+	
+	# 初始化build相关组件
+	_init_build_components()
 
 # 重写initData函数以调整哥布林工兵的基础属性
 func initData(Mul:float):
@@ -35,6 +51,9 @@ func initData(Mul:float):
 		speed = 30
 	if speed > 120:
 		speed = 120
+	
+	# 检查是否触发build
+	check_build_trigger()
 
 # 可以重写att函数以实现工兵特有的攻击方式
 func att():
@@ -55,6 +74,18 @@ func att():
 	# 可以在这里添加工兵特有的攻击效果
 	# 例如：短暂降低玩家移动速度或攻击速度
 	print("哥布林工兵攻击造成 ", damage, " 点伤害")
+
+# 重写getHurt函数以处理build被打断的逻辑
+func getHurt(_damage):
+	# 如果在build过程中被攻击，打断build
+	if is_building:
+		print("哥布林工兵build被打断")
+		is_building = false
+		if build_timer and build_timer.is_stopped() == false:
+			build_timer.stop()
+	
+	# 调用父类的getHurt函数处理伤害和状态转换
+	super.getHurt(_damage)
 
 # 重写_enter_state函数以处理工兵特有的状态逻辑
 func _enter_state(new_state:state, _last_state:state = state.nothing):
@@ -84,3 +115,80 @@ func _enter_state(new_state:state, _last_state:state = state.nothing):
 				animation_player.animation_finished.connect(func(_animeName):
 					die()
 					, CONNECT_ONE_SHOT)
+			state.nothing:
+				# 特殊状态，不播放动画
+				pass
+
+# 处理build状态（哥布林工兵特有）
+func _enter_build_state():
+	print("哥布林工兵进入build状态")
+	animation_player.play("build")
+	build_timer.start(build_duration)
+	# 在build动画完成后继续build流程
+	animation_player.animation_finished.connect(func(_animeName):
+		# 动画播放完成，等待计时器完成
+		pass
+		, CONNECT_ONE_SHOT)
+
+# 初始化build相关组件
+func _init_build_components():
+	# 创建build计时器
+	build_timer = Timer.new()
+	build_timer.wait_time = build_duration
+	build_timer.one_shot = true
+	build_timer.timeout.connect(_on_build_complete)
+	add_child(build_timer)
+	
+	# 预加载图腾场景
+	totem_scene = preload("res://globalSkillData/totem.tscn")
+	print("哥布林工兵build组件初始化完成")
+
+# 检查是否触发build
+func check_build_trigger():
+	# 如果已经在build中，不重复触发
+	if is_building:
+		return false
+	
+	# 检查当前等级是否满足最低要求
+	if Level.currentLevel < min_level_for_build:
+		return false
+	
+	# 根据概率判断是否触发build
+	var random_chance = randf()
+	if random_chance <= build_trigger_chance:
+		print("哥布林工兵触发build，随机值：", random_chance, " 触发概率：", build_trigger_chance)
+		start_build()
+		return true
+	
+	return false
+
+# 开始build流程
+func start_build():
+	is_building = true
+	print("哥布林工兵开始build，持续时间：", build_duration, "秒")
+	_enter_build_state()
+
+# build完成时的回调
+func _on_build_complete():
+	if not is_building:
+		return
+	
+	print("哥布林工兵build完成，生成图腾")
+	
+	# 在当前位置生成图腾
+	if totem_scene:
+		var totem = totem_scene.instantiate()
+		if totem:
+			totem.global_position = self.global_position
+			get_tree().current_scene.add_child(totem)
+			print("成功生成图腾在位置：", self.global_position)
+	
+	# build完成后工兵死亡
+	is_building = false
+	# 确保计时器停止
+	if build_timer and build_timer.is_stopped() == false:
+		build_timer.stop()
+	
+	# 延迟一帧后死亡，确保所有清理工作完成
+	await get_tree().process_frame
+	_enter_state(state.death)

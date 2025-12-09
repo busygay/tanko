@@ -49,7 +49,8 @@ func _on_add_enemy_button_pressed() -> void:
 			enemy.initData(1.0)
 			get_tree().get_first_node_in_group("main").add_child(enemy)
 			level.memEnemys.append(enemy)
-			enemy_list.queue_free()
+			# Remove the entire popup container (not just the enemy_list)
+			tempscroll.queue_free()
 		)
 		enemy_list.add_child(button)
 
@@ -107,7 +108,62 @@ func _on_get_skill_button_pressed() -> void:
 			shop.show()
 			
 			# 移除技能选择列表
-			skill_list.queue_free()
+			# Remove the entire popup container (not just the skill_list)
+			tempscroll.queue_free()
 		)
 		skill_list.add_child(button)
 		
+
+
+func _on_add_levels_pressed() -> void:
+	var tempscroll = ScrollContainer.new()
+	tempscroll.custom_minimum_size = Vector2(300,400)
+	tempscroll.scale = Vector2(3,3)
+	var tempPos:Vector2 = Vector2(self.size.x*scale.x +10,0)
+	tempscroll.global_position=tempPos
+	tempscroll.name = "tempScroll"
+	tempscroll.process_mode = Node.PROCESS_MODE_ALWAYS
+	var existing_scroll = get_node_or_null("../tempScroll")
+	if existing_scroll:
+		existing_scroll.free()
+	get_parent().add_child(tempscroll)
+
+	var level_list = VBoxContainer.new()
+	tempscroll.add_child(level_list)
+	
+	# Get reference to Level singleton
+	var level = get_node("/root/Level")
+	
+	# Create buttons for adding levels
+	var level_increments = [1, 3, 5, 10]
+	for increment in level_increments:
+		var button = Button.new()
+		button.text = "增加关卡 +%d" % increment
+		button.pressed.connect(func():
+			# Log the level increase
+			print("增加关卡前：", level.currentLevel, "，增加：", increment)
+			
+			# 清理现有敌人
+			if not level.memEnemys.is_empty():
+				print("清理现有敌人，数量：", level.memEnemys.size())
+				for i in level.memEnemys:
+					if is_instance_valid(i):
+						i.queue_free()
+				level.memEnemys.clear()
+			
+			# 重置关卡状态
+			level.enemysSpanwFinish.clear()
+			print("已重置关卡状态：enemysSpanwFinish")
+			
+			# Increase current level by increment
+			level.currentLevel += increment
+			print("增加关卡后：", level.currentLevel)
+			
+			# 可选：调用enterLevel来正确初始化新关卡
+			level.enterLevel()
+			print("已调用enterLevel()初始化新关卡")
+			
+			# Remove the entire popup container (not just the level_list)
+			tempscroll.queue_free()
+		)
+		level_list.add_child(button)
