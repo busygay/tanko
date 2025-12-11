@@ -14,9 +14,9 @@ func _ready() -> void:
 	super()
 	attCd = 10  # 10秒攻击间隔
 	
-	# 设置暴食者基础属性
-	speed = 30  # 移动缓慢（比普通敌人慢）
 	damage = 4  # 近战物理攻击伤害（普通僵尸的4倍）
+
+	# 初始化生命值（在initData之后设置）
 
 
 func initData(Mul: float):
@@ -40,6 +40,8 @@ func initData(Mul: float):
 	# 确保移动速度不会过快
 	if speed > 40:
 		speed = 40
+	
+	speed = int (0.8*speed) #将移动速度设置为平常的0.8倍
 	
 func _enter_state(new_state: state, _last_state: state = state.nothing):
 	_last_state = currentState
@@ -96,5 +98,5 @@ func BoomColorStart(_type = 1):
 		animated_sprite_2d.modulate= Color(1.0, 1.0, 1.0, 0.6)
 		_type =1
 	await get_tree().create_timer(0.1).timeout
-	
+
 	BoomColorStart(_type)
