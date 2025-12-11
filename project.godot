@@ -23,6 +23,7 @@ AudioManager="*res://global/audio_manager.gd"
 Level="*res://global/level.gd"
 SkillManager="*res://global/skill_manager.gd"
 globalSet="*res://globalSet.gd"
+PlayFabManager="*res://addons/godot-playfab/PlayFabManager.gd"
 
 [display]
 
@@ -34,7 +35,7 @@ window/handheld/orientation=6
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/simple_gdscript_formatter/plugin.cfg")
+enabled=PackedStringArray("res://addons/godot-playfab/plugin.cfg", "res://addons/simple_gdscript_formatter/plugin.cfg")
 
 [global_group]
 
@@ -55,6 +56,10 @@ enemy=""
 [gui]
 
 theme/custom_font="uid://bnnm0j2xa4rlb"
+
+[playfab]
+
+title_id="CKZGBH9OAOAI9TTQYX9SZN95PF3XQ91WFDR1NPYTZTMSKYWAW6"
 
 [rendering]
 
