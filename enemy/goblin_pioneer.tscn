@@ -578,7 +578,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"build",
-"speed": 12.0
+"speed": 11.0
 }, {
 "frames": [{
 "duration": 1.0,

@@ -1,20 +1,25 @@
 extends "res://enemy/base_enemy.gd"
 
-# 哥布林工兵特有的状态
-enum pioneer_state {
-	build,
+# 哥布林工兵的行为模式
+enum GoblinMode {
+	NORMAL, # 普通模式，只会攻击
+	BUILDER # 建造者模式，会尝试建造图腾
 }
 
 # 哥布林工兵特有的变量
 @onready var pioneer_effect: Node2D = $pioneer_effect if has_node("pioneer_effect") else null
+var mode: GoblinMode = GoblinMode.NORMAL # 当前工兵的行为模式
 
 # Build（献祭）相关变量
 var is_building: bool = false  # 是否正在build（献祭）
 var build_timer: Timer = null  # build计时器
-var build_duration: float = 3.0  # build持续时间（默认3秒）
+var build_duration: float = 4.0  # build所需时间（默认4秒）两轮动画
 var totem_scene: PackedScene = null  # 图腾场景引用
-var build_trigger_chance: float = 0.3  # build触发概率（默认30%）
 var min_level_for_build: int = 5  # 可触发build的最低等级（默认5级）
+@export var builder_chance: float = 0.5 # 成为建造者模式的概率
+@export var setPx: float = 150.0 # 必定触发建造的距离
+@export var max_build_trigger_distance: float = 500.0 # 开始尝试触发建造的最大距离
+var build_check_timer: Timer = null # 用于周期性检查是否建造的计时器
 
 func _ready() -> void:
 	baseDir = true  # 设置初始朝向为右
@@ -46,14 +51,17 @@ func initData(Mul:float):
 		speed = int(speed * speedMul)
 		damage = int(damage * damageMul)
 	
+	# 在出生时随机确定行为模式
+	if randf() < builder_chance:
+		self.mode = GoblinMode.BUILDER
+	else:
+		self.mode = GoblinMode.NORMAL
+	
 	# 确保移动速度在合理范围内
 	if speed < 30:
 		speed = 30
 	if speed > 120:
 		speed = 120
-	
-	# 检查是否触发build
-	check_build_trigger()
 
 # 可以重写att函数以实现工兵特有的攻击方式
 func att():
@@ -92,6 +100,15 @@ func _enter_state(new_state:state, _last_state:state = state.nothing):
 	_last_state = currentState
 	if new_state != currentState or (new_state == state.hurt and _last_state == state.hurt):
 		currentState = new_state
+		
+		# 根据新状态和模式管理build检查计时器
+		if mode == GoblinMode.BUILDER and new_state == state.walk:
+			if build_check_timer and build_check_timer.is_stopped():
+				build_check_timer.start()
+		else:
+			if build_check_timer and not build_check_timer.is_stopped():
+				build_check_timer.stop()
+
 		match currentState:
 			state.idle:
 				animation_player.play("idle")
@@ -139,32 +156,48 @@ func _init_build_components():
 	build_timer.timeout.connect(_on_build_complete)
 	add_child(build_timer)
 	
+	# 创建用于周期性检查建造的计时器
+	build_check_timer = Timer.new()
+	build_check_timer.wait_time = 1.0 # 每秒检查一次
+	build_check_timer.timeout.connect(check_build_trigger_by_distance)
+	add_child(build_check_timer)
+	
 	# 预加载图腾场景
 	totem_scene = preload("res://globalSkillData/totem.tscn")
 	print("哥布林工兵build组件初始化完成")
 
-# 检查是否触发build
-func check_build_trigger():
-	# 如果已经在build中，不重复触发
-	if is_building:
-		return false
-	
-	# 检查当前等级是否满足最低要求
-	if Level.currentLevel < min_level_for_build:
-		return false
-	
-	# 根据概率判断是否触发build
-	var random_chance = randf()
-	if random_chance <= build_trigger_chance:
-		print("哥布林工兵触发build，随机值：", random_chance, " 触发概率：", build_trigger_chance)
+# 根据与玩家的距离检查是否触发build（仅用于建造者模式）
+func check_build_trigger_by_distance():
+	# 如果不是建造者模式、或正在建造、或等级不够、或玩家不在范围内，则不触发
+	if mode != GoblinMode.BUILDER or is_building or Level.currentLevel < min_level_for_build or playerbox.is_empty():
+		return
+
+	# 获取玩家位置并计算距离
+	var tempPlayer = get_tree().get_first_node_in_group(&"player")
+	var distance_to_player = self.global_position.distance_to(tempPlayer.global_position)
+
+	var should_build = false
+	# 距离小于等于setPx，100%触发
+	if distance_to_player <= setPx:
+		should_build = true
+		print("哥布林工兵（建造者）距离过近，强制触发build")
+	# 在最大距离和最小距离之间，概率触发
+	elif distance_to_player <= max_build_trigger_distance:
+		# 距离越近，概率越高（线性插值）
+		var probability = 1.0 - (distance_to_player - setPx) / (max_build_trigger_distance - setPx)
+		if randf() < probability:
+			should_build = true
+			print("哥布林工兵（建造者）概率触发build，距离: ", int(distance_to_player), " 概率: ", round(probability * 100), "%")
+
+	if should_build:
 		start_build()
-		return true
-	
-	return false
+
 
 # 开始build流程
 func start_build():
 	is_building = true
+	# 切换到idle状态以停止移动，然后播放build动画
+	_enter_state(state.idle)
 	print("哥布林工兵开始build，持续时间：", build_duration, "秒")
 	_enter_build_state()
 
