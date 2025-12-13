@@ -8,35 +8,36 @@ extends Control
 
 @onready var tips_label: Label = $TipsPanel/VBoxContainer/TipsLabel
 
-const example:PackedScene = preload('uid://ic5kydsh7con')
+const example: PackedScene = preload('uid://ic5kydsh7con')
 
-var currentSkill:Node
-@onready var allTigger:Dictionary = {
-	"onCombo":$Panel/MarginContainer/VBoxContainer/HBoxContainer3/onCombo,
-	"twoCombo":$Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxLeft/twoCombo,
-	"fiveCombo":$Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxLeft/fiveCombo,
-	"brokenCombo":$Panel/MarginContainer/VBoxContainer/HBoxContainer3/brokenCombo,
-	"APGained":$Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxRight/APGained,
-	"APSpent":$Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxRight/APSpent
+var currentSkill: Node
+@onready var allTigger: Dictionary = {
+	"onCombo": $Panel/MarginContainer/VBoxContainer/HBoxContainer3/onCombo,
+	"twoCombo": $Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxLeft/twoCombo,
+	"fiveCombo": $Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxLeft/fiveCombo,
+	"brokenCombo": $Panel/MarginContainer/VBoxContainer/HBoxContainer3/brokenCombo,
+	"APGained": $Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxRight/APGained,
+	"APSpent": $Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxRight/APSpent
 }
 
-var tiggerTips:Dictionary={
-	"onCombo":"处于连答状态时，每10秒触发一次技能。",
-	"twoCombo":"二连答时触发一次技能。",
-	"fiveCombo":"五连答时触发一次技能，通常会加强技能的能力。",
-	"brokenCombo":"连答中断时，触发一次技能。",
-	"APGained":"获得一点行动点时，触发一次技能。",
-	"APSpent":"消耗一点行动点时，触发一次技能。"
+var tiggerTips: Dictionary = {
+	"onCombo": "处于连答状态时，每10秒触发一次技能。",
+	"twoCombo": "二连答时触发一次技能。",
+	"fiveCombo": "五连答时触发一次技能，通常会加强技能的能力。",
+	"brokenCombo": "连答中断时，触发一次技能。",
+	"APGained": "获得一点行动点时，触发一次技能。",
+	"APSpent": "消耗一点行动点时，触发一次技能。"
 }
 var tigger
 func _ready() -> void:
 	ConnectTigger()
 	Eventmanger.drag_ended.connect(checkPoint)
 	Eventmanger.ShowSkillAssembly.connect(ShowSkillAssembly)
-	tigger =get_tree().get_first_node_in_group("tigger")
+	tigger = get_tree().get_first_node_in_group("tigger")
 	self.hide()
 	tips_panel.hide()
 func ShowSkillAssembly():
+	tigger.check_and_fuse_skills() # 检查并融合技能
 	Eventmanger.UIHideAll.emit(self)
 	_setSkill()
 	
@@ -46,22 +47,21 @@ func _setSkill():
 		remove_child(currentSkill)
 		tigger._setunequip(currentSkill)
 
-	var unequipSkillBox:Array = tigger._returnUnequip()
-	if unequipSkillBox.size()>0:
+	var unequipSkillBox: Array = tigger._returnUnequip()
+	if unequipSkillBox.size() > 0:
 		currentSkill = unequipSkillBox.pop_back()
 		
 		currentSkill.hide()
 		self.add_child(currentSkill)
 		await get_tree().process_frame
-		currentSkill.pivot_offset = currentSkill.size /2.0
-		currentSkill.scale = Vector2(0.8,0.8)
+		currentSkill.pivot_offset = currentSkill.size / 2.0
+		currentSkill.scale = Vector2(0.8, 0.8)
 		currentSkill.global_position = marker_2d.global_position
 		currentSkill.show()
 	else:
 		currentSkill = null
 		
 		
-
 func _on_button_left_pressed() -> void:
 	if not is_instance_valid(currentSkill):
 		return
@@ -71,7 +71,7 @@ func _on_button_left_pressed() -> void:
 	tigger._setunequip(currentSkill)
 	
 	# 2. 获取更新后的技能池
-	var unequipSkillBox:Array = tigger._returnUnequip()
+	var unequipSkillBox: Array = tigger._returnUnequip()
 	
 	# 3. 修正“获取上一个”的逻辑
 	if unequipSkillBox.size() < 2:
@@ -93,8 +93,8 @@ func _on_button_left_pressed() -> void:
 	currentSkill.hide()
 	self.add_child(currentSkill)
 	await get_tree().process_frame
-	currentSkill.pivot_offset = currentSkill.size /2.0
-	currentSkill.scale = Vector2(0.8,0.8)
+	currentSkill.pivot_offset = currentSkill.size / 2.0
+	currentSkill.scale = Vector2(0.8, 0.8)
 	currentSkill.global_position = marker_2d.global_position
 	currentSkill.show()
 
@@ -109,7 +109,7 @@ func _on_button_right_pressed() -> void:
 	tigger._setunequip(currentSkill)
 	
 	# 2. 获取更新后的技能池
-	var unequipSkillBox:Array = tigger._returnUnequip()
+	var unequipSkillBox: Array = tigger._returnUnequip()
 	if unequipSkillBox.is_empty():
 		currentSkill = null
 		return
@@ -121,22 +121,22 @@ func _on_button_right_pressed() -> void:
 	currentSkill.hide()
 	self.add_child(currentSkill)
 	await get_tree().process_frame
-	currentSkill.pivot_offset = currentSkill.size /2.0
-	currentSkill.scale = Vector2(0.8,0.8)
+	currentSkill.pivot_offset = currentSkill.size / 2.0
+	currentSkill.scale = Vector2(0.8, 0.8)
 	currentSkill.global_position = marker_2d.global_position
 	currentSkill.show()
 
 
-func checkPoint(_node,pos):
+func checkPoint(_node, pos):
 	for i in allTigger:
-		var temp:Rect2 = allTigger.get(i).get_global_rect()
+		var temp: Rect2 = allTigger.get(i).get_global_rect()
 		if temp.has_point(pos):
-			var ob:PackedScene = load(_node.Data.get("path"))
+			var ob: PackedScene = load(_node.Data.get("path"))
 			var obins = ob.instantiate()
-			Eventmanger.equipSkill.emit(i,obins)
-			currentSkill=null
+			Eventmanger.equipSkill.emit(i, obins)
+			currentSkill = null
 			_node.queue_free()
-			if get_tree().get_first_node_in_group("main").islevelDone==false:
+			if get_tree().get_first_node_in_group("main").islevelDone == false:
 				get_tree().paused = false
 				#var main = get_tree().get_first_node_in_group("main")
 				Eventmanger.UIShowAll.emit()
@@ -160,16 +160,16 @@ func HideTiggerTipsUi():
 	tips_label.text = ""
 
 
-func ShowTiggerTipsUi(tiggerName:String):
+func ShowTiggerTipsUi(tiggerName: String):
 	tips_panel.show()
-	if get_global_mouse_position() < get_viewport_rect().size-tips_panel.size:
-		tips_panel.position=Vector2(315,306)
+	if get_global_mouse_position() < get_viewport_rect().size - tips_panel.size:
+		tips_panel.position = Vector2(315, 306)
 	else:
-		tips_panel.position=Vector2(10,306)
-	tips_label.text=tiggerTips.get(tiggerName,"找不到提示")
-	var temp:Node = get_tree().get_first_node_in_group("tigger").tigger.get(tiggerName)
-	if temp !=null:
-		if temp.get_child_count() >0:
+		tips_panel.position = Vector2(10, 306)
+	tips_label.text = tiggerTips.get(tiggerName, "找不到提示")
+	var temp: Node = get_tree().get_first_node_in_group("tigger").tigger.get(tiggerName)
+	if temp != null:
+		if temp.get_child_count() > 0:
 			for i in temp.get_children():
 				var tempExample = example.instantiate()
 				tempExample._setdata(i)

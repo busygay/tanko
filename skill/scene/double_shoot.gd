@@ -1,27 +1,29 @@
 extends "res://skill/scene/skill.gd"
 
-var baseCount:int = 1
+var baseCount: int = 1
+var upgrade_count: int = 0 # 记录升级次数
 
 func _ready() -> void:
-	super()
+	super ()
 	Eventmanger.doubleShootUP.connect(doubleShootUpFunc)
 func _skill():
-	super()
+	super ()
 	pass
 	
 func _skillSignal():
 	pass
 
 	
-func _skillEmit(_dic:Dictionary={}):
+func _skillEmit(_dic: Dictionary = {}):
 	print("double_shoot _skillEmit: 触发，baseCount=%d" % baseCount)
-	await super()
+	await super ()
 	if _dic.has("fiveCombo"):
-		print("double_shoot _skillEmit: 触发fiveCombo，发射%d发子弹" % (baseCount*5))
-		Eventmanger.playerbulletCount.emit(baseCount*5)
+		print("double_shoot _skillEmit: 触发fiveCombo，发射%d发子弹" % (baseCount * 5))
+		Eventmanger.playerbulletCount.emit(baseCount * 5)
 	else:
 		print("double_shoot _skillEmit: 发射%d发子弹" % baseCount)
 		Eventmanger.playerbulletCount.emit(baseCount)
 
 func doubleShootUpFunc():
-	baseCount+=1
+	baseCount += 1
+	upgrade_count += 1
