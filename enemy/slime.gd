@@ -4,38 +4,42 @@ extends "res://enemy/base_enemy.gd"
 @export var split_times_min: int = 1
 @export var split_times_max: int = 3
 
-var split_count_max :int =3 
-var split_count_min :int =1
+var split_count_max: int = 3
+var split_count_min: int = 1
 
 @export var spawn_radius: float = 75.0
-@export var slime_scene: PackedScene  # 史莱姆场景（用于生成新的史莱姆）
+@export var slime_scene: PackedScene # 史莱姆场景（用于生成新的史莱姆）
 
 # 分裂次数
-var split_times :int =0 #剩余分裂次数，1表示可以分裂一次，0表示不能分裂
+var split_times: int = 0 # 剩余分裂次数，1表示可以分裂一次，0表示不能分裂
 
 func _ready() -> void:
 	baseDir = true
-	super()
+	super ()
 	# 根据分裂次数设置属性
 	# 如果没有设置史莱姆场景，尝试加载
 
 
-
 # 重写initData方法以支持史莱姆的初始化
-func initData(Mul: float,_initSplit_times:int = -1):
-	super(Mul)
+func initData(Mul: float, _initSplit_times: int = -1):
+	super (Mul)
 	
 
 	#initData一般只有level脚本调用，且不设置_initSplit_times,因此对于该变量为-1的情况继续随机生成
 	
-	#如果关卡太低，就不要分裂了
+	# 调整分裂逻辑：小于5关概率开启分裂，每级增加15%概率
 	var currentLevel = Level.currentLevel
+	var enable_split = true
 	
-	if currentLevel <5:
-		split_times =0
-	elif _initSplit_times <= -1 :
-		split_times = randi_range(split_times_min,split_times_max)
-	
+	if currentLevel < 5:
+		# 例如1级15%，2级30%...
+		if randf() > (currentLevel * 0.15):
+			enable_split = false
+
+	if not enable_split:
+		split_times = 0
+	elif _initSplit_times <= -1:
+		split_times = randi_range(split_times_min, split_times_max)
 	else:
 		split_times = _initSplit_times
 		
@@ -48,7 +52,6 @@ func die():
 
 # 生成小史莱姆
 func spawn_small_slimes():
-
 	var split_count = randi_range(split_count_min, split_count_max)
 	
 	for i in range(split_count):
@@ -58,7 +61,7 @@ func spawn_small_slimes():
 		var tempSlime = slime_scene.instantiate()
 		
 		# 最小不能低于0次
-		var tempSlitTimes = max(split_times - 1,0)
+		var tempSlitTimes = max(split_times - 1, 0)
 		
 		# 设置子史莱姆的位置（在父史莱姆周围随机位置）
 		var random_angle = randf() * 2 * PI
@@ -72,5 +75,3 @@ func spawn_small_slimes():
 			print("找不到main场景，游戏可能结束了。by:level.gd")
 			return
 		get_tree().get_first_node_in_group("main").add_child.call_deferred(tempSlime)
-	
-		

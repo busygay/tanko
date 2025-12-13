@@ -11,40 +11,40 @@ enum GoblinMode {
 var mode: GoblinMode = GoblinMode.NORMAL # 当前工兵的行为模式
 
 # Build（献祭）相关变量
-var is_building: bool = false  # 是否正在build（献祭）
-var build_timer: Timer = null  # build计时器
-var build_duration: float = 4.0  # build所需时间（默认4秒）两轮动画
-var totem_scene: PackedScene = null  # 图腾场景引用
-var min_level_for_build: int = 5  # 可触发build的最低等级（默认5级）
+var is_building: bool = false # 是否正在build（献祭）
+var build_timer: Timer = null # build计时器
+var build_duration: float = 4.0 # build所需时间（默认4秒）两轮动画
+var totem_scene: PackedScene = null # 图腾场景引用
+var min_level_for_build: int = 5 # 可触发build的最低等级（默认5级）
 @export var builder_chance: float = 0.5 # 成为建造者模式的概率
 @export var setPx: float = 150.0 # 必定触发建造的距离
 @export var max_build_trigger_distance: float = 500.0 # 开始尝试触发建造的最大距离
 var build_check_timer: Timer = null # 用于周期性检查是否建造的计时器
 
 func _ready() -> void:
-	baseDir = true  # 设置初始朝向为右
-	super()
+	baseDir = true # 设置初始朝向为右
+	super ()
 	# 设置哥布林工兵的属性
-	speed = 65  # 中等速度，比基础敌人快一些
-	attCd = 3   # 攻击冷却时间，平衡的攻击频率
-	damage = 2  # 中等攻击力
+	speed = 65 # 中等速度，比基础敌人快一些
+	attCd = 3 # 攻击冷却时间，平衡的攻击频率
+	damage = 2 # 中等攻击力
 	
 	# 初始化build相关组件
 	_init_build_components()
 
 # 重写initData函数以调整哥布林工兵的基础属性
-func initData(Mul:float):
-	super(Mul)
+func initData(Mul: float):
+	super (Mul)
 	# 哥布林工兵的基础生命值调整
 	var temp = Level.currentLevel
-	health = int(temp/4.0)*2 + 8  # 稍微更高的基础生命值
+	health = int(temp / 4.0) * 2 + 8 # 稍微更高的基础生命值
 	
 	# 根据等级倍数调整属性
 	if Mul > 1:
-		var healthMul:float = Mul * 0.9  # 生命值倍率稍微降低，保持平衡
-		var sizeMul:float = Mul * 0.8   # 体型倍率稍微降低
-		var speedMul:float = 2.0 - Mul * 0.7  # 速度倍率调整，保持中等速度
-		var damageMul:float = Mul * 0.9  # 伤害倍率稍微降低
+		var healthMul: float = Mul * 0.9 # 生命值倍率稍微降低，保持平衡
+		var sizeMul: float = Mul * 0.8 # 体型倍率稍微降低
+		var speedMul: float = 2.0 - Mul * 0.7 # 速度倍率调整，保持中等速度
+		var damageMul: float = Mul * 0.9 # 伤害倍率稍微降低
 		
 		health = int(health * healthMul)
 		self.scale = self.scale * sizeMul
@@ -52,7 +52,15 @@ func initData(Mul:float):
 		damage = int(damage * damageMul)
 	
 	# 在出生时随机确定行为模式
-	if randf() < builder_chance:
+	var can_be_builder = true
+	var currentLevel = Level.currentLevel
+	
+	if currentLevel < 5:
+		# 小于5关概率开启模式随机，每级增加15%概率
+		if randf() > (currentLevel * 0.15):
+			can_be_builder = false
+
+	if can_be_builder and randf() < builder_chance:
 		self.mode = GoblinMode.BUILDER
 	else:
 		self.mode = GoblinMode.NORMAL
@@ -96,7 +104,7 @@ func getHurt(_damage):
 	super.getHurt(_damage)
 
 # 重写_enter_state函数以处理工兵特有的状态逻辑
-func _enter_state(new_state:state, _last_state:state = state.nothing):
+func _enter_state(new_state: state, _last_state: state = state.nothing):
 	_last_state = currentState
 	if new_state != currentState or (new_state == state.hurt and _last_state == state.hurt):
 		currentState = new_state
@@ -168,8 +176,9 @@ func _init_build_components():
 
 # 根据与玩家的距离检查是否触发build（仅用于建造者模式）
 func check_build_trigger_by_distance():
-	# 如果不是建造者模式、或正在建造、或等级不够、或玩家不在范围内，则不触发
-	if mode != GoblinMode.BUILDER or is_building or Level.currentLevel < min_level_for_build or playerbox.is_empty():
+	# 如果不是建造者模式、或正在建造、或玩家不在范围内，则不触发
+	# Level check removed as it is now handled in initData
+	if mode != GoblinMode.BUILDER or is_building or playerbox.is_empty():
 		return
 
 	# 获取玩家位置并计算距离
@@ -178,7 +187,7 @@ func check_build_trigger_by_distance():
 
 	var should_build = false
 	# 距离小于等于setPx，100%触发
-	if distance_to_player <= setPx	:
+	if distance_to_player <= setPx:
 		should_build = true
 		print("哥布林工兵（建造者）距离过近，强制触发build")
 	# 在最大距离和最小距离之间，概率触发
