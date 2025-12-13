@@ -10,50 +10,51 @@ class_name players
 ##用于设置无敌的timer
 @onready var parryInvincibleTimer: Timer = $parryInvincible
 @onready var hurtInvincibleTimer: Timer = $hurtInvincible
+@onready var sword: Sprite2D = $sword
+
 #用于无敌判断的bool
 var is_hurt_invincible := false
 var is_parry_invincible := false
-var breakInvincibleCount :int
+var breakInvincibleCount: int
 
 # drain debuff
-var drainDebuffLayers:int:
+var drainDebuffLayers: int:
 	set(new):
-		if drainDebuffLayers >=10:
+		if drainDebuffLayers >= 10:
 			return
-		if new >drainDebuffLayers:
+		if new > drainDebuffLayers:
 			get_tree().create_timer(1).timeout.connect(func():
-				drainDebuffLayers -=1
+				drainDebuffLayers -= 1
 				)
-		drainDebuffLayers= new
+		drainDebuffLayers = new
 
-@export var MaxHealth:int =10
-@export var baseshootCD:float
-@export var baseDamage:float
+@export var MaxHealth: int = 10
+@export var baseshootCD: float
+@export var baseDamage: float
 
-var health:int
+var health: int
 #基础伤害加成变量
-var attackBonus:int = 0      #攻击力加成(百分比，如10表示10%)
-var globalDamageBonus:int = 0 #全局伤害加成(百分比，如20表示20%)
-var trueDamageRatio:float = 0.0  
-var criticalChance:int = 10    #暴击率(百分比，初始10%)
-var criticalRatio:int = 50     #暴击伤害加成(百分比，初始50%)
+var attackBonus: int = 0 # 攻击力加成(百分比，如10表示10%)
+var globalDamageBonus: int = 0 # 全局伤害加成(百分比，如20表示20%)
+var trueDamageRatio: float = 0.0
+var criticalChance: int = 10 # 暴击率(百分比，初始10%)
+var criticalRatio: int = 50 # 暴击伤害加成(百分比，初始50%)
 
 
-
-var inshootcd:bool = false
-var reloading:bool
+var inshootcd: bool = false
+var reloading: bool
 #子弹数量和最大子弹数
 var MaxAmmo = 7
 var currentAmmo:
 	set(new):
-		currentAmmo=new
+		currentAmmo = new
 		Eventmanger.bulletCountChange.emit(currentAmmo)
 
 
-var enemy:Array[Node2D]
+var enemy: Array[Node2D]
 
 #一个子弹可以发射的次数，类似于doubleShoot的作用数
-var bulletCount:int =1
+var bulletCount: int = 1
 # 首先，我们定义一个枚举来清晰地表示所有可能的状态
 enum State {
 	IDLE,
@@ -63,12 +64,12 @@ enum State {
 }
 
 # 用于管理当前状态的变量
-var current_state: State =State.NOTHING
+var current_state: State = State.NOTHING
 
 func _ready() -> void:
 	Eventmanger.register_player(self)
 	##skillSingal
-	Eventmanger.playerGlobalDamageBonusChange.connect(func(bonus:int):
+	Eventmanger.playerGlobalDamageBonusChange.connect(func(bonus: int):
 		globalDamageBonus = bonus
 	)
 	Eventmanger.playerCdSub.connect(BaseShootCdSub)
@@ -164,13 +165,13 @@ func baseshootingline():
 			enemy.remove_at(i)
 	
 	# 在射击前进行最终检查，虽然状态机已经保证了大部分情况
-	var tempcount :int
-	tempcount=min(bulletCount,enemy.size())
+	var tempcount: int
+	tempcount = min(bulletCount, enemy.size())
 	
-	if currentAmmo <= 0 and  (not reloading):
+	if currentAmmo <= 0 and (not reloading):
 		Eventmanger.reloadAmmo.emit()
 		return
-	if reloading or currentAmmo <=0:
+	if reloading or currentAmmo <= 0:
 		return
 		
 	# 优化：原先的await会阻塞函数，改为为每条线创建一个独立的计时器来销毁
@@ -180,8 +181,8 @@ func baseshootingline():
 		# 确保敌人实例仍然有效
 		if not is_instance_valid(enemy[i]):
 			continue
-		else :
-			bulletCount -=1
+		else:
+			bulletCount -= 1
 		var ends = enemy[i].global_position
 		var start = shoot_point_mark.global_position
 		line.points = [start, ends]
@@ -192,21 +193,20 @@ func baseshootingline():
 		var damage = calculate_damage(enemy[i].armor)
 		if enemy[i].has_method("getHurt"):
 			enemy[i].getHurt(damage)
-		Eventmanger.playerShooted.emit(enemy[i],ends,baseDamage)
+		Eventmanger.playerShooted.emit(enemy[i], ends, baseDamage)
 		
-	bulletCount = max(bulletCount,1)
+	bulletCount = max(bulletCount, 1)
 	#currentAmmo -= 1 ,用播放音效修改子弹数量
 	Eventmanger.playershooting.emit(currentAmmo)
 
 
-		
 func lookAtEnemy():
 	if not enemy.is_empty() and is_instance_valid(enemy[0]):
 		var temp = enemy[0]
-		if temp.global_position.x < self.global_position.x :
+		if temp.global_position.x < self.global_position.x:
 			bodys.scale.x = -1
-			hand.scale.x = -0.5 
-		elif  temp.global_position.x > self.global_position.x:
+			hand.scale.x = -0.5
+		elif temp.global_position.x > self.global_position.x:
 			bodys.scale.x = 1
 			hand.scale.x = 0.5
 			
@@ -224,7 +224,7 @@ func reloadAmmofunc():
 	if get_tree().get_first_node_in_group(&"main").power > 0:
 		get_tree().get_first_node_in_group(&"main").power -= 1
 		_enter_state(State.RELOAD)
-		AudioManager.play_sfx_at_position("Semi22LRReloadFullMP3",shoot_point_mark.global_position)
+		AudioManager.play_sfx_at_position("Semi22LRReloadFullMP3", shoot_point_mark.global_position)
 	else:
 		_showTips("无法重新装弹")
 		# 确保即使装弹失败也返回IDLE状态，以防万一
@@ -264,7 +264,7 @@ func _showTips(stext: String):
 
 	# --- 接下来是你的动画代码 ---
 	templabel.pivot_offset = templabel.size / 2.0 # 缩放和旋转的中心
-	templabel.modulate = Color(1,1,1,1)
+	templabel.modulate = Color(1, 1, 1, 1)
 	templabel.scale = Vector2(0, 0)
 	templabel.show()
 
@@ -277,15 +277,15 @@ func _showTips(stext: String):
 	newtween.chain().tween_property(templabel, ^"modulate", Color(1, 1, 1, 0), 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	newtween.tween_callback(templabel.queue_free)
 
-func getHurt(damage:int):
+func getHurt(damage: int):
 	if is_hurt_invincible or is_parry_invincible:
-		
+		swordRot()
 		if is_hurt_invincible:
-			breakInvincibleCount +=1
-			print("受击无敌中，剩余时间"+str(hurtInvincibleTimer.time_left-breakInvincibleCount))
-			if breakInvincibleCount >int (hurtInvincibleTimer.time_left):
-				is_hurt_invincible =false
-				breakInvincibleCount =0
+			breakInvincibleCount += 1
+			print("受击无敌中，剩余时间" + str(hurtInvincibleTimer.time_left - breakInvincibleCount))
+			if breakInvincibleCount > int(hurtInvincibleTimer.time_left):
+				is_hurt_invincible = false
+				breakInvincibleCount = 0
 				hurtInvincibleTimer.stop()
 				return
 		if is_parry_invincible:
@@ -296,7 +296,7 @@ func getHurt(damage:int):
 	if health <= 0:
 		Eventmanger.gameover.emit()
 		return
-	modulate=Color(1.0, 0.0, 0.0)
+	modulate = Color(1.0, 0.0, 0.0)
 	await get_tree().create_timer(0.1).timeout
 	modulate = Color(1.0, 1.0, 1.0)
 	hurtInvincibleTimer.start()
@@ -307,27 +307,24 @@ func parryInvinclibleFunc():
 		return
 	else:
 		parryInvincibleTimer.start()
-		is_hurt_invincible =true
-
-
-
+		is_hurt_invincible = true
 
 
 func gunshootingsounds():
 	## 由于声音播放在子弹数量减一后调用，所以这里子弹=0也有射击声音
-	if currentAmmo >0 :
+	if currentAmmo > 0:
 		AudioManager.play_sfx_at_position("22LRSingleMP3", shoot_point_mark.global_position)
-		currentAmmo -=1
-	elif  get_tree().get_first_node_in_group(&'main').power <=0:
-		AudioManager.play_sfx_at_position("Semi22LRCantReloadMP3",shoot_point_mark.global_position)
+		currentAmmo -= 1
+	elif get_tree().get_first_node_in_group(&'main').power <= 0:
+		AudioManager.play_sfx_at_position("Semi22LRCantReloadMP3", shoot_point_mark.global_position)
 		
 	pass
 
-func _bulletCountChangeFunc(count:int):
+func _bulletCountChangeFunc(count: int):
 	bulletCount += count
 
 func BaseShootCdSub():
-	baseshootCD -=0.1
+	baseshootCD -= 0.1
 	
 func BaseDamageUp():
 	attackBonus += 10 # 将原本对 baseDamage 的复杂计算改为直接增加 attackBonus
@@ -345,7 +342,7 @@ func _on_eye_body_entered(body: Node2D) -> void:
 
 func calculate_damage(enemy_armor: float = 0.0) -> float:
 	# 基础伤害计算 
-	var attack_bonus = float(attackBonus) / 100.0  # 整数百分比转小数
+	var attack_bonus = float(attackBonus) / 100.0 # 整数百分比转小数
 	var global_damage_bonus = float(globalDamageBonus) / 100.0
 	var base_damage = baseDamage * (1.0 + attack_bonus) * (1.0 + global_damage_bonus)
 	
@@ -374,17 +371,17 @@ func _on_parry_invincible_timeout() -> void:
 	pass # Replace with function body.
 
 
-
 func _on_hurt_invincible_timeout() -> void:
 	is_hurt_invincible = false
 	breakInvincibleCount = 0
 	pass # Replace with function body.
 
-
-
-
 func _DrainDebuff():
-	if drainDebuffLayers >0:
-		if randi()%100 <(drainDebuffLayers*5 ):
-			get_tree().get_first_node_in_group(&"main").Correctcount -=1
-			drainDebuffLayers = int(drainDebuffLayers/2.0)
+	if drainDebuffLayers > 0:
+		if randi() % 100 < (drainDebuffLayers * 5):
+			get_tree().get_first_node_in_group(&"main").Correctcount -= 1
+			drainDebuffLayers = int(drainDebuffLayers / 2.0)
+
+func swordRot():
+	var tween = create_tween()
+	tween.tween_property(sword, "rotation", sword.rotation + TAU, 0.5)

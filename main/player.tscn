@@ -1,10 +1,11 @@
-[gd_scene load_steps=67 format=3 uid="uid://dsxur7ffaes6w"]
+[gd_scene load_steps=68 format=3 uid="uid://dsxur7ffaes6w"]
 
 [ext_resource type="Script" uid="uid://dj3s0bb0lm2mn" path="res://main/player.gd" id="1_hqtel"]
 [ext_resource type="Texture2D" uid="uid://cwt1cruxposy3" path="res://asset/Towers.png" id="1_i3pqv"]
 [ext_resource type="Texture2D" uid="uid://cjkupxyxqm0ub" path="res://asset/Character-and-Zombie.png" id="2_hqtel"]
 [ext_resource type="Texture2D" uid="uid://iu0rqfswwdke" path="res://asset/Gun-Sprite-Sheet.png" id="3_sweqy"]
 [ext_resource type="AudioStream" uid="uid://df6hy1273vl0b" path="res://sounds/22LRSingleMP3.mp3" id="5_sweqy"]
+[ext_resource type="Texture2D" uid="uid://dj6n5a5yk5fsv" path="res://asset/sword.png" id="6_5ar6u"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2hs0m"]
 atlas = ExtResource("2_hqtel")
@@ -759,6 +760,11 @@ one_shot = true
 [node name="hurtInvincible" type="Timer" parent="."]
 wait_time = 0.5
 one_shot = true
+
+[node name="sword" type="Sprite2D" parent="."]
+z_index = 99
+position = Vector2(1, -26.333334)
+texture = ExtResource("6_5ar6u")
 
 [connection signal="body_entered" from="eye" to="." method="_on_eye_body_entered"]
 [connection signal="timeout" from="baseshootCDtimer" to="." method="_on_baseshoot_c_dtimer_timeout"]
