@@ -14,9 +14,10 @@ var wordBookPath: Dictionary = {
 }
 
 #用于保存错误单词文件路径
-var savepath = "user://saveErrorWordData.json"
-#用于保存已掌握单词文件路径
-var saveMasteredPath = "user://masteredWordData.json"
+var savepath = "user://saveData.json"
+
+# 全局ID映射表，键为唯一ID，值为单词数据引用
+var _id_map: Dictionary = {}
 
 
 # 存储所有已加载的单词数据，键为单词本名称，值为该单词本的所有单词数据
@@ -151,71 +152,103 @@ func _restartGame():
 
 func _saveErrorWord():
 	# 调用方: Eventmanger.saveErrorWord信号触发 (第25行)
-	# 功能: 保存错误单词和已掌握单词到不同文件
-	#先合并allerrorWord和savedErrorWord
+	# 功能: 保存错误单词和已掌握单词到统一文件 (ID Based)
+	# 1. 先合并allErrorWord到savedErrorWord (确保拥有最新数据)
 	for tempWordKey in allErrorWord:
 		var cheackWord = savedErrorWord.get(tempWordKey, null)
 		var needSaveWord = allErrorWord.get(tempWordKey)
-		#如果该单词重复则累加错误次数
+		# 如果该单词重复则累加错误次数
 		if cheackWord:
 			var tempcount = cheackWord.get("error_count", 3) + needSaveWord.get("error_count", 3)
 			cheackWord.set("error_count", tempcount)
 		else:
-			#如果是新的错误单词则直接添加进SavedErrorWord
+			# 如果是新的错误单词则直接添加进SavedErrorWord
 			savedErrorWord.set(tempWordKey, needSaveWord)
 
-	#保存单词
-	var errorWordFile = FileAccess.open(savepath, FileAccess.WRITE)
-	if errorWordFile:
-		var tempjson = JSON.stringify(savedErrorWord, "\t")
-		errorWordFile.store_string(tempjson)
-		print("错误单词数据已保存，共 %d 个单词" % savedErrorWord.size())
-		errorWordFile.close()
-	else:
-		print("错误单词保存失败")
-	# 保存错误单词到文件
+	# 2. 构建保存数据结构 (仅保存ID和必要状态)
+	var save_data = {
+		"error": {}, # ID -> error_count
+		"mastered": [] # List of IDs
+	}
 
+	# 处理错误单词
+	for key in savedErrorWord:
+		var word = savedErrorWord[key]
+		var uid = word.get("id")
+		if uid:
+			save_data["error"][uid] = word.get("error_count", 3)
+		else:
+			push_warning("单词缺少ID, 无法保存: " + str(key))
 
-	# 保存已掌握的单词到单独的文件
-	var masteredFile = FileAccess.open(saveMasteredPath, FileAccess.WRITE)
-	if masteredFile:
-		var masetredJson = JSON.stringify(masteredWord, "\t")
-		masteredFile.store_string(masetredJson)
-		print("已掌握单词数据已保存，共 %d 个单词" % masteredWord.size())
-		masteredFile.close()
+	# 处理已掌握单词
+	for key in masteredWord:
+		var word = masteredWord[key]
+		var uid = word.get("id")
+		if uid:
+			save_data["mastered"].append(uid)
+		else:
+			push_warning("已掌握单词缺少ID, 无法保存: " + str(key))
+
+	# 3. 写入文件
+	var file = FileAccess.open(savepath, FileAccess.WRITE)
+	if file:
+		var json_str = JSON.stringify(save_data, "\t")
+		file.store_string(json_str)
+		print("保存完成。错误单词: %d, 已掌握单词: %d" % [save_data["error"].size(), save_data["mastered"].size()])
+		file.close()
 	else:
-		print("已掌握单词保存失败")
-	print("_saveErrorWord: 保存完成")
+		push_error("保存文件失败")
+
 
 func _loadErrorWord():
 	# 调用方: menu/menu.gd (第104行)
-	# 功能: 从文件加载错误单词和已掌握单词数据
-	# 加载错误单词数据
-	if FileAccess.file_exists(savepath):
-		var errorWordFile = FileAccess.open(savepath, FileAccess.READ)
-		if errorWordFile:
-			var tempjson = errorWordFile.get_as_text()
-			var tempData = JSON.parse_string(tempjson)
-			if typeof(tempData) == TYPE_DICTIONARY:
-				savedErrorWord = tempData
-				print("已加载 %d 个错误单词数据" % savedErrorWord.size())
+	# 功能: 从文件加载ID数据并还原单词对象
+	if not FileAccess.file_exists(savepath):
+		print("存档文件不存在，跳过加载")
+		return
+
+	var file = FileAccess.open(savepath, FileAccess.READ)
+	if not file:
+		push_error("无法打开存档文件")
+		return
+
+	var json_text = file.get_as_text()
+	var save_data = JSON.parse_string(json_text)
+	file.close()
+
+	if typeof(save_data) != TYPE_DICTIONARY:
+		push_error("存档格式错误")
+		return
+
+	# 还原错误单词
+	savedErrorWord.clear()
+	var error_ids = save_data.get("error", {})
+	if typeof(error_ids) == TYPE_DICTIONARY:
+		for uid in error_ids:
+			if _id_map.has(uid):
+				var temp_word_data = _id_map[uid].duplicate()
+				temp_word_data["error_count"] = error_ids[uid]
+				var word_key = temp_word_data.get("假名", "")
+				if word_key:
+					savedErrorWord[word_key] = temp_word_data
 			else:
-				push_error("错误单词数据加载失败")
-		errorWordFile.close()
-	else:
-		print("错误单词保存文件不存在，将创建新文件")
+				print("ID未找到(可能词库已更新): " + str(uid))
+
+	# 还原已掌握单词
+	masteredWord.clear()
+	var mastered_ids = save_data.get("mastered", [])
+	if typeof(mastered_ids) == TYPE_ARRAY:
+		for uid in mastered_ids:
+			if _id_map.has(uid):
+				var temp_word_data = _id_map[uid].duplicate()
+				temp_word_data["error_count"] = 0 # 确保已掌握也是0错误
+				var word_key = temp_word_data.get("假名", "")
+				if word_key:
+					masteredWord[word_key] = temp_word_data
+			else:
+				print("ID未找到(可能词库已更新): " + str(uid))
 	
-	# 加载已掌握单词数据
-	if FileAccess.file_exists(saveMasteredPath):
-		var masteredWordFile = FileAccess.open(saveMasteredPath, FileAccess.READ)
-		if masteredWordFile:
-			var mastered_json = masteredWordFile.get_as_text()
-			var mastered_parsed = JSON.parse_string(mastered_json)
-			if typeof(mastered_parsed) == TYPE_DICTIONARY:
-				masteredWord = mastered_parsed
-		masteredWordFile.close()
-	else:
-		print("已掌握保存文件不存在，将创建新文件")
+	print("加载完成。恢复错误单词: %d, 已掌握单词: %d" % [savedErrorWord.size(), masteredWord.size()])
 
 	
 func _loadWord():
@@ -233,6 +266,7 @@ func _loadWord():
 				file.close()
 				push_error("文件异常，没有中文翻译，无法使用这一行作为唯一id，by:jlptn_5.gd,002")
 				continue
+			var _index = 0
 			while not file.eof_reached():
 				var line_Data = file.get_csv_line()
 				if line_Data.size() <= 1 and line_Data[0] == "":
@@ -247,6 +281,13 @@ func _loadWord():
 					if temp == "":
 						continue
 					row_dir[head] = temp
+				
+				# 生成唯一ID: 词库名_序号
+				var unique_id = "%s_%d" % [y, _index]
+				row_dir["id"] = unique_id
+				_id_map[unique_id] = row_dir
+				_index += 1
+
 				if row_dir.get("假名"):
 					tempWordData[row_dir["假名"]] = row_dir
 			file.close()
