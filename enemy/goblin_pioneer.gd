@@ -178,7 +178,7 @@ func check_build_trigger_by_distance():
 
 	var should_build = false
 	# 距离小于等于setPx，100%触发
-	if distance_to_player <= setPx:
+	if distance_to_player <= setPx	:
 		should_build = true
 		print("哥布林工兵（建造者）距离过近，强制触发build")
 	# 在最大距离和最小距离之间，概率触发
