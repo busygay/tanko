@@ -44,7 +44,9 @@ func check_and_fuse_skills() -> bool:
 			if fusion_skill_scene:
 				var new_skill = fusion_skill_scene.instantiate()
 				_setunequip(new_skill) # 添加到未装备列表
+				SkillManager.addSkillCount("baseDamageUp", 5)
 				print("技能融合成功！新技能已添加到未装备池。")
+
 				return true
 			else:
 				print("技能融合成功！但 fusion_skill_scene 为空。")
