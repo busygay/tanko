@@ -1,9 +1,9 @@
 extends Node
 var player
-var allenemyboxcount:int = 0
+var allenemyboxcount: int = 0
 var answering = null
 var bullet = null
-var powerbar =null
+var powerbar = null
 func _ready() -> void:
 	randomize()
 	enemySpawn.connect(enemySpawnfunc)
@@ -23,34 +23,34 @@ func enemydeathfunc(enemynode):
 		player.enemy.remove_at(player.enemy.find(enemynode))
 func reloadAmmofunc():
 	player.animation_player.play("reloadAmmo")
-func addCurrentAmmo(isanswer:bool):
+func addCurrentAmmo(isanswer: bool):
 	if isanswer:
-		player.currentAmmo+=1
+		player.currentAmmo += 1
 		
 
 func register_player(player_node):
-	player=player_node
+	player = player_node
 	
 ###第一个变量是为node,第二个变量当调用节点为answering时写true，否则写fales
-func setbulletPos(_node,who:bool):
+func setbulletPos(_node, who: bool):
 	if who:
 		answering = _node
-	else :
+	else:
 		bullet = _node
 	if answering != null and bullet != null:
 		await get_tree().process_frame
-		var temp =answering.answerPanlePos()
-		bullet.position.y = temp.position.y-bullet.size.y
+		var temp = answering.answerPanlePos()
+		bullet.position.y = temp.position.y - bullet.size.y
 
-func setpowerPos(_node,who:bool):
+func setpowerPos(_node, who: bool):
 	if who:
 		answering = _node
-	else :
+	else:
 		powerbar = _node
 	if answering != null and powerbar != null:
 		await get_tree().process_frame
-		var temp =answering.answerPanlePos()
-		powerbar.position.y = temp.position.y-powerbar.size.y
+		var temp = answering.answerPanlePos()
+		powerbar.position.y = temp.position.y - powerbar.size.y
 
 
 @warning_ignore('unused_signal')
@@ -61,19 +61,19 @@ signal actionPointUp
 signal actionPointSub
 
 @warning_ignore('unused_signal')
-signal bulletCountChange(count:int)
+signal bulletCountChange(count: int)
 @warning_ignore('unused_signal')
 signal playershooting
 @warning_ignore('unused_signal')
 signal playerShooted
 @warning_ignore('unused_signal')
-signal playerGotHurt(damage:int)
+signal playerGotHurt(damage: int)
 @warning_ignore('unused_signal')
 signal reloadAmmo
 @warning_ignore('unused_signal')
 signal FinishReloadAmmo
 @warning_ignore('unused_signal')
-signal playerbulletCount(count:int)
+signal playerbulletCount(count: int)
 @warning_ignore('unused_signal')
 signal parryInvincible()
 
@@ -85,17 +85,17 @@ signal playerBaseDamageUp()
 @warning_ignore('unused_signal')
 signal playerTrueDamageUp()
 @warning_ignore('unused_signal')
-signal playerGlobalDamageBonusChange(bonus:int)
+signal playerGlobalDamageBonusChange(bonus: int)
 
 
-signal answered(isanswer:bool)
+signal answered(isanswer: bool)
 @warning_ignore('unused_signal')
 @warning_ignore('unused_signal')
-signal questionSkipped  # 新增跳过信号
+signal questionSkipped # 新增跳过信号
 @warning_ignore('unused_signal')
 signal comboChange
 @warning_ignore('unused_signal')
-signal wordReorderCompleted  # 单词重组完成信号
+signal wordReorderCompleted # 单词重组完成信号
 @warning_ignore('unused_signal')
 signal getCorrectCount()
 
@@ -114,7 +114,7 @@ signal levelOver
 @warning_ignore('unused_signal')
 signal NextLevel
 @warning_ignore('unused_signal')
-signal ShowShoping(levelDone:bool)
+signal ShowShoping(levelDone: bool)
 
 @warning_ignore('unused_signal')
 signal GameStart
@@ -147,9 +147,9 @@ signal APSpentEmit
 @warning_ignore('unused_signal')
 signal setequipData(_node)
 @warning_ignore('unused_signal')
-signal drag_ended(_node,pos)
+signal drag_ended(_node, pos)
 @warning_ignore('unused_signal')
-signal equipSkill(tiggerName,SkillNode)
+signal equipSkill(tiggerName, SkillNode)
 @warning_ignore('unused_signal')
 signal ShowSkillAssembly
 
@@ -159,11 +159,14 @@ signal ricochetShootUp
 
 @warning_ignore('unused_signal')
 signal doubleShootUP
-var isQuiting:bool
+
+@warning_ignore('unused_signal')
+signal bt7270UP
+var isQuiting: bool
 func _notification(what: int) -> void:
 	match what:
 		NOTIFICATION_WM_CLOSE_REQUEST:
 			if isQuiting:
 				return
-			isQuiting=true
+			isQuiting = true
 			get_tree().quit()

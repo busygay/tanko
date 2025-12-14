@@ -11,4 +11,10 @@ skill_cname = "BT-7270"
 sprite = ExtResource("2_falng")
 tips = "触发时获得一个自动攻击敌人的炮塔"
 path = "res://skill/scene/BT-7270.tscn"
+derivedSkill = Dictionary[String, Dictionary]({
+"BT-7270Up": {
+"count": 5,
+"path": "res://skill/resource/bt-7270Up.tres"
+}
+})
 metadata/_custom_type_script = "uid://c1djkh2or1f4p"

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="skill" load_steps=3 format=3 uid="uid://c7yk2h4m3qkrn"]
+
+[ext_resource type="Script" uid="uid://c1djkh2or1f4p" path="res://skill/resource/skill.gd" id="1_bt7270up"]
+[ext_resource type="Texture2D" uid="uid://bxf56nt3ilt4k" path="res://skill/asset/BT-7270.png" id="2_bt7270up"]
+
+[resource]
+script = ExtResource("1_bt7270up")
+skill_type = "爱与机器人"
+skill_name = "BT-7270Up"
+skill_cname = "BT-7270升级"
+sprite = ExtResource("2_bt7270up")
+tips = "升级BT-7270一次（触发后销毁技能，效果全局有效）"
+path = "res://skill/scene/bt-7270Up.tscn"
+metadata/_custom_type_script = "uid://c1djkh2or1f4p"
