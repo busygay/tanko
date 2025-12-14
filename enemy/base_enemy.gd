@@ -6,20 +6,20 @@ class_name baseEnemy extends CharacterBody2D
 @onready var timer: Timer = $Timer
 
 # Buff系统相关
-var activeBuffs: Array = []  # 存储当前活跃的buff
-var baseSpeed: int = 50  # 基础速度，用于buff计算
+var activeBuffs: Array = [] # 存储当前活跃的buff
+var baseSpeed: int = 50 # 基础速度，用于buff计算
 
-var armor:float = 0.0
-var speed:int = 50
-var baseScale:Vector2
-var attCd:int = 10
-var damage:int =1
-var health:int
+var armor: float = 0.0
+var speed: int = 50
+var baseScale: Vector2
+var attCd: int = 10
+var damage: int = 1
+var health: int
 var player
-var playerbox:Array
-var currentFacingDir:bool = true # 当前面朝的方向，避免频繁翻转
-var baseDir :bool  # 初始面朝的方向，true为右，false为左
-enum state{
+var playerbox: Array
+var currentFacingDir: bool = true # 当前面朝的方向，避免频繁翻转
+var baseDir: bool # 初始面朝的方向，true为右，false为左
+enum state {
 	idle,
 	walk,
 	att,
@@ -28,16 +28,13 @@ enum state{
 	nothing,
 	
 }
-var currentState=state.idle
+var currentState = state.idle
 
 func _ready() -> void:
 	print("base_enemy _ready() 开始")
 	Eventmanger.enterTreeEnemy.emit()
 	# 获取玩家引用
-	if self.scale != null:
-		baseScale = self.scale
-	else:
-		baseScale = Vector2(1, 1)
+
 	print("设置 baseScale: ", baseScale)
 	player = get_tree().get_first_node_in_group("player")
 	if not is_instance_valid(player):
@@ -46,6 +43,12 @@ func _ready() -> void:
 		return
 	
 	# 根据敌人相对玩家的初始位置设置朝向
+
+	if self.scale != null:
+		baseScale = self.scale
+	else:
+		baseScale = Vector2(1, 1)
+	
 	var initialDirection = global_position.direction_to(player.global_position)
 	var targetDir = initialDirection.x > 0
 	print("初始方向检查 - baseDir: ", baseDir, " targetDir: ", targetDir, " 初始scale: ", scale)
@@ -53,7 +56,7 @@ func _ready() -> void:
 		currentFacingDir = targetDir
 		if currentFacingDir:
 			# 初始朝右
-			scale.x = -baseScale.x
+			scale.x = - baseScale.x
 		else:
 			# 初始朝左
 			scale.x = baseScale.x
@@ -64,29 +67,31 @@ func _ready() -> void:
 			scale.x = baseScale.x
 		else:
 			# 初始朝左
-			scale.x = -baseScale.x
+			scale.x = - baseScale.x
+	
+	
 	print("朝向设置完成 - currentFacingDir: ", currentFacingDir, " 最终scale: ", scale)
 	_enter_state(state.walk)
 	# 保存基础速度
 	baseSpeed = speed
 
 
-func initData(Mul:float):
+func initData(Mul: float):
 	var temp = Level.currentLevel
-	health = int( temp/5.0)*2+5
-	var tempRandf:float = randf_range(0.8,1.2)
-	speed = int ( speed *tempRandf)
+	health = int(temp / 5.0) * 2 + 5
+	var tempRandf: float = randf_range(0.8, 1.2)
+	speed = int(speed * tempRandf)
 	
 	
-	if Mul >1:
-		var healthMul:float = Mul
-		var sizeMul:float = Mul
-		var speedMul:float = 2.0-Mul
-		var damageMul:float = Mul
-		health = int( health*healthMul)
-		self.scale = self.scale *sizeMul
-		speed = int (speed *speedMul)
-		damage = int (damage*damageMul)
+	if Mul > 1:
+		var healthMul: float = Mul
+		var sizeMul: float = Mul
+		var speedMul: float = 2.0 - Mul
+		var damageMul: float = Mul
+		health = int(health * healthMul)
+		self.scale = self.scale * sizeMul
+		speed = int(speed * speedMul)
+		damage = int(damage * damageMul)
 	
 	# 限制最小移动速度
 	if speed < 25:
@@ -118,10 +123,10 @@ func _state_logic_walk():
 	velocity = direction * finalSpeed
 	move_and_slide()
 	#确保 图像纹理朝向已经被设置
-	if baseDir == null :
+	if baseDir == null:
 		return
 	if direction.x != 0:
-		var targetDir = direction.x >0 #大于0朝右，小于0朝左
+		var targetDir = direction.x > 0 # 大于0朝右，小于0朝左
 		# 只有当朝向真正改变时才翻转
 		if targetDir != currentFacingDir:
 			print("朝向改变 - 从 ", currentFacingDir, " 到 ", targetDir, " baseScale: ", baseScale, " 当前scale: ", scale)
@@ -132,15 +137,15 @@ func _state_logic_walk():
 				scale.x = baseScale.x
 			else:
 				# 目标朝左
-				scale.x = -baseScale.x
+				scale.x = - baseScale.x
 			print("朝向更新完成 - 新scale: ", scale)
 
 	if not playerbox.is_empty():
-		_enter_state(state.att,)
+		_enter_state(state.att, )
 		
-func _enter_state(new_state:state,):
-	var  _last_state = currentState
-	if new_state != currentState or (new_state ==state.hurt and _last_state == state.hurt):
+func _enter_state(new_state: state, ):
+	var _last_state = currentState
+	if new_state != currentState or (new_state == state.hurt and _last_state == state.hurt):
 		currentState = new_state
 		match currentState:
 			state.idle:
@@ -153,19 +158,18 @@ func _enter_state(new_state:state,):
 				# 在动画中途触发攻击伤害
 				animation_player.animation_finished.connect(func(_animeName):
 					_enter_state(state.idle)
-					,CONNECT_ONE_SHOT)
+					, CONNECT_ONE_SHOT)
 			state.hurt:
 				animation_player.play("hurt")
 				animation_player.animation_finished.connect(func(_animeName):
 					if _last_state != state.nothing:
 						_enter_state(_last_state)
-					,CONNECT_ONE_SHOT)
+					, CONNECT_ONE_SHOT)
 			state.death:
 				animation_player.play("death")
 				animation_player.animation_finished.connect(func(_animeName):
-					
 					die()
-					,CONNECT_ONE_SHOT)
+					, CONNECT_ONE_SHOT)
 			
 				
 func _state_logic_att():
@@ -185,19 +189,17 @@ func _on_timer_timeout() -> void:
 func att():
 	if playerbox.is_empty():
 		return
-	var i =0
-	var temp  = playerbox[i] as Node2D
-	var maxcount = playerbox.size()-1
-	while not  temp.has_method("getHurt"):
-		i +=1
-		if i >maxcount:
+	var i = 0
+	var temp = playerbox[i] as Node2D
+	var maxcount = playerbox.size() - 1
+	while not temp.has_method("getHurt"):
+		i += 1
+		if i > maxcount:
 			return
 		temp = playerbox[i]
 	temp.getHurt(damage)
 
 	
-
-
 func getHurt(_damage):
 	health -= _damage
 	if health <= 0:

@@ -762,9 +762,12 @@ wait_time = 0.5
 one_shot = true
 
 [node name="sword" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(1, 1, 1, 0)
 z_index = 99
 position = Vector2(1, -26.333334)
 texture = ExtResource("6_5ar6u")
+offset = Vector2(0, -11)
 
 [connection signal="body_entered" from="eye" to="." method="_on_eye_body_entered"]
 [connection signal="timeout" from="baseshootCDtimer" to="." method="_on_baseshoot_c_dtimer_timeout"]

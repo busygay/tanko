@@ -24,9 +24,9 @@ func check_and_fuse_skills() -> bool:
 		all_skills.append_array(tigger[key].get_children())
 		
 	for s_node in all_skills:
-		if s_node.filename == "res://skill/scene/double_shoot.tscn" or s_node.get_script().resource_path.ends_with("double_shoot.gd"):
+		if s_node.get_script().resource_path.ends_with("double_shoot.gd"):
 			double_shoot_node = s_node
-		elif s_node.filename == "res://skill/scene/ricochet_shoot.tscn" or s_node.get_script().resource_path.ends_with("ricochet_shoot.gd"):
+		elif s_node.get_script().resource_path.ends_with("ricochet_shoot.gd"):
 			ricochet_shoot_node = s_node
 			
 	if double_shoot_node and ricochet_shoot_node:

@@ -383,5 +383,14 @@ func _DrainDebuff():
 			drainDebuffLayers = int(drainDebuffLayers / 2.0)
 
 func swordRot():
-	var tween = create_tween()
-	tween.tween_property(sword, "rotation", sword.rotation + TAU, 0.5)
+	var swordTemp = sword.duplicate()
+	swordTemp.show()
+	add_child.call_deferred(swordTemp)
+	await swordTemp.tree_entered
+	var tween = create_tween().set_parallel(true)
+	tween.tween_property(swordTemp, "rotation", swordTemp.rotation + TAU, 0.5)
+	tween.tween_property(swordTemp, "modulate", Color(1.0, 1.0, 1.0, 0.784), 0.5)
+	tween.chain().tween_callback(swordTemp.queue_free)
+
+func swordBreak():
+	pass
