@@ -1,0 +1,44 @@
+[gd_scene load_steps=4 format=3 uid="uid://dh3wb3j86rm8w"]
+
+[ext_resource type="Script" uid="uid://dykxv23tdbvkp" path="res://globalSkillData/asset/robot.gd" id="1_ajbe4"]
+[ext_resource type="PackedScene" uid="uid://cg14fxw0pef8g" path="res://globalSkillData/asset/robot/roboto.tscn" id="1_m3kl4"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_m3kl4"]
+radius = 57.558666
+
+[node name="robot" type="Node2D"]
+script = ExtResource("1_ajbe4")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+texture_filter = 1
+offset_left = -256.0
+offset_top = -434.0
+offset_right = 256.0
+offset_bottom = 78.0
+stretch = true
+stretch_shrink = 3
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(170, 170)
+render_target_update_mode = 4
+
+[node name="Node3D" type="Node3D" parent="SubViewportContainer/SubViewport"]
+
+[node name="roboto" parent="SubViewportContainer/SubViewport/Node3D" instance=ExtResource("1_m3kl4")]
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/Node3D"]
+transform = Transform3D(1, 0, 0, 0, 0.6604998, 0.7508263, 0, -0.7508263, 0.6604998, 0, 35.517113, 21.852022)
+projection = 1
+current = true
+size = 20.0
+
+[node name="liveTimer" type="Timer" parent="."]
+
+[node name="attArea2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="attArea2D"]
+shape = SubResource("CircleShape2D_m3kl4")
+
+[connection signal="timeout" from="liveTimer" to="." method="_on_live_timer_timeout"]

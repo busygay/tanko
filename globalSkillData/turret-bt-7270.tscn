@@ -6,6 +6,55 @@
 [sub_resource type="Animation" id="Animation_ehopc"]
 length = 0.001
 
+[sub_resource type="Animation" id="Animation_r501o"]
+resource_name = "broken"
+length = 0.6
+tracks/0/type = "rotation_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../Turret/骨架/Skeleton3D:骨骼.001")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.922, -0.187, 0.2, 0.274, 0.5, 1, -0.721, 0.216, -0.218, -0.621)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../Turret/骨架/Skeleton3D:骨骼.002")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.26467955, 0.090572745, 0.9070412, -0.31467062, 0.5, 1, -0.354, -0.606, -0.618, 0.355)
+tracks/2/type = "rotation_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../Turret/骨架/Skeleton3D:骨骼.005")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.8804101, -0.11741543, -0.35615757, -0.2902474, 0.5, 1, -0.67, 0.26, 0.271, 0.641)
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../Turret/骨架:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, -0.3842486, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../Turret/Swivel:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(1.5707964, 0, 0), Vector3(0.17081541, 1.5707963, 1.5707963)]
+}
+
 [sub_resource type="Animation" id="Animation_w1ban"]
 resource_name = "enter"
 length = 0.5
@@ -106,55 +155,6 @@ tracks/7/keys = {
 "values": [false]
 }
 
-[sub_resource type="Animation" id="Animation_r501o"]
-resource_name = "broken"
-length = 0.6
-tracks/0/type = "rotation_3d"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Turret/骨架/Skeleton3D:骨骼.001")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = PackedFloat32Array(0, 1, 0.922, -0.187, 0.2, 0.274, 0.5, 1, -0.721, 0.216, -0.218, -0.621)
-tracks/1/type = "rotation_3d"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("../Turret/骨架/Skeleton3D:骨骼.002")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = PackedFloat32Array(0, 1, 0.26467955, 0.090572745, 0.9070412, -0.31467062, 0.5, 1, -0.354, -0.606, -0.618, 0.355)
-tracks/2/type = "rotation_3d"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("../Turret/骨架/Skeleton3D:骨骼.005")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = PackedFloat32Array(0, 1, 0.8804101, -0.11741543, -0.35615757, -0.2902474, 0.5, 1, -0.67, 0.26, 0.271, 0.641)
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("../Turret/骨架:position")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(0, 0, 0), Vector3(0, -0.3842486, 0)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("../Turret/Swivel:rotation")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0, 0.6),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(1.5707964, 0, 0), Vector3(0.17081541, 1.5707963, 1.5707963)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ehopc"]
 _data = {
 &"RESET": SubResource("Animation_ehopc"),
@@ -235,6 +235,7 @@ scale = Vector2(0.3, 0.3)
 script = ExtResource("1_w1ban")
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+texture_filter = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -246,10 +247,13 @@ offset_right = 256.0
 offset_bottom = 154.0
 grow_horizontal = 2
 grow_vertical = 2
+stretch = true
+stretch_shrink = 2
 
 [node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
 transparent_bg = true
 handle_input_locally = false
+size = Vector2i(256, 256)
 render_target_update_mode = 4
 
 [node name="Node3D" type="Node3D" parent="SubViewportContainer/SubViewport"]
@@ -276,7 +280,7 @@ transform = Transform3D(0.99999994, 0, 0, 0, -4.3711385e-08, -0.99999994, 0, 0.9
 bones/1/rotation = Quaternion(0.92194057, -0.18698795, 0.19998708, 0.27398232)
 
 [node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/Node3D"]
-transform = Transform3D(1, 3.184072e-08, 1.376387e-08, -3.184072e-08, 0.68511945, 0.7284308, 1.37638665e-08, -0.7284308, 0.68511945, 0.4145407, 3.8712332, 2.8023248)
+transform = Transform3D(1, 3.184072e-08, 1.376387e-08, -3.184072e-08, 0.68511945, 0.7284308, 1.37638665e-08, -0.7284308, 0.68511945, 0.043310758, 3.8712332, 2.8023248)
 projection = 1
 current = true
 size = 2.7
