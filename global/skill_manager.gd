@@ -8,6 +8,8 @@ var _skillDataPath: Dictionary = {
 	"BT-7270": 'res://skill/resource/BT-7270.tres',
 	"fullPower": 'res://skill/resource/fullPower.tres',
 	"trueDamageUp": 'res://skill/resource/trueDamageUp.tres',
+	"BT-7271": 'res://skill/resource/BT-7271.tres',
+	
 }
 var _skillDataManager: Dictionary = {
 }
@@ -21,6 +23,7 @@ var _SkillCount: Dictionary = {
 	"BT-7270": 1,
 	"fullPower": 1,
 	"trueDamageUp": 5,
+	"BT-7271": 1,
 }
 var _SkillCountCopy: Dictionary
 func _ready() -> void:

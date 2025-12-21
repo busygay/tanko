@@ -1,12 +1,21 @@
-[gd_scene load_steps=4 format=3 uid="uid://dh3wb3j86rm8w"]
+[gd_scene load_steps=6 format=3 uid="uid://dh3wb3j86rm8w"]
 
-[ext_resource type="Script" uid="uid://dykxv23tdbvkp" path="res://globalSkillData/asset/robot.gd" id="1_ajbe4"]
-[ext_resource type="PackedScene" uid="uid://cg14fxw0pef8g" path="res://globalSkillData/asset/robot/roboto.tscn" id="1_m3kl4"]
+[ext_resource type="Script" uid="uid://dykxv23tdbvkp" path="res://globalSkillData/robot.gd" id="1_ajbe4"]
+[ext_resource type="PackedScene" uid="uid://dvytx4gyb51m4" path="res://globalSkillData/asset/robot/robot.tscn" id="2_ujpwd"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p77bs"]
+render_priority = 10
+depth_draw_mode = 1
+stencil_flags = 2
+stencil_color = Color(0, 0, 0, 0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4ajjr"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_m3kl4"]
 radius = 57.558666
 
 [node name="robot" type="Node2D"]
+scale = Vector2(0.7, 0.7)
 script = ExtResource("1_ajbe4")
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="."]
@@ -26,13 +35,20 @@ render_target_update_mode = 4
 
 [node name="Node3D" type="Node3D" parent="SubViewportContainer/SubViewport"]
 
-[node name="roboto" parent="SubViewportContainer/SubViewport/Node3D" instance=ExtResource("1_m3kl4")]
-
 [node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/Node3D"]
 transform = Transform3D(1, 0, 0, 0, 0.6604998, 0.7508263, 0, -0.7508263, 0.6604998, 0, 35.517113, 21.852022)
 projection = 1
 current = true
 size = 20.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewportContainer/SubViewport/Node3D"]
+
+[node name="robot" parent="SubViewportContainer/SubViewport/Node3D" instance=ExtResource("2_ujpwd")]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/Node3D"]
+transform = Transform3D(43.970554, 0, 0, 0, 1, 0, 0, 0, 49.085747, 0, 14.200264, 0)
+material_override = SubResource("StandardMaterial3D_p77bs")
+mesh = SubResource("BoxMesh_4ajjr")
 
 [node name="liveTimer" type="Timer" parent="."]
 
@@ -40,5 +56,7 @@ size = 20.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="attArea2D"]
 shape = SubResource("CircleShape2D_m3kl4")
+
+[node name="attTimer" type="Timer" parent="."]
 
 [connection signal="timeout" from="liveTimer" to="." method="_on_live_timer_timeout"]

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="skill" load_steps=3 format=3 uid="uid://dyrwd2l78yeju"]
+
+[ext_resource type="Script" uid="uid://c1djkh2or1f4p" path="res://skill/resource/skill.gd" id="1_1j1u7"]
+[ext_resource type="Texture2D" uid="uid://bxf56nt3ilt4k" path="res://skill/asset/BT-7270.png" id="2_falng"]
+
+[resource]
+script = ExtResource("1_1j1u7")
+skill_type = "爱与机器人"
+skill_name = "BT-7271"
+skill_cname = "BT-7271"
+sprite = ExtResource("2_falng")
+tips = "召唤BT-7271机器人协助战斗 (15秒)"
+path = "res://skill/scene/BT-7271.tscn"
+derivedSkill = Dictionary[String, Dictionary]({})
+metadata/_custom_type_script = "uid://c1djkh2or1f4p"
