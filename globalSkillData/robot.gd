@@ -1,7 +1,7 @@
 extends Node2D
 
 # 机器人状态枚举 (对齐 base_enemy.gd)
-enum state { idle, walk, att, jumpAtt, death}
+enum state { spawn, idle, walk, att, jumpAtt, death}
 
 @export var lightningScene: PackedScene # 雷电链效果场景 (camelCase)
 
@@ -56,7 +56,7 @@ func _ready() -> void:
 
 	_setup_timers()
 
-	_enter_state(state.idle)
+	_enter_state(state.spawn)  # 从 spawn 状态开始
 
 	
 
@@ -111,9 +111,7 @@ func _setup_timers():
 
 		liveTimer.wait_time = liveTime
 
-		liveTimer.start()
-
-	
+		# 不在这里启动 liveTimer，等待 spawn 状态结束后启动
 
 	if attTimer:
 
@@ -130,6 +128,10 @@ func _physics_process(delta: float) -> void:
 	robotRotation(delta)
 
 	match currentState:
+
+		state.spawn:
+			# spawn 状态不需要物理逻辑处理
+			pass
 
 		state.idle:
 
@@ -239,47 +241,42 @@ func _enter_state(new_state: state):
 
 		return
 
-	
-
 	currentState = new_state
-
-	
 
 	match currentState:
 
-		state.idle:
+		state.spawn:
+			_play_anim(&"self/spawn")
+			# spawn 动画结束后启动 liveTimer 并进入 idle 状态
+			if animationPlayer and animationPlayer.has_animation(&"self/spawn"):
+				animationPlayer.animation_finished.connect(_on_spawn_animation_finished, CONNECT_ONE_SHOT)
+			else:
+				# 如果没有 spawn 动画，直接进入 idle 状态并启动 timer
+				_on_spawn_animation_finished()
 
+		state.idle:
 			_play_anim(&"walk")
 			# 检查死亡标志位
 			_check_death_flag()
 
 		state.walk:
-
 			_play_anim(&"walk")
 			# 检查死亡标志位
 			_check_death_flag()
 
 		state.att:
-
 			_play_anim(&"att")
-
 			# 使用 CONNECT_ONE_SHOT 处理动画完成逻辑 (对齐 base_enemy.gd)
-
 			if animationPlayer and animationPlayer.has_animation(&"att"):
-
 				animationPlayer.animation_finished.connect(func(_a): _enter_state(state.idle), CONNECT_ONE_SHOT)
-
 			else:
-
 				_enter_state(state.idle)
 
 		state.jumpAtt:
-
 			_play_anim(&"jumpAtt")
-
 			if animationPlayer and animationPlayer.has_animation(&"jumpAtt"):
-
 				animationPlayer.animation_finished.connect(func(_a): _enter_state(state.idle), CONNECT_ONE_SHOT)
+
 		state.death:
 			_play_anim(&"self/death")
 			# 机器人死亡后直接移除
@@ -297,9 +294,19 @@ func _play_anim(anim_name: StringName):
 
 		animationPlayer.play(anim_name)
 
-	else: 
+	else:
 
 		push_warning("Robot: AnimationPlayer missing or animation not found: %s" % anim_name)
+
+
+# spawn 动画结束后的回调函数
+
+func _on_spawn_animation_finished() -> void:
+	# 启动 liveTimer
+	if liveTimer:
+		liveTimer.start()
+	# 进入 idle 状态
+	_enter_state(state.idle)
 
 
 
@@ -455,7 +462,7 @@ func _on_live_timer_timeout() -> void:
 	if currentState == state.idle or currentState == state.walk:
 		_enter_state(state.death)
 	else:
-		# 如果处于其他状态（att、jumpAtt），设置死亡标志位等待状态结束
+		# 如果处于其他状态（spawn、att、jumpAtt），设置死亡标志位等待状态结束
 		death_flag = true
 
 
