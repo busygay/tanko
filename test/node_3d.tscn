@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://cyxfm36nfkvmf"]
+
+[ext_resource type="Shader" uid="uid://dblu2cuiy67iq" path="res://test/node_3d.tres" id="1_nd1li"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7t15p"]
+render_priority = 0
+shader = ExtResource("1_nd1li")
+
+[sub_resource type="SphereMesh" id="SphereMesh_nd1li"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_7t15p")
+mesh = SubResource("SphereMesh_nd1li")

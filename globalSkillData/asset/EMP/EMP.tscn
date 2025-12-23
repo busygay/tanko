@@ -1,0 +1,38 @@
+[gd_scene load_steps=10 format=3 uid="uid://b1argyuu753la"]
+
+[ext_resource type="PackedScene" uid="uid://bbi2spj5ve84d" path="res://globalSkillData/asset/EMP/test.blend" id="1_qjqi5"]
+[ext_resource type="Shader" uid="uid://ddxt1f3im46ye" path="res://globalSkillData/asset/EMP/EMP.tres" id="2_3xy8p"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_8hq08"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_en45c"]
+noise = SubResource("FastNoiseLite_8hq08")
+
+[sub_resource type="Gradient" id="Gradient_3xy8p"]
+offsets = PackedFloat32Array(0, 0.30092594, 0.5231481, 0.8888889, 1)
+colors = PackedColorArray(0, 0.5999999, 1, 0, 0.44556493, 0.99017954, 1.353256, 0.98039216, 0.16666651, 0, 1, 1, 2.454227, 2.454227, 2.454227, 0.96862745, 3.2944162, 3.2944162, 3.2944162, 0.96862745)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_8hq08"]
+gradient = SubResource("Gradient_3xy8p")
+
+[sub_resource type="Gradient" id="Gradient_en45c"]
+offsets = PackedFloat32Array(0, 0.17592593, 0.5601852, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_qerfl"]
+gradient = SubResource("Gradient_en45c")
+fill_from = Vector2(1, 0)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qjqi5"]
+render_priority = 0
+shader = ExtResource("2_3xy8p")
+shader_parameter/speed = Vector2(0.3, -0.5)
+shader_parameter/base = SubResource("NoiseTexture2D_en45c")
+shader_parameter/subTextrue2D = SubResource("GradientTexture2D_qerfl")
+shader_parameter/colorTextrue1D = SubResource("GradientTexture1D_8hq08")
+
+[node name="test" instance=ExtResource("1_qjqi5")]
+
+[node name="球体" parent="." index="0"]
+material_override = SubResource("ShaderMaterial_qjqi5")

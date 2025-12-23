@@ -1,0 +1,39 @@
+[gd_resource type="VisualShader" load_steps=3 format=3 uid="uid://dblu2cuiy67iq"]
+
+[sub_resource type="VisualShaderNodeTexture2DParameter" id="VisualShaderNodeTexture2DParameter_icp45"]
+parameter_name = "Texture2DParameter"
+texture_type = 1
+texture_repeat = 1
+
+[sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_kfy7f"]
+output_port_for_preview = 4
+expanded_output_ports = [0]
+source = 5
+texture_type = 1
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, depth_test_default, cull_back, diffuse_lambert, specular_schlick_ggx;
+
+uniform sampler2D Texture2DParameter : source_color, repeat_enable;
+
+
+
+void vertex() {
+	vec4 n_out3p0;
+// Texture2D:3
+	n_out3p0 = texture(Texture2DParameter, UV);
+	float n_out3p1 = n_out3p0.r;
+
+
+// Output:0
+	COLOR.a = n_out3p1;
+
+
+}
+"
+nodes/vertex/2/node = SubResource("VisualShaderNodeTexture2DParameter_icp45")
+nodes/vertex/2/position = Vector2(-220, 380)
+nodes/vertex/3/node = SubResource("VisualShaderNodeTexture_kfy7f")
+nodes/vertex/3/position = Vector2(140, 320)
+nodes/vertex/connections = PackedInt32Array(2, 0, 3, 2, 3, 1, 0, 7)

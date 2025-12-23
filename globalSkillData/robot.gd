@@ -5,6 +5,8 @@ enum state { spawn, idle, walk, att, jumpAtt, death}
 
 @export var lightningScene: PackedScene # 雷电链效果场景 (camelCase)
 
+const EMP_SCENE = preload("res://globalSkillData/EMP.tscn")
+
 @onready var robot: Node3D = $SubViewportContainer/SubViewport/Node3D/robot
 @onready var sub_viewport_container: SubViewportContainer = $SubViewportContainer
 @onready var camera_3d: Camera3D = $SubViewportContainer/SubViewport/Node3D/Camera3D
@@ -275,6 +277,8 @@ func _enter_state(new_state: state):
 
 		state.jumpAtt:
 			_play_anim(&"jumpAtt")
+			# 创建 emp 场景
+			_spawn_emp()
 			if animationPlayer and animationPlayer.has_animation(&"jumpAtt"):
 				animationPlayer.animation_finished.connect(func(_a): _enter_state(state.idle), CONNECT_ONE_SHOT)
 
@@ -353,6 +357,15 @@ func _trigger_pulse():
 	_enter_state(state.jumpAtt)
 
 
+# 创建 emp 场景
+func _spawn_emp():
+	var emp_instance = EMP_SCENE.instantiate()
+	if emp_instance.has_method("set_master"):
+		emp_instance.set_master(master)
+	get_parent().add_child(emp_instance)
+	emp_instance.global_position = global_position
+
+
 
 
 
@@ -361,11 +374,9 @@ func _trigger_pulse():
 
 func _has_thunder_mark(enemy: Node2D) -> bool:
 
-	var buff_manager = get_tree().get_first_node_in_group(&"buff_manager")
+	if master and is_instance_valid(master) and enemy in master.lightningBuffManger:
 
-	if buff_manager and buff_manager.has_method(&"has_thunder_mark"):
-
-		return buff_manager.has_thunder_mark(enemy)
+		return true
 
 	return false
 

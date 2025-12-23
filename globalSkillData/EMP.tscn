@@ -1,0 +1,40 @@
+[gd_scene load_steps=3 format=3 uid="uid://dd1kvwsmr8o28"]
+
+[ext_resource type="PackedScene" uid="uid://b1argyuu753la" path="res://globalSkillData/asset/EMP/EMP.tscn" id="1_5pdj0"]
+[ext_resource type="Script" uid="uid://d3dpphokv7m4h" path="res://globalSkillData/emp.gd" id="1_27v1k"]
+
+[node name="EMP" type="Node2D"]
+script = ExtResource("1_27v1k")
+
+[node name="Node2D" type="Node2D" parent="."]
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Node2D"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -256.0
+offset_top = -198.0
+offset_right = 256.0
+offset_bottom = 314.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+stretch = true
+stretch_shrink = 2
+
+[node name="SubViewport" type="SubViewport" parent="Node2D/SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(256, 256)
+render_target_update_mode = 4
+
+[node name="Node3D" type="Node3D" parent="Node2D/SubViewportContainer/SubViewport"]
+
+[node name="Camera3D" type="Camera3D" parent="Node2D/SubViewportContainer/SubViewport/Node3D"]
+transform = Transform3D(1, 0, 0, 0, 0.43959433, 0.8981964, 0, -0.8981964, 0.43959433, 0, 5.368343, 4.1835723)
+
+[node name="test" parent="Node2D/SubViewportContainer/SubViewport/Node3D" instance=ExtResource("1_5pdj0")]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Node2D/SubViewportContainer/SubViewport/Node3D"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 6.4437695, 0)
