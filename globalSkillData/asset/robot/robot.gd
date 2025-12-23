@@ -7,7 +7,4 @@ func onCharacterAttackHit():
 	attackHit.emit()
 
 
-func deathAnim():
-	mesh_instance_3d.show()
-	pass
 	

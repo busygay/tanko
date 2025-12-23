@@ -1,0 +1,48 @@
+[gd_scene load_steps=10 format=3 uid="uid://bap761pfarlu5"]
+
+[ext_resource type="Texture2D" uid="uid://cjulmsj71ou2h" path="res://globalSkillData/asset/Lightning/Lightning03_2.png" id="1_1riss"]
+[ext_resource type="Script" uid="uid://du1pidbmjphld" path="res://globalSkillData/lightning.gd" id="1_rovca"]
+[ext_resource type="Texture2D" uid="uid://bpnfj11p25ite" path="res://globalSkillData/asset/Lightning/Lightning03_3.png" id="2_rovca"]
+[ext_resource type="Texture2D" uid="uid://b0xqv4jksdbow" path="res://globalSkillData/asset/Lightning/Lightning03_4.png" id="3_ah0es"]
+[ext_resource type="Texture2D" uid="uid://bp57nl8mogg2e" path="res://globalSkillData/asset/Lightning/Lightning03_5.png" id="4_bgndt"]
+[ext_resource type="Texture2D" uid="uid://bbaxg1b3esukt" path="res://globalSkillData/asset/Lightning/Lightning03_6.png" id="5_khitu"]
+[ext_resource type="Texture2D" uid="uid://b2veplfkighaa" path="res://globalSkillData/asset/Lightning/Lightning03_7.png" id="6_63vlv"]
+[ext_resource type="Texture2D" uid="uid://dux1hueuivhbg" path="res://globalSkillData/asset/Lightning/Lightning03_8.png" id="7_ofv21"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1riss"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_1riss")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_rovca")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_ah0es")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_bgndt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_khitu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_63vlv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_ofv21")
+}],
+"loop": false,
+"name": &"default",
+"speed": 10.0
+}]
+
+[node name="node2D" type="Node2D"]
+script = ExtResource("1_rovca")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(60, 0)
+rotation = -1.5707964
+sprite_frames = SubResource("SpriteFrames_1riss")
+frame = 3

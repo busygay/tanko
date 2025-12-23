@@ -3,6 +3,7 @@ extends "res://skill/scene/skill.gd"
 const ROBOT_SCENE = preload("res://globalSkillData/robot.tscn")
 
 var currentRobot: Node2D = null
+var lightningBuffManger:Array = []
 
 
 func _ready() -> void:
@@ -47,7 +48,15 @@ func spawnRobot(_dic: Dictionary = {}):
 	
 	# 初始化机器人数据，传递字典
 	if robotInstance.has_method("initData"):
-		robotInstance.initData(_dic)
+		robotInstance.initData(_dic, self)
 	else:
 		push_error("机器人实例缺少initData方法")
 	
+
+func AddToLightningBuffManger(enemy1:Node2D):
+	if is_instance_valid(enemy1):
+		lightningBuffManger.append(enemy1)
+
+func removeFromLightningBuffManger(enemy1:Node2D):
+	if enemy1 in lightningBuffManger:
+		lightningBuffManger.erase(enemy1)

@@ -30,6 +30,7 @@ var hasPulse: bool = false
 var currentState: state = state.idle
 var death_flag: bool = false # 死亡标志位
 
+var master :Node2D #用于获取父级 BT-7271
 
 
 # 常量定义
@@ -78,13 +79,13 @@ func getRobotAimationPlayer():
 
 # 设置机器人数据,由BT-7271调用
 
-func initData(_dic:Dictionary):
+func initData(_dic:Dictionary,_master:Node2D):
 
 	if "fiveCombo" in _dic or "APSpent" in _dic:
 		speed = 125
 
 	damage = _calculate_damage()
-
+	master = _master
 	_setup_timers()
 
 
@@ -339,20 +340,9 @@ func _execute_att():
 # 施加雷霆标记
 
 func _apply_thunder_mark(enemy: Node2D):
+	
+	master.call_deferred("AddToLightningBuffManger", enemy)
 
-	var buff_manager = get_tree().get_first_node_in_group(&"buff_manager")
-
-	if buff_manager and buff_manager.has_method(&"apply_thunder_mark"):
-
-		buff_manager.apply_thunder_mark(enemy, {
-
-			"duration": THUNDER_MARK_DURATION,
-
-			"slow_ratio": THUNDER_MARK_SLOW,
-
-			"damage_bonus": THUNDER_MARK_DAMAGE_BONUS
-
-		})
 
 
 
@@ -362,49 +352,8 @@ func _trigger_pulse():
 
 	_enter_state(state.jumpAtt)
 
-	
 
-	var player = get_tree().get_first_node_in_group(&"player")
 
-	var pulseDamage = 10.0
-
-	if player and "baseDamage" in player:
-
-		pulseDamage = player.baseDamage * 1.0
-
-	
-
-	var enemies = get_tree().get_nodes_in_group(&"enemy")
-
-	var affectedEnemies = []
-
-	
-
-	for enemy in enemies:
-
-		if not is_instance_valid(enemy): continue
-
-		if global_position.distance_to(enemy.global_position) <= PULSE_RADIUS:
-
-			affectedEnemies.append(enemy)
-
-			
-
-			var finalDamage = pulseDamage
-
-			if _has_thunder_mark(enemy):
-
-				finalDamage *= (1.0 + THUNDER_MARK_DAMAGE_BONUS)
-
-			
-
-			if enemy.has_method(&"getHurt"):
-
-				enemy.getHurt(finalDamage)
-
-	
-
-	_create_lightning_chains(affectedEnemies)
 
 
 
@@ -420,39 +369,6 @@ func _has_thunder_mark(enemy: Node2D) -> bool:
 
 	return false
 
-
-
-# 创建雷电锁链效果
-
-func _create_lightning_chains(enemies: Array):
-
-	if not lightningScene:
-
-		push_warning("Robot: lightningScene is not assigned!")
-
-		return
-
-	
-
-	for enemy in enemies:
-
-		if not is_instance_valid(enemy): continue
-
-		
-
-		var lightning = lightningScene.instantiate()
-
-		get_tree().current_scene.add_child(lightning)
-
-		
-
-		if lightning.has_method(&"setup_chain"):
-
-			lightning.setup_chain(global_position, enemy.global_position)
-
-		
-
-		get_tree().create_timer(1.0).timeout.connect(func(): if is_instance_valid(lightning): lightning.queue_free())
 
 
 

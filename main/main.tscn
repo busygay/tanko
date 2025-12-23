@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=4 uid="uid://ch1wwpmk3c6wq"]
+[gd_scene load_steps=41 format=4 uid="uid://ch1wwpmk3c6wq"]
 
 [ext_resource type="Script" uid="uid://lfc73u04r0om" path="res://main/main.gd" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://cxnnivoip7stv" path="res://main/UI/Answering.tscn" id="2_0xm2m"]
@@ -221,6 +221,10 @@ texture = ExtResource("17_4hmqs")
 [sub_resource type="TileSet" id="TileSet_vapsy"]
 sources/0 = SubResource("TileSetAtlasSource_q0sk7")
 
+[sub_resource type="Environment" id="Environment_4hmqs"]
+glow_enabled = true
+glow_blend_mode = 0
+
 [node name="main" type="Node2D" groups=["main"]]
 y_sort_enabled = true
 script = ExtResource("1_0xm2m")
@@ -439,6 +443,9 @@ tile_set = SubResource("TileSet_vapsy")
 
 [node name="test" type="Marker2D" parent="."]
 position = Vector2(342, 1049)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_4hmqs")
 
 [connection signal="pressed" from="CanvasLayer/test/PlayerLevelUpButton" to="CanvasLayer/test" method="_on_player_level_up_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/test/Invincible ModeButton" to="CanvasLayer/test" method="_on_invincible_mode_button_pressed"]

@@ -14,7 +14,7 @@ stencil_color = Color(0, 0, 0, 0)
 [sub_resource type="CircleShape2D" id="CircleShape2D_m3kl4"]
 radius = 57.558666
 
-[node name="robot" type="Node2D"]
+[node name="robot" type="Node2D" groups=["robot"]]
 scale = Vector2(0.7, 0.7)
 script = ExtResource("1_ajbe4")
 
