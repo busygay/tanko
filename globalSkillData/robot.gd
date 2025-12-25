@@ -3,6 +3,9 @@ extends Node2D
 # 机器人状态枚举 (对齐 base_enemy.gd)
 enum state { spawn, idle, walk, att, jumpAtt, death}
 
+# 信号：机器人销毁时通知 BT-7271
+signal robot_destroyed
+
 @export var lightningScene: PackedScene # 雷电链效果场景 (camelCase)
 
 const EMP_SCENE = preload("res://globalSkillData/EMP.tscn")
@@ -32,7 +35,7 @@ var hasPulse: bool = false
 var currentState: state = state.idle
 var death_flag: bool = false # 死亡标志位
 
-var master :Node2D #用于获取父级 BT-7271
+var master :Node #用于获取父级 BT-7271
 
 
 # 常量定义
@@ -70,6 +73,9 @@ func _ready() -> void:
 	robot.attackHit.connect(func():
 		_execute_att()
 		)
+	robot.jumpAttFall.connect(func():
+		_spawn_emp()
+		)
 
 func getRobotAimationPlayer():
 
@@ -81,10 +87,17 @@ func getRobotAimationPlayer():
 
 # 设置机器人数据,由BT-7271调用
 
-func initData(_dic:Dictionary,_master:Node2D):
+func initData(_dic:Dictionary,_master:Node):
 
 	if "fiveCombo" in _dic or "APSpent" in _dic:
 		speed = 125
+	else:
+		speed = 100.0  # 默认基础速度
+
+	# 应用速度倍率
+	if master and master.has_method("get_speed_multiplier"):
+		var mult = master.get_speed_multiplier()
+		speed = int(speed * mult)
 
 	damage = _calculate_damage()
 	master = _master
@@ -249,13 +262,13 @@ func _enter_state(new_state: state):
 	match currentState:
 
 		state.spawn:
-			_play_anim(&"self/spawn")
+			_play_anim(&"standUpAnim")
 			# spawn 动画结束后启动 liveTimer 并进入 idle 状态
-			if animationPlayer and animationPlayer.has_animation(&"self/spawn"):
+			if animationPlayer and animationPlayer.has_animation(&"standUpAnim"):
 				animationPlayer.animation_finished.connect(_on_spawn_animation_finished, CONNECT_ONE_SHOT)
 			else:
 				# 如果没有 spawn 动画，直接进入 idle 状态并启动 timer
-				_on_spawn_animation_finished()
+				_on_spawn_animation_finished("name")
 
 		state.idle:
 			_play_anim(&"walk")
@@ -277,14 +290,15 @@ func _enter_state(new_state: state):
 
 		state.jumpAtt:
 			_play_anim(&"jumpAtt")
-			# 创建 emp 场景
-			_spawn_emp()
+			# emp 通过 robot.jumpAttFall 信号创建
 			if animationPlayer and animationPlayer.has_animation(&"jumpAtt"):
-				animationPlayer.animation_finished.connect(func(_a): _enter_state(state.idle), CONNECT_ONE_SHOT)
+				animationPlayer.animation_finished.connect(func(_a): _destroy_robot(), CONNECT_ONE_SHOT)
+			else:
+				_destroy_robot()
 
 		state.death:
 			_play_anim(&"self/death")
-			# 机器人死亡后直接移除
+			# 机器人死亡后直接移除（不发送信号，避免触发 BT-7271 创建新 robot）
 			if animationPlayer and animationPlayer.has_animation(&"death"):
 				animationPlayer.animation_finished.connect(func(_a): queue_free(), CONNECT_ONE_SHOT)
 			else:
@@ -306,7 +320,7 @@ func _play_anim(anim_name: StringName):
 
 # spawn 动画结束后的回调函数
 
-func _on_spawn_animation_finished() -> void:
+func _on_spawn_animation_finished(_name) -> void:
 	# 启动 liveTimer
 	if liveTimer:
 		liveTimer.start()
@@ -362,7 +376,7 @@ func _spawn_emp():
 	var emp_instance = EMP_SCENE.instantiate()
 	if emp_instance.has_method("set_master"):
 		emp_instance.set_master(master)
-	get_parent().add_child(emp_instance)
+	get_tree().get_first_node_in_group(&"main").add_child(emp_instance)
 	emp_instance.global_position = global_position
 
 
@@ -413,3 +427,8 @@ func _check_death_flag() -> void:
 	if death_flag:
 		death_flag = false
 		_enter_state(state.death)
+
+# 销毁机器人并发送信号
+func _destroy_robot():
+	robot_destroyed.emit()
+	queue_free()

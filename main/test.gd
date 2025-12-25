@@ -167,3 +167,89 @@ func _on_add_levels_pressed() -> void:
 			tempscroll.queue_free()
 		)
 		level_list.add_child(button)
+
+
+func _on_emit_skill_pressed() -> void:
+	var existing_scroll = get_node_or_null("../tempScroll")
+	if existing_scroll:
+		existing_scroll.free()
+	
+	var tempscroll = ScrollContainer.new()
+	tempscroll.custom_minimum_size = Vector2(300,400)
+	tempscroll.scale = Vector2(3,3)
+	var tempPos:Vector2 = Vector2(self.size.x*scale.x +10,0)
+	tempscroll.global_position=tempPos
+	tempscroll.name = "tempScroll"
+	tempscroll.process_mode = Node.PROCESS_MODE_ALWAYS
+	get_parent().add_child(tempscroll)
+	
+	var button_list = VBoxContainer.new()
+	tempscroll.add_child(button_list)
+	
+	# 创建 "emitAllSkill" 按钮
+	var emit_all_skill_button = Button.new()
+	emit_all_skill_button.text = "发射所有技能 (emitAllSkill)"
+	emit_all_skill_button.pressed.connect(func():
+		_emit_all_skill()
+		tempscroll.queue_free()
+	)
+	button_list.add_child(emit_all_skill_button)
+	
+	# 创建 "emitAllSkillTigger" 按钮
+	var emit_all_skill_tigger_button = Button.new()
+	emit_all_skill_tigger_button.text = "触发所有技能触发器 (emitAllSkillTigger)"
+	emit_all_skill_tigger_button.pressed.connect(func():
+		_emit_all_skill_tigger()
+		tempscroll.queue_free()
+	)
+	button_list.add_child(emit_all_skill_tigger_button)
+
+
+# 发射所有技能
+func _emit_all_skill():
+	var tigger_node = get_tree().get_first_node_in_group("tigger")
+	if not tigger_node:
+		print("无法获取 tigger 节点")
+		return
+	
+	# 获取所有已装备和未装备的技能
+	var all_skills = []
+	
+	# 1. 添加未装备的技能（在 unequip 数组中）
+	if tigger_node.has_method("_returnUnequip"):
+		all_skills.append_array(tigger_node._returnUnequip())
+	
+	# 2. 添加已装备的技能
+	# tigger_node.tigger 是一个字典，结构如下：
+	# {
+	#     "onCombo": $onComboTigger,
+	#     "twoCombo": $twoComboTigger,
+	#     "fiveCombo": $fiveComboTigger,
+	#     ...
+	# }
+	# 每个 value (如 $onComboTigger) 是一个容器节点，存放着装备到该触发器的技能
+	var tigger_dict = tigger_node.get("tigger")
+	if tigger_dict:
+		for tigger_name in tigger_dict:
+			var tigger_container = tigger_dict[tigger_name]  # 获取触发器容器
+			if tigger_container:
+				all_skills.append_array(tigger_container.get_children())  # 添加容器中的所有技能节点
+	
+	# 对每个技能调用 _skillEmit
+	for skill_node in all_skills:
+		if is_instance_valid(skill_node) and skill_node.has_method("_skillEmit"):
+			print("发射技能:", skill_node)
+			skill_node._skillEmit.call_deferred()
+
+
+# 触发所有技能触发器
+func _emit_all_skill_tigger():
+	# 触发所有技能触发器的 Emit 信号
+	Eventmanger.onComboEmit.emit()
+	Eventmanger.twoComboEmit.emit()
+	Eventmanger.fiveComboEmit.emit()
+	Eventmanger.brokenComboEmit.emit()
+	Eventmanger.APGainedEmit.emit()
+	Eventmanger.APSpentEmit.emit()
+	
+	print("已触发所有技能触发器")

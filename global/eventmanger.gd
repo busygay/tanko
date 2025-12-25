@@ -162,6 +162,8 @@ signal doubleShootUP
 
 @warning_ignore('unused_signal')
 signal bt7270UP
+@warning_ignore('unused_signal')
+signal bt7271UP
 var isQuiting: bool
 func _notification(what: int) -> void:
 	match what:

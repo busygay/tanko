@@ -259,6 +259,11 @@ text = "GetSkill
 layout_mode = 2
 text = "AddLevel"
 
+[node name="emitSkill" type="Button" parent="CanvasLayer/test"]
+layout_mode = 2
+text = "emitSkill
+"
+
 [node name="shoping" parent="CanvasLayer" groups=["popup"] instance=ExtResource("3_fwcvl")]
 visible = false
 
@@ -452,4 +457,5 @@ environment = SubResource("Environment_4hmqs")
 [connection signal="pressed" from="CanvasLayer/test/AddEnemyButton" to="CanvasLayer/test" method="_on_add_enemy_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/test/GetSkillButton" to="CanvasLayer/test" method="_on_get_skill_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/test/AddLevels" to="CanvasLayer/test" method="_on_add_levels_pressed"]
+[connection signal="pressed" from="CanvasLayer/test/emitSkill" to="CanvasLayer/test" method="_on_emit_skill_pressed"]
 [connection signal="timeout" from="onComboTimer" to="." method="_on_on_combo_timer_timeout"]

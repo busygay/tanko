@@ -11,5 +11,10 @@ skill_cname = "BT-7271"
 sprite = ExtResource("2_falng")
 tips = "召唤BT-7271机器人协助战斗 (15秒)"
 path = "res://skill/scene/BT-7271.tscn"
-derivedSkill = Dictionary[String, Dictionary]({})
+derivedSkill = Dictionary[String, Dictionary]({
+"bt-7271Up": {
+"count": 5,
+"path": "res://skill/resource/bt-7271Up.tres"
+}
+})
 metadata/_custom_type_script = "uid://c1djkh2or1f4p"

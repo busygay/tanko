@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dsivq88qsb3xd"]
+
+[resource]
+resource_name = "materal.002"
+transparency = 1
+albedo_color = Color(0, 0, 0, 1)
+roughness = 0.5

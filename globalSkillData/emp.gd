@@ -3,7 +3,7 @@ extends Node2D
 
 const LIGHTNING_SCENE = preload("res://globalSkillData/lightning.tscn")
 
-var master: Node2D # 用于获取父级 BT-7271
+var master: Node # 用于获取父级 BT-7271
 
 
 # Called when the node enters the scene tree for the first time.
@@ -26,7 +26,7 @@ func _ready() -> void:
 
 
 # 设置 master (BT-7271)
-func set_master(_master: Node2D):
+func set_master(_master: Node):
 	master = _master
 
 
