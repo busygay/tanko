@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://bumy666mine"]
+[gd_scene load_steps=6 format=3 uid="uid://bumy666mine"]
 
 [ext_resource type="Script" path="res://globalSkillData/mine_entity.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://skill/asset/BOOM.png" id="2_sprite"]
+[ext_resource type="Texture2D" path="res://asset/bar_shadow_round_large.png" id="3_shadow"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_mine"]
 radius = 20.0
@@ -9,7 +10,14 @@ radius = 20.0
 [node name="MineEntity" type="Area2D"]
 script = ExtResource("1_script")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Shadow" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.5)
+scale = Vector2(0.5, 0.3)
+texture = ExtResource("3_shadow")
+
+[node name="VisualLayer" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="VisualLayer"]
 texture = ExtResource("2_sprite")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
