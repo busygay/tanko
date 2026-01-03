@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="skill" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://skill/resource/skill.gd" id="1_1j1u7"]
+[ext_resource type="Texture2D" path="res://skill/asset/Molotov cocktail.png" id="2_falng"]
+
+[resource]
+script = ExtResource("1_1j1u7")
+skill_type = "战术投掷"
+skill_name = "Molotov"
+skill_cname = "红莲·烈焰"
+sprite = ExtResource("2_falng")
+tips = "随机火海(常规)/长效火墙(奖励)/环形护卫(生存)/高能蓝火(资源)"
+path = "res://skill/scene/molotov.tscn"
+derivedSkill = Dictionary[String, Dictionary]({
+})
