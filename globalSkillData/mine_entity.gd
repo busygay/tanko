@@ -84,6 +84,10 @@ func _on_landed() -> void:
 	visual_layer.position = Vector2.ZERO
 	visual_layer.rotation = 0
 	
+	# 确保地雷图片朝上（base状态）
+	sprite.rotation = 0
+	sprite.scale = Vector2(1.0, 1.0)
+	
 	# 启用碰撞检测
 	collision_shape.disabled = false
 	
