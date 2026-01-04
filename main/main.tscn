@@ -452,6 +452,9 @@ position = Vector2(342, 1049)
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_4hmqs")
 
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(540, 960)
+
 [connection signal="pressed" from="CanvasLayer/test/PlayerLevelUpButton" to="CanvasLayer/test" method="_on_player_level_up_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/test/Invincible ModeButton" to="CanvasLayer/test" method="_on_invincible_mode_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/test/AddEnemyButton" to="CanvasLayer/test" method="_on_add_enemy_button_pressed"]

@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3 uid="uid://6w487tso41r6"]
 
-[ext_resource type="PackedScene" path="res://skill/scene/skill.tscn" id="1_base"]
-[ext_resource type="Script" path="res://skill/scene/molotov.gd" id="2_script"]
+[ext_resource type="PackedScene" uid="uid://bveueqdnn2l7p" path="res://skill/scene/skill.tscn" id="1_base"]
+[ext_resource type="Script" uid="uid://drr3ffeoe5f8t" path="res://skill/scene/molotov.gd" id="2_script"]
+[ext_resource type="Resource" path="res://skill/resource/Molotov.tres" id="3_j72tu"]
 
 [node name="Skill" instance=ExtResource("1_base")]
 script = ExtResource("2_script")
+Data = ExtResource("3_j72tu")

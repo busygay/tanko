@@ -57,7 +57,7 @@ func creatBuff():
 		tempBreakBuff.play("breakBuff")
 		buffnode.offset = Vector2(0,8)
 		buffnode.play("hit")
-		Eventmanger.playerGlobalDmmageBonusChange.emit(0)
+		Eventmanger.playerGlobalDamageBonusChange.emit(0)
 		buffnode.animation_finished.connect(func():
 			buffnode.queue_free()
 			buffnode = null

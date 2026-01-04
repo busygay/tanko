@@ -1,17 +1,21 @@
 extends "res://skill/scene/skill.gd"
 
+var molotov_scene = preload("res://globalSkillData/molotov_entity.tscn")
+
 func _ready() -> void:
 	super ()
 
 func _skillEmit(_dic: Dictionary = {}):
 	await super ()
-	# TODO: 实现具体燃烧瓶逻辑
+	
 	var pos_array: Array = []
 	var view_size = get_viewport_rect().size
 	var player = get_tree().get_first_node_in_group("player")
 	var center_pos = view_size / 2
+	var spawn_pos = view_size / 2  # 燃烧瓶投掷起始位置
 	if player:
 		center_pos = player.global_position
+		spawn_pos = player.global_position
 
 	if _dic.has("fiveCombo"):
 		print("执行金黄色长效火墙逻辑")
@@ -49,3 +53,10 @@ func _skillEmit(_dic: Dictionary = {}):
 		pos_array.append(pos)
 	
 	print("Molotov positions:", pos_array)
+	
+	# 创建并投掷燃烧瓶到所有目标位置
+	for target_pos in pos_array:
+		var molotov = molotov_scene.instantiate()
+		get_tree().current_scene.add_child(molotov)
+		molotov.global_position = spawn_pos
+		molotov.throw_to(target_pos)
