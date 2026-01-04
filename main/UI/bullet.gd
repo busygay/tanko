@@ -19,7 +19,7 @@ func showAllButtel():
 func bulletCountChange(count:int):
 	for i in v_box_container.get_children():
 		i.hide()
-	for i in range(count):
+	for i in range(min(count, v_box_container.get_child_count())):
 		v_box_container.get_child(i).show()
 
 
