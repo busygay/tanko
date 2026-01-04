@@ -22,6 +22,7 @@ extends Area2D
 
 var _is_triggered: bool = false
 var _is_landed: bool = false
+var start_pos: Vector2
 
 ## 地雷图片和skillcard地雷用了同一个素材.
 
@@ -41,7 +42,7 @@ func throw_to(pos: Vector2, _duration: float = -1.0) -> void:
 	if _duration > 0:
 		throw_duration = _duration
 	
-	var start_pos = global_position
+	start_pos = global_position
 	
 	# 禁用碰撞检测直到落地
 	collision_shape.disabled = true
