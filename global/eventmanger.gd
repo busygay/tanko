@@ -25,7 +25,7 @@ func reloadAmmofunc():
 	player.animation_player.play("reloadAmmo")
 func addCurrentAmmo(isanswer: bool):
 	if isanswer:
-		player.currentAmmo += 1
+		player.currentAmmo = min(player.currentAmmo + 1, player.MaxAmmo)
 		
 
 func register_player(player_node):
