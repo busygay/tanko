@@ -262,9 +262,9 @@ func _enter_state(new_state: state):
 	match currentState:
 
 		state.spawn:
-			_play_anim(&"standUpAnim")
+			_play_anim(&"self/spawn")
 			# spawn 动画结束后启动 liveTimer 并进入 idle 状态
-			if animationPlayer and animationPlayer.has_animation(&"standUpAnim"):
+			if animationPlayer and animationPlayer.has_animation(&"spawn"):
 				animationPlayer.animation_finished.connect(_on_spawn_animation_finished, CONNECT_ONE_SHOT)
 			else:
 				# 如果没有 spawn 动画，直接进入 idle 状态并启动 timer
