@@ -57,6 +57,7 @@ func _readSvaeData() -> void:
 	isTestMode = globalSet.isTestMode
 	wordBook = globalSet.wordBookList.duplicate()
 	Jlptn5._setWordBookList(wordBook)
+	Jlptn5.setEnableObfuscationWord(globalSet.enableObfuscationWord)
 	##设置单词本选择按钮状态
 	for i in wordListVbox.get_children():
 		if wordBook.has(i.text):
@@ -90,6 +91,7 @@ func _on_back_pressed() -> void:
 	connectWordSelectButton()
 	globalSet.setIsTestMode(isTestMode)
 	globalSet.setWordBookList(wordBook)
+	globalSet.setEnableObfuscationWord(Jlptn5.enableObfuscationWord)
 	set_panel.hide()
 	pass # Replace with function body.
 
@@ -280,3 +282,7 @@ func _on_check_button_toggled(toggled_on: bool) -> void:
 	isTestMode = toggled_on
 	
 	pass # Replace with function body.
+
+
+func _on_obfuscation_check_button_toggled(toggled_on: bool) -> void:
+	Jlptn5.setEnableObfuscationWord(toggled_on)

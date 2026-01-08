@@ -56,6 +56,9 @@ var savedErrorWord: Dictionary # 存储从文件加载的错误单词，包含�
 # 已掌握的单词字典，键为单词假名，值为单词数据（错误次数为0且从错题本移除的单词）
 var masteredWord: Dictionary # 存储已掌握的单词（错误次数为0且从错题本移除）
 
+# 是否启用混淆单词功能
+var enableObfuscationWord: bool = false
+
 # 【新增】假名备份字符常量，用于单词重组时的干扰项
 const BACKUP_KANA_CHARS = [
 	"あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ",
@@ -313,6 +316,10 @@ func _setWordBookList(list: Array):
 	wordBookList = list.duplicate()
 
 
+func setEnableObfuscationWord(enabled: bool) -> void:
+	enableObfuscationWord = enabled
+
+
 func getNextQuestion(type: int = 0) -> Dictionary:
 	var questionData: Dictionary = {}
 	
@@ -406,9 +413,10 @@ func getNextQuestion(type: int = 0) -> Dictionary:
 
 				selectErrorWordData.append(errorWordStr)
 
-			var temp = tiltle.get("容易混淆的单词", null)
-			if temp:
-				selectErrorWordData.append(temp)
+			if enableObfuscationWord:
+				var temp = tiltle.get("容易混淆的单词", null)
+				if temp:
+					selectErrorWordData.append(temp)
 			errorButtonCount = 3
 		
 		1:
@@ -469,9 +477,10 @@ func getNextQuestion(type: int = 0) -> Dictionary:
 					tempErrorWord = tempWordData.get("假名", "")
 				selectErrorWordData.append(tempErrorWord)
 
-			var temp = tiltle.get("容易混淆的单词", null)
-			if temp:
-				selectErrorWordData.append(temp)
+			if enableObfuscationWord:
+				var temp = tiltle.get("容易混淆的单词", null)
+				if temp:
+					selectErrorWordData.append(temp)
 			errorButtonCount = 3
 			
 		2:

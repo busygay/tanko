@@ -7,6 +7,7 @@ var wordBookList:Array=[
 ]
 var BGMSoundVolume:float=1
 var GUNSoundVolume:float=1
+var enableObfuscationWord:bool = false
 
 
 
@@ -24,7 +25,8 @@ func _exit_tree() -> void:
 func svaeSettings() -> void:
 	var saveData:Dictionary = {
 		"isTestMode": isTestMode,
-		"wordBookList": wordBookList
+		"wordBookList": wordBookList,
+		"enableObfuscationWord": enableObfuscationWord
 	}
 	var jsonData= JSON.stringify(saveData)
 	var file = FileAccess.open(saveSettingsPath, FileAccess.WRITE)
@@ -49,6 +51,7 @@ func loadSettings() -> void:
 				wordBookList = ["JLPTN5"]
 			else:
 				wordBookList =loadData.get("wordBookList")
+			enableObfuscationWord = loadData.get("enableObfuscationWord", false)
 		
 		else:
 			push_error("设置文件解析错误，使用默认设置！")
@@ -61,3 +64,6 @@ func setIsTestMode(value: bool) -> void:
 
 func setWordBookList(bookList: Array) -> void:
 	wordBookList = bookList
+
+func setEnableObfuscationWord(value: bool) -> void:
+	enableObfuscationWord = value
