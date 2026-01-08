@@ -2007,6 +2007,7 @@ albedo_color = Color(1, 1, 1, 0)
 [sub_resource type="BoxMesh" id="BoxMesh_8v1xg"]
 
 [node name="robot" instance=ExtResource("1_7kcqq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.2879791, 0)
 script = ExtResource("2_qaxrl")
 
 [node name="Armature_002" parent="." index="0"]
