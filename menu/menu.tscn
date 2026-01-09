@@ -565,6 +565,7 @@ size_flags_horizontal = 4
 
 [node name="ObfuscationCheckButton" type="CheckButton" parent="setPanel/MarginContainer/NinePatchRect/VBoxContainer/ObfuscationMode"]
 layout_mode = 2
+mouse_filter = 1
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 32
 text = "混淆词模式"
@@ -769,6 +770,8 @@ horizontal_alignment = 1
 [connection signal="pressed" from="HBoxContainer/startButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/setBtton" to="." method="_on_set_btton_pressed"]
 [connection signal="pressed" from="HBoxContainer/errorWordButton" to="." method="_on_error_word_button_pressed"]
+[connection signal="mouse_entered" from="setPanel/MarginContainer/NinePatchRect/VBoxContainer/ObfuscationMode" to="." method="_on_obfuscation_mode_mouse_entered"]
+[connection signal="mouse_exited" from="setPanel/MarginContainer/NinePatchRect/VBoxContainer/ObfuscationMode" to="." method="_on_obfuscation_mode_mouse_exited"]
 [connection signal="toggled" from="setPanel/MarginContainer/NinePatchRect/VBoxContainer/ObfuscationMode/ObfuscationCheckButton" to="." method="_on_obfuscation_check_button_toggled"]
 [connection signal="toggled" from="setPanel/MarginContainer/NinePatchRect/VBoxContainer/testmode/CheckButton" to="." method="_on_check_button_toggled"]
 [connection signal="pressed" from="setPanel/MarginContainer/NinePatchRect/VBoxContainer/MarginContainer2/back" to="." method="_on_back_pressed"]

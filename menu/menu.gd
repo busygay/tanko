@@ -10,6 +10,14 @@ extends Control
 @onready var testmodeButton: CheckButton= $setPanel/MarginContainer/NinePatchRect/VBoxContainer/testmode/CheckButton
 @onready var wordListVbox :VBoxContainer =$setPanel/MarginContainer/NinePatchRect/VBoxContainer/MarginContainer/Panel/MarginContainer/HBoxContainer/MarginContainer/ColorRect/wordListVbox
 
+###混淆词功能的启停
+@onready var obfuscation_mode: MarginContainer = $setPanel/MarginContainer/NinePatchRect/VBoxContainer/ObfuscationMode
+
+var obfuscation_tooltip: Panel = null
+var obfuscation_tooltip_label: Label = null
+
+
+
 ###控制背景用
 @onready var bg_player: Node2D = $BG/bgPlayer
 @onready var bg_enemy_example: AnimatedSprite2D = $BG/bgEnemyExample
@@ -34,12 +42,17 @@ func _ready() -> void:
 	bg_player.get_node(^"body").play("idle")
 	bg_player.get_node(^"gun").play("idle")
 	
+	# 创建混淆词提示面板
+	_create_obfuscation_tooltip()
+	
 	# 连接错题本相关按钮信号
 	error_word_data_button.pressed.connect(_on_error_word_data_button_pressed)
 	rebuild_error_word_data_button.pressed.connect(_on_rebuild_error_word_data_button_pressed)
 	#	添加单词库列表
 	_addWordBookCheckBox()
 	_readSvaeData()
+	
+	print("menu.gd _ready 完成")
 
 
 
@@ -51,6 +64,46 @@ func _addWordBookCheckBox():
 		tempCheckBtton.text = i
 		tempCheckBtton.add_theme_font_size_override("font_size",28)
 		wordListVbox.add_child(tempCheckBtton)
+	
+
+# 创建混淆词提示面板
+func _create_obfuscation_tooltip():
+	# 创建提示面板
+	obfuscation_tooltip = Panel.new()
+	obfuscation_tooltip.z_index = 100
+	obfuscation_tooltip.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+	obfuscation_tooltip.set_position(Vector2(0, 0))
+	obfuscation_tooltip.hide()
+	
+	# 创建样式
+	var style_box = StyleBoxFlat.new()
+	style_box.bg_color = Color(0.15, 0.15, 0.2, 0.95)
+	style_box.border_width_left = 2
+	style_box.border_width_top = 2
+	style_box.border_width_right = 2
+	style_box.border_width_bottom = 2
+	style_box.border_color = Color(0.4, 0.7, 1.0, 1.0)
+	style_box.corner_radius_top_left = 8
+	style_box.corner_radius_top_right = 8
+	style_box.corner_radius_bottom_left = 8
+	style_box.corner_radius_bottom_right = 8
+	obfuscation_tooltip.add_theme_stylebox_override("panel", style_box)
+	
+	# 创建标签
+	obfuscation_tooltip_label = Label.new()
+	obfuscation_tooltip_label.text = "tips:使用JLPTN1词库和N2词库,混淆词模式会造成奇怪的bug"
+	obfuscation_tooltip_label.add_theme_font_size_override("font_size", 20)
+	obfuscation_tooltip_label.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 1.0))
+	obfuscation_tooltip_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	obfuscation_tooltip_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	obfuscation_tooltip_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	obfuscation_tooltip_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	
+	# 将标签添加到面板
+	obfuscation_tooltip.add_child(obfuscation_tooltip_label)
+	
+	# 将提示面板添加到场景中（添加到根节点）
+	add_child(obfuscation_tooltip)
 	
 
 func _readSvaeData() -> void:
@@ -277,7 +330,7 @@ func _on_area_2d_area_entered(area: Area2D) -> void:
 		bgInEyeBox.append(temp)
 	pass # Replace with function body.
 
-
+###测试模式
 func _on_check_button_toggled(toggled_on: bool) -> void:
 	isTestMode = toggled_on
 	
@@ -286,3 +339,33 @@ func _on_check_button_toggled(toggled_on: bool) -> void:
 
 func _on_obfuscation_check_button_toggled(toggled_on: bool) -> void:
 	Jlptn5.setEnableObfuscationWord(toggled_on)
+
+
+func _on_obfuscation_mode_mouse_entered() -> void:
+	print("鼠标进入混淆词模式区域")
+	# 鼠标进入时显示提示（仅当设置面板可见时）
+	if set_panel.visible and obfuscation_tooltip:
+		# 获取 obfuscation_mode 的全局位置
+		var obfuscation_global_pos = obfuscation_mode.global_position
+		var obfuscation_size = obfuscation_mode.size
+		
+		# 计算提示面板位置（在 obfuscation_mode 右侧）
+		var tooltip_pos = Vector2(
+			obfuscation_global_pos.x + obfuscation_size.x + 10,
+			obfuscation_global_pos.y
+		)
+		
+		# 设置提示面板位置和大小
+		obfuscation_tooltip.set_position(tooltip_pos)
+		obfuscation_tooltip.custom_minimum_size = Vector2(400, 100)
+		
+		# 显示提示面板
+		obfuscation_tooltip.show()
+
+
+
+func _on_obfuscation_mode_mouse_exited() -> void:
+	print("鼠标退出混淆词模式区域")
+	# 鼠标退出时隐藏提示
+	if obfuscation_tooltip:
+		obfuscation_tooltip.hide()
