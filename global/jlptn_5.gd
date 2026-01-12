@@ -11,6 +11,8 @@ var wordBookPath: Dictionary = {
 	"JLPTN5": 'res://word/JLPTN5.csv',
 	"JLPTN4": 'res://word/JLPTN4.csv',
 	"JLPTN3": 'res://word/JLPTN3.csv',
+	"JLPTN2": 'res://word/JLPTN2.csv',
+	"JLPTN1": 'res://word/JLPTN1.csv',
 }
 
 #用于保存错误单词文件路径
