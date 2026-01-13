@@ -97,6 +97,14 @@ func _setTilte():
 	#	buttonArray内的按钮添加进answering面板。
 	
 		
+func _disable_all_buttons():
+	for btn in h_box_container_1.get_children():
+		if btn.has_method("disable_button"):
+			btn.disable_button()
+	for btn in h_box_container_2.get_children():
+		if btn.has_method("disable_button"):
+			btn.disable_button()
+
 func checkAnswer(answer: String):
 	var iscorrect: bool
 	var tempcorrectData: Array = questionData.get("correctData")
@@ -105,6 +113,7 @@ func checkAnswer(answer: String):
 		tempcorrectData.erase(answer)
 		if questionData.get("correctData").size() <= 0:
 			timer.start(0.5)
+			_disable_all_buttons()
 			
 			if questionData.get("type") == 2:
 				#新增信号，直接获取一点行动点。
@@ -112,6 +121,7 @@ func checkAnswer(answer: String):
 	else:
 		iscorrect = false
 		timer.start(1)
+		_disable_all_buttons()
 		pass
 	##	发送回答信号，包含是否回答正确，
 	var count_change: int

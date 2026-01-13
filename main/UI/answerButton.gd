@@ -3,21 +3,20 @@ extends Control
 @onready var label: Label = $TextureButton/MarginContainer/Label
 
 var answerpanel
-var wordStr:String
+var wordStr: String
 
 
 func _ready() -> void:
 	label.text = wordStr
 	
 
-func setData(WordStr:String,ansPanel:Node):
+func setData(WordStr: String, ansPanel: Node):
 	wordStr = WordStr
 	answerpanel = ansPanel
 
 
-
 func _setcolor():
-	self.modulate =  Color(0.0, 1.0, 0.231)
+	self.modulate = Color(0.0, 1.0, 0.231)
 
 
 func _on_texture_button_pressed() -> void:
@@ -25,8 +24,11 @@ func _on_texture_button_pressed() -> void:
 	if iscorrect:
 		self.modulate = Color(0.0, 1.0, 0.231)
 		#
-	else :
+	else:
 		self.modulate = Color(1.0, 0.0, 0.0)
 		
 
 	pass # Replace with function body.
+
+func disable_button():
+	button.disabled = true
